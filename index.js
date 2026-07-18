@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -37,7 +36,17 @@ app.use("/content", express.static(CONTENT_DIR));
 // Routes
 // --------------------------------------------------
 app.use("/user", userRouter);
+app.get("/article/:slug", (req, res) => {
 
+	const file = path.join(
+		CONTENT_DIR,
+		"articles",
+		`${req.params.slug}.html`
+	);
+
+	res.sendFile(file);
+
+});
 // --------------------------------------------------
 // API
 // --------------------------------------------------
@@ -57,10 +66,33 @@ app.get("/api/health", (req, res) => {
 	});
 });
 
+
+app.get("/home-links", (req, res) => {
+
+	res.sendFile(
+		path.join(
+			CONTENT_DIR,
+			"data",
+			"home-links.json"
+		)
+	);
+
+});
+// --------------------------------------------------
+app.get("/syllabus/:course", (req, res) => {
+
+	res.sendFile(
+		path.join(
+			CONTENT_DIR,
+			"syllabus",
+			`${req.params.course}.json`
+		)
+	);
+
+});
 // --------------------------------------------------
 // Start Server
 // --------------------------------------------------
-
 app.listen(PORT, () => {
 	console.log(`🚀 Taleem API running on http://localhost:${PORT}`);
 	console.log(`📁 Serving content from: ${CONTENT_DIR}`);
