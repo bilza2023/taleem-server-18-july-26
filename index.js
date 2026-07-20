@@ -8,7 +8,7 @@ import userRouter from "./routes/user.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9000;
 
 // --------------------------------------------------
 // Paths
@@ -30,13 +30,13 @@ app.use(express.json());
 // Static Content
 // --------------------------------------------------
 
-app.use("/content", express.static(CONTENT_DIR));
+app.use("/api/content", express.static(CONTENT_DIR));
 
 // --------------------------------------------------
 // Routes
 // --------------------------------------------------
-app.use("/user", userRouter);
-app.get("/article/:slug", (req, res) => {
+app.use("/api/user", userRouter);
+app.get("/api/article/:slug", (req, res) => {
 
 	const file = path.join(
 		CONTENT_DIR,
@@ -50,7 +50,7 @@ app.get("/article/:slug", (req, res) => {
 // --------------------------------------------------
 // API
 // --------------------------------------------------
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
 	res.json({
 		name: "Taleem API",
 		version: "1.0.0",
@@ -67,7 +67,7 @@ app.get("/api/health", (req, res) => {
 });
 
 
-app.get("/home-links", (req, res) => {
+app.get("/api/home-links", (req, res) => {
 
 	res.sendFile(
 		path.join(
@@ -79,7 +79,7 @@ app.get("/home-links", (req, res) => {
 
 });
 // --------------------------------------------------
-app.get("/syllabus/:course", (req, res) => {
+app.get("/api/syllabus/:course", (req, res) => {
 
 	res.sendFile(
 		path.join(
@@ -93,7 +93,7 @@ app.get("/syllabus/:course", (req, res) => {
 // --------------------------------------------------
 // Start Server
 // --------------------------------------------------
-app.listen(PORT, () => {
-	console.log(`🚀 Taleem API running on http://localhost:${PORT}`);
+app.listen(PORT, "127.0.0.1", () => {
+	console.log(`🚀 Taleem API running on http://127.0.0.1:${PORT}`);
 	console.log(`📁 Serving content from: ${CONTENT_DIR}`);
 });
