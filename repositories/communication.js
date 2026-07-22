@@ -2,14 +2,20 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function create({ userId, libraryId, message }) {
+export async function create({
+	userId,
+	referenceId,
+	type,
+	message
+}) {
 
 	return await prisma.communication.create({
 
 		data: {
 
 			userId,
-			libraryId,
+			referenceId,
+			type,
 			message
 
 		}
@@ -18,7 +24,7 @@ export async function create({ userId, libraryId, message }) {
 
 }
 
-export async function findByUser(userId) {
+export async function findMine(userId) {
 
 	return await prisma.communication.findMany({
 
@@ -28,22 +34,6 @@ export async function findByUser(userId) {
 
 		},
 
-		include: {
-
-			library: {
-
-				select: {
-
-					id: true,
-					slug: true,
-					title: true
-
-				}
-
-			}
-
-		},
-
 		orderBy: {
 
 			createdAt: "desc"
@@ -54,56 +44,13 @@ export async function findByUser(userId) {
 
 }
 
-export async function findPublicByLibrary(libraryId) {
+export async function findById(id) {
 
-	return await prisma.communication.findMany({
-
-		where: {
-
-			libraryId
-		
-
-		},
-
-		include: {
-
-			user: {
-
-				select: {
-
-					name: true
-
-				}
-
-			}
-
-		},
-
-		orderBy: {
-
-			createdAt: "desc"
-
-		}
-
-	});
-
-}
-
-export async function findLibraryBySlug(slug) {
-
-	return await prisma.library.findUnique({
+	return await prisma.communication.findUnique({
 
 		where: {
 
-			slug
-
-		},
-
-		select: {
-
-			id: true,
-			slug: true,
-			title: true
+			id
 
 		}
 

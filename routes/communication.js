@@ -5,7 +5,7 @@ import authenticate from "../middleware/authenticate.js";
 import {
 	createCommunication,
 	getMyCommunications,
-	getLibraryCommunications
+	getCommunication
 } from "../controllers/communication.js";
 
 const router = express.Router();
@@ -19,16 +19,16 @@ router.post(
 
 // Get all communications for the logged-in user
 router.get(
-	"/my",
+	"/me",
 	authenticate,
 	getMyCommunications
 );
 
-// Get all public communications for a library item
+// Get a single communication
 router.get(
-	"/library/:librarySlug",
+	"/:id",
 	authenticate,
-	getLibraryCommunications
+	getCommunication
 );
 
 export default router;

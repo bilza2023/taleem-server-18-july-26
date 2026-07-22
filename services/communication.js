@@ -1,57 +1,41 @@
 import * as communicationRepository from "../repositories/communication.js";
 
-export async function createCommunication({
+export async function create({
 
 	userId,
-	librarySlug,
+	referenceId,
+	type,
 	message
 
 }) {
 
-	const library =
-		await communicationRepository.findLibraryBySlug(
-			librarySlug
-		);
-
-	if (!library) {
-
-		throw new Error("NOT_FOUND");
-
-	}
-
 	return await communicationRepository.create({
 
 		userId,
-		libraryId: library.id,
+		referenceId,
+		type,
 		message
 
 	});
 
 }
 
-export async function getMyCommunications(userId) {
+export async function findMine(userId) {
 
-	return await communicationRepository.findByUser(
+	return await communicationRepository.findMine(
+
 		userId
+
 	);
 
 }
 
-export async function getLibraryCommunications(librarySlug) {
+export async function findById(id) {
 
-	const library =
-		await communicationRepository.findLibraryBySlug(
-			librarySlug
-		);
+	return await communicationRepository.findById(
 
-	if (!library) {
+		id
 
-		throw new Error("NOT_FOUND");
-
-	}
-
-	return await communicationRepository.findPublicByLibrary(
-		library.id
 	);
 
 }

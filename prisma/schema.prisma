@@ -62,7 +62,6 @@ model Library {
   updatedAt DateTime @updatedAt
 
   course         Course          @relation(fields: [courseId], references: [id])
-  communications Communication[]
 
   @@index([slug])
   @@index([courseId])
@@ -89,8 +88,10 @@ model Communication {
 
   userId Int
 
-  libraryId Int
+  referenceId String
 
+  type String
+  
   meta String?
 
   message String
@@ -103,8 +104,6 @@ model Communication {
   updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
-  library Library @relation(fields: [libraryId], references: [id])
 
   @@index([userId])
-  @@index([libraryId])
 }

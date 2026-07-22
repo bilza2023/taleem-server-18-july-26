@@ -5,11 +5,13 @@ export async function createCommunication(req, res) {
 	try {
 
 		const communication =
-			await communicationService.createCommunication({
+			await communicationService.create({
 
 				userId: req.user.id,
 
-				librarySlug: req.body.librarySlug,
+				referenceId: req.body.referenceId,
+
+				type: req.body.type,
 
 				message: req.body.message
 
@@ -20,16 +22,6 @@ export async function createCommunication(req, res) {
 	}
 
 	catch (error) {
-
-		if (error.message === "NOT_FOUND") {
-
-			return res.status(404).json({
-
-				message: "Library item not found."
-
-			});
-
-		}
 
 		console.error(error);
 
@@ -48,8 +40,10 @@ export async function getMyCommunications(req, res) {
 	try {
 
 		const communications =
-			await communicationService.getMyCommunications(
+			await communicationService.findMine(
+
 				req.user.id
+
 			);
 
 		res.status(200).json(communications);
@@ -70,32 +64,32 @@ export async function getMyCommunications(req, res) {
 
 }
 
-export async function getLibraryCommunications(req, res) {
+export async function getCommunication(req, res) {
 
 	try {
 
-		const communications =
-			await communicationService.getLibraryCommunications(
+		const communication =
+			await communicationService.findById(
 
-				req.params.librarySlug
+				Number(req.params.id)
 
 			);
 
-		res.status(200).json(communications);
-
-	}
-
-	catch (error) {
-
-		if (error.message === "NOT_FOUND") {
+		if (!communication) {
 
 			return res.status(404).json({
 
-				message: "Library item not found."
+				message: "Communication not found."
 
 			});
 
 		}
+
+		res.status(200).json(communication);
+
+	}
+
+	catch (error) {
 
 		console.error(error);
 

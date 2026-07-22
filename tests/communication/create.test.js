@@ -49,7 +49,8 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				librarySlug: "9math-ch1-quickref-real-numbers",
+				referenceId: "hub",
+				type: "query",
 				message: "Hello"
 
 			})
@@ -75,7 +76,8 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				librarySlug: "9math-ch1-quickref-real-numbers",
+				referenceId: "hub",
+				type: "query",
 				message: "Hello"
 
 			})
@@ -83,34 +85,6 @@ describe("Create Communication", () => {
 		});
 
 		expect(response.status).toBe(401);
-
-	});
-
-	it("should reject unknown library", async () => {
-
-		const token = await loginAlice();
-
-		const response = await fetch(`${API}/communication`, {
-
-			method: "POST",
-
-			headers: {
-
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`
-
-			},
-
-			body: JSON.stringify({
-
-				librarySlug: "does-not-exist",
-				message: "Hello"
-
-			})
-
-		});
-
-		expect(response.status).toBe(404);
 
 	});
 
@@ -131,7 +105,8 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				librarySlug: "9math-ch1-quickref-real-numbers",
+				referenceId: "hub",
+				type: "query",
 				message: "I don't understand this lesson."
 
 			})
@@ -143,6 +118,8 @@ describe("Create Communication", () => {
 		const data = await response.json();
 
 		expect(data.id).toBeDefined();
+		expect(data.referenceId).toBe("hub");
+		expect(data.type).toBe("query");
 		expect(data.message).toBe("I don't understand this lesson.");
 
 	});

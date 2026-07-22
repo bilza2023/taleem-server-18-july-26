@@ -154,7 +154,8 @@ async function main() {
   await prisma.communication.create({
     data: {
       userId: user.id,
-      libraryId: quickRef.id,
+      referenceId: "welcome-to-blog",
+      type: "query",
       message: "This quick reference is very helpful!",
       authorResponse: "Thank you for your feedback.",
       isPublic: true,

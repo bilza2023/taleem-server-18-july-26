@@ -33,12 +33,41 @@ async function loginAlice() {
 
 }
 
-describe("Library Communications", () => {
+async function createCommunication(token) {
+
+	const response = await fetch(`${API}/communication`, {
+
+		method: "POST",
+
+		headers: {
+
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`
+
+		},
+
+		body: JSON.stringify({
+
+			referenceId: "hub",
+			type: "query",
+			message: "Reference test"
+
+		})
+
+	});
+
+	expect(response.status).toBe(201);
+
+	return await response.json();
+
+}
+
+describe("Reference Communication", () => {
 
 	it("should reject missing token", async () => {
 
 		const response = await fetch(
-			`${API}/communication/library/9math-ch1-quickref-real-numbers`
+			`${API}/communication/1`
 		);
 
 		expect(response.status).toBe(401);
@@ -48,7 +77,7 @@ describe("Library Communications", () => {
 	it("should reject invalid token", async () => {
 
 		const response = await fetch(
-			`${API}/communication/library/9math-ch1-quickref-real-numbers`,
+			`${API}/communication/1`,
 			{
 
 				headers: {
@@ -64,12 +93,12 @@ describe("Library Communications", () => {
 
 	});
 
-	it("should return 404 for unknown library", async () => {
+	it("should return 404 for unknown communication", async () => {
 
 		const token = await loginAlice();
 
 		const response = await fetch(
-			`${API}/communication/library/does-not-exist`,
+			`${API}/communication/999999`,
 			{
 
 				headers: {
@@ -85,12 +114,14 @@ describe("Library Communications", () => {
 
 	});
 
-	it("should return public communications for a library item", async () => {
+	it("should return a communication by id", async () => {
 
 		const token = await loginAlice();
 
+		const created = await createCommunication(token);
+
 		const response = await fetch(
-			`${API}/communication/library/9math-ch1-quickref-real-numbers`,
+			`${API}/communication/${created.id}`,
 			{
 
 				headers: {
@@ -106,7 +137,10 @@ describe("Library Communications", () => {
 
 		const data = await response.json();
 
-		expect(Array.isArray(data)).toBe(true);
+		expect(data.id).toBe(created.id);
+		expect(data.referenceId).toBe("hub");
+		expect(data.type).toBe("query");
+		expect(data.message).toBe("Reference test");
 
 	});
 
