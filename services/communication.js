@@ -3,14 +3,14 @@ import * as communicationRepository from "../repositories/communication.js";
 export async function createCommunication({
 
 	userId,
-	libraryId,
+	librarySlug,
 	message
 
 }) {
 
 	const library =
-		await communicationRepository.libraryExists(
-			libraryId
+		await communicationRepository.findLibraryBySlug(
+			librarySlug
 		);
 
 	if (!library) {
@@ -22,7 +22,7 @@ export async function createCommunication({
 	return await communicationRepository.create({
 
 		userId,
-		libraryId,
+		libraryId: library.id,
 		message
 
 	});
@@ -37,11 +37,11 @@ export async function getMyCommunications(userId) {
 
 }
 
-export async function getLibraryCommunications(libraryId) {
+export async function getLibraryCommunications(librarySlug) {
 
 	const library =
-		await communicationRepository.libraryExists(
-			libraryId
+		await communicationRepository.findLibraryBySlug(
+			librarySlug
 		);
 
 	if (!library) {
@@ -51,7 +51,7 @@ export async function getLibraryCommunications(libraryId) {
 	}
 
 	return await communicationRepository.findPublicByLibrary(
-		libraryId
+		library.id
 	);
 
 }

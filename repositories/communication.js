@@ -89,19 +89,21 @@ export async function findPublicByLibrary(libraryId) {
 
 }
 
-export async function libraryExists(libraryId) {
+export async function findLibraryBySlug(slug) {
 
 	return await prisma.library.findUnique({
 
 		where: {
 
-			id: libraryId
+			slug
 
 		},
 
 		select: {
 
-			id: true
+			id: true,
+			slug: true,
+			title: true
 
 		}
 

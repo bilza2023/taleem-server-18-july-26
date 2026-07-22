@@ -9,7 +9,7 @@ export async function createCommunication(req, res) {
 
 				userId: req.user.id,
 
-				libraryId: req.body.libraryId,
+				librarySlug: req.body.librarySlug,
 
 				message: req.body.message
 
@@ -77,7 +77,7 @@ export async function getLibraryCommunications(req, res) {
 		const communications =
 			await communicationService.getLibraryCommunications(
 
-				Number(req.params.libraryId)
+				req.params.librarySlug
 
 			);
 

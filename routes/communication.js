@@ -26,7 +26,7 @@ router.get(
 
 // Get all public communications for a library item
 router.get(
-	"/library/:libraryId",
+	"/library/:librarySlug",
 	authenticate,
 	getLibraryCommunications
 );

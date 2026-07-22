@@ -86,17 +86,7 @@ app.get("/api/home-links", (req, res) => {
 
 });
 // --------------------------------------------------
-app.get("/api/syllabus/:course", (req, res) => {
 
-	res.sendFile(
-		path.join(
-			CONTENT_DIR,
-			"syllabus",
-			`${req.params.course}.json`
-		)
-	);
-
-});
 // --------------------------------------------------
 // Start Server
 // --------------------------------------------------

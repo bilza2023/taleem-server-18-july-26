@@ -49,7 +49,7 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				libraryId: 1,
+				librarySlug: "9math-ch1-quickref-real-numbers",
 				message: "Hello"
 
 			})
@@ -75,7 +75,7 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				libraryId: 1,
+				librarySlug: "9math-ch1-quickref-real-numbers",
 				message: "Hello"
 
 			})
@@ -103,7 +103,7 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				libraryId: 999999,
+				librarySlug: "does-not-exist",
 				message: "Hello"
 
 			})
@@ -131,7 +131,7 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				libraryId: 1,
+				librarySlug: "9math-ch1-quickref-real-numbers",
 				message: "I don't understand this lesson."
 
 			})

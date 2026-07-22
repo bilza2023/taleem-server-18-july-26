@@ -38,7 +38,7 @@ describe("Library Communications", () => {
 	it("should reject missing token", async () => {
 
 		const response = await fetch(
-			`${API}/communication/library/1`
+			`${API}/communication/library/9math-ch1-quickref-real-numbers`
 		);
 
 		expect(response.status).toBe(401);
@@ -48,7 +48,7 @@ describe("Library Communications", () => {
 	it("should reject invalid token", async () => {
 
 		const response = await fetch(
-			`${API}/communication/library/1`,
+			`${API}/communication/library/9math-ch1-quickref-real-numbers`,
 			{
 
 				headers: {
@@ -69,7 +69,7 @@ describe("Library Communications", () => {
 		const token = await loginAlice();
 
 		const response = await fetch(
-			`${API}/communication/library/999999`,
+			`${API}/communication/library/does-not-exist`,
 			{
 
 				headers: {
@@ -90,7 +90,7 @@ describe("Library Communications", () => {
 		const token = await loginAlice();
 
 		const response = await fetch(
-			`${API}/communication/library/1`,
+			`${API}/communication/library/9math-ch1-quickref-real-numbers`,
 			{
 
 				headers: {

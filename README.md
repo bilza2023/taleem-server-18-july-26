@@ -1,55 +1,152 @@
-# Taleem Server
+# Taleem Server API
 
-Backend server for **Taleem.help**.
+Base URL (development)
+
+```
+http://127.0.0.1:9000/api
+```
+
+This document describes the API consumed by the Taleem Svelte frontend.
 
 ---
 
-# Base URL
+# Authentication
 
-```
-http://localhost:3000
+The API uses JWT Bearer tokens.
+
+After login, every protected request must include:
+
+```http
+Authorization: Bearer <token>
 ```
 
 ---
 
-# Health
+# Public Endpoints
 
-## GET /
+## GET /api
 
-Returns basic server information.
+Returns API information.
 
-Example:
+Response
 
-```
-GET /
+```json
+{
+  "name": "Taleem API",
+  "version": "1.0.0",
+  "status": "running",
+  "message": "Welcome to Taleem Server 🚀"
+}
 ```
 
 ---
 
 ## GET /api/health
 
-Health check endpoint.
+Health check.
 
-Example:
+Response
+
+```json
+{
+  "status": "ok",
+  "time": "2026-07-22T12:00:00.000Z"
+}
+```
+
+---
+
+## GET /api/home-links
+
+Returns the homepage navigation JSON.
+
+Used by:
+
+- Home page
+- Tabs
+- Featured articles
+- Course cards
+
+Response
+
+```json
+[
+  {
+    "type": "article",
+    "contentId": "9math-ch1-quickref-real-numbers",
+    "title": "...",
+    "description": "...",
+    "image": "...",
+    "url": "/articles?article=9math-ch1-quickref-real-numbers"
+  }
+]
+```
+
+---
+
+## GET /api/article/:slug
+
+Returns article HTML.
+
+Example
 
 ```
-GET /api/health
+GET /api/article/9math-ch1-quickref-real-numbers
+```
+
+Response
+
+```
+HTML
+```
+
+The frontend renders the returned HTML directly.
+
+---
+
+## Static Content
+
+Everything inside
+
+```
+content/
+```
+
+is available through
+
+```
+/api/content/
+```
+
+Examples
+
+```
+/api/content/images/example.png
+
+/api/content/audio/example.mp3
+
+/api/content/decks/example.json
+
+/api/content/files/example.pdf
 ```
 
 ---
 
 # User API
 
-## POST /user/register
+---
 
-Register a new user.
+## POST /api/user/register
+
+Creates a user.
 
 Request
 
 ```json
 {
-    "email": "admin@example.com",
-    "password": "12345678"
+  "name": "Bilal",
+  "email": "bilal@example.com",
+  "password": "12345678"
 }
 ```
 
@@ -57,23 +154,25 @@ Response
 
 ```json
 {
-    "message": "User registered.",
-    "token": "..."
+  "token": "...",
+  "user": {
+    ...
+  }
 }
 ```
 
 ---
 
-## POST /user/login
+## POST /api/user/login
 
-Login.
+Logs in an existing user.
 
 Request
 
 ```json
 {
-    "email": "admin@example.com",
-    "password": "12345678"
+  "email": "bilal@example.com",
+  "password": "12345678"
 }
 ```
 
@@ -81,16 +180,20 @@ Response
 
 ```json
 {
-    "message": "Login successful.",
-    "token": "..."
+  "token": "...",
+  "user": {
+    ...
+  }
 }
 ```
 
+Save the token locally.
+
 ---
 
-## GET /user/verify
+## GET /api/user/verify
 
-Verify JWT token.
+Verifies an existing JWT.
 
 Headers
 
@@ -102,178 +205,276 @@ Response
 
 ```json
 {
-    "user": {
-        "id": 1,
-        "email": "admin@example.com",
-        "name": null,
-        "role": "ADMIN"
-    }
+    ...
 }
 ```
 
 ---
 
-# Article API
+# Library API
 
-## GET /article/:slug
+Library items are identified by **slug**.
 
-Serve an HTML article.
+The frontend never uses database IDs.
+
+---
+
+## GET /api/library/:slug
+
+Returns one library item.
 
 Example
 
 ```
-GET /article/test
+GET /api/library/9math-ch1-quickref-real-numbers
 ```
 
-Serves
+Headers
 
 ```
-content/articles/test.html
+Authorization: Bearer <token>
 ```
 
----
+Response
 
-# Home Links API
-
-## GET /home-links
-
-Returns home page navigation JSON.
-
-Serves
-
-```
-content/data/home-links.json
+```json
+{
+    ...
+}
 ```
 
 ---
 
-# Syllabus API
+# Communication API
 
-## GET /syllabus/:course
+Communication allows logged-in users to ask questions about a library item.
 
-Returns syllabus JSON.
+The frontend always uses **librarySlug**.
+
+Database IDs never leave the backend.
+
+---
+
+## POST /api/communication
+
+Create a communication.
+
+Headers
+
+```
+Authorization: Bearer <token>
+```
+
+Request
+
+```json
+{
+    "librarySlug": "9math-ch1-quickref-real-numbers",
+    "message": "I don't understand this lesson."
+}
+```
+
+Response
+
+```json
+{
+    ...
+}
+```
+
+---
+
+## GET /api/communication/my
+
+Returns all communications created by the current user.
+
+Headers
+
+```
+Authorization: Bearer <token>
+```
+
+Response
+
+```json
+[
+    {
+        ...
+    }
+]
+```
+
+---
+
+## GET /api/communication/library/:librarySlug
+
+Returns all **public** communications for one library item.
 
 Example
 
 ```
-GET /syllabus/fbise8math
+GET /api/communication/library/9math-ch1-quickref-real-numbers
 ```
 
-Serves
+Headers
 
 ```
-content/syllabus/fbise8math.json
+Authorization: Bearer <token>
 ```
 
----
+Response
 
-# Static Content
-
-## Audio
-
-```
-GET /content/audio/<file>
-```
-
-Example
-
-```
-/content/audio/music.mp3
+```json
+[
+    {
+        ...
+    }
+]
 ```
 
 ---
 
-## Images
+# Error Responses
 
-```
-GET /content/images/<file>
-```
+Unauthorized
 
-Example
-
-```
-/content/images/image.png
+```http
+401 Unauthorized
 ```
 
----
+Not Found
 
-## Decks
-
-```
-GET /content/decks/<file>
+```http
+404 Not Found
 ```
 
-Example
+Internal Error
 
-```
-/content/decks/test.json
+```http
+500 Internal Server Error
 ```
 
 ---
 
-# Content Directory
+# Frontend Flow
+
+## App Startup
 
 ```
-content/
-
-    articles/
-    audio/
-    data/
-    decks/
-    images/
-    syllabus/
+GET /api/home-links
 ```
+
+↓
+
+Display home page.
 
 ---
 
-# Tests
-
-Run all tests
+## Open Article
 
 ```
-npm test
+GET /api/article/:slug
 ```
 
-Current integration tests
+↓
 
-- Article
-- Audio
-- Images
-- Decks
-- Home Links
-- Syllabus
-- User Authentication
-
-All tests use the real server, real database and real HTTP requests.
-
-No mocking is used.
+Render returned HTML.
 
 ---
 
-# Status
-
-Current Version
+## Register
 
 ```
-Taleem Server v1
+POST /api/user/register
 ```
 
-Implemented
+↓
 
-- Express Server
-- Prisma
-- SQLite
-- JWT Authentication
-- Content Server
-- Article Server
-- Home Links
-- Syllabus
-- Integration Tests
+Save JWT.
 
-Pending
+---
 
-- Content Authentication
-- Admin API
-- Course API
-- Lesson API
-- Deployment
+## Login
+
+```
+POST /api/user/login
+```
+
+↓
+
+Save JWT.
+
+---
+
+## Verify Existing Login
+
+```
+GET /api/user/verify
+```
+
+↓
+
+Keep user logged in.
+
+---
+
+## Open Library Item
+
+```
+GET /api/library/:slug
+```
+
+↓
+
+Receive metadata.
+
+↓
+
+Render page.
+
+---
+
+## Load Public Discussion
+
+```
+GET /api/communication/library/:librarySlug
+```
+
+↓
+
+Display public questions and answers.
+
+---
+
+## Ask Question
+
+```
+POST /api/communication
+```
+
+↓
+
+Body contains
+
+```json
+{
+    "librarySlug": "...",
+    "message": "..."
+}
+```
+
+↓
+
+Refresh communication list.
+
+---
+
+# Design Rules
+
+- The frontend never uses database IDs.
+- Library items are always identified by `slug`.
+- Communication APIs always use `librarySlug`.
+- Static assets are served from `/api/content`.
+- Articles are HTML.
+- Images, audio, PDFs and decks are static files.
+- All authenticated endpoints require a JWT Bearer token.
