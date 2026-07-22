@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import userRouter from "./routes/user.js";
 import libraryRouter from "./routes/library.js";
+import communicationRouter from "./routes/communication.js";
 
 dotenv.config();
 
@@ -39,6 +40,8 @@ app.use("/api/content", express.static(CONTENT_DIR));
 app.use("/api/user", userRouter);
 
 app.use("/api/library", libraryRouter);
+
+app.use("/api/communication", communicationRouter);
 
 app.get("/api/article/:slug", (req, res) => {
 
