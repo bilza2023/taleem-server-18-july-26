@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import userRouter from "./routes/user.js";
+import libraryRouter from "./routes/library.js";
 
 dotenv.config();
 
@@ -36,6 +37,9 @@ app.use("/api/content", express.static(CONTENT_DIR));
 // Routes
 // --------------------------------------------------
 app.use("/api/user", userRouter);
+
+app.use("/api/library", libraryRouter);
+
 app.get("/api/article/:slug", (req, res) => {
 
 	const file = path.join(
