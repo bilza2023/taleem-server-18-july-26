@@ -43,6 +43,7 @@ app.use("/api/library", libraryRouter);
 
 app.use("/api/communication", communicationRouter);
 
+//depricated
 app.get("/api/article/:slug", (req, res) => {
 
 	const file = path.join(
@@ -73,7 +74,7 @@ app.get("/api/health", (req, res) => {
 	});
 });
 
-
+//depricated
 app.get("/api/home-links", (req, res) => {
 
 	res.sendFile(
@@ -86,7 +87,38 @@ app.get("/api/home-links", (req, res) => {
 
 });
 // --------------------------------------------------
+//--new API
+// --------------------------------------------------
+// Public HTML Pages
+// --------------------------------------------------
 
+app.get("/api/page/:slug", (req, res) => {
+
+	const file = path.join(
+		CONTENT_DIR,
+		"pages",
+		`${req.params.slug}.html`
+	);
+
+	res.sendFile(file);
+
+});
+
+// --------------------------------------------------
+// Public JSON Data
+// --------------------------------------------------
+
+app.get("/api/data/:name", (req, res) => {
+
+	const file = path.join(
+		CONTENT_DIR,
+		"data",
+		`${req.params.name}.json`
+	);
+
+	res.sendFile(file);
+
+});
 // --------------------------------------------------
 // Start Server
 // --------------------------------------------------

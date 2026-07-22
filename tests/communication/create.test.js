@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 
 const API = "http://127.0.0.1:9000/api";
 
-async function loginAlice() {
+async function login() {
 
 	const response = await fetch(`${API}/user/login`, {
 
@@ -16,7 +16,7 @@ async function loginAlice() {
 
 		body: JSON.stringify({
 
-			email: "alice@example.com",
+			email: "test@example.com",
 			password: "12345678"
 
 		})
@@ -49,7 +49,7 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				referenceId: "hub",
+				referenceId: "public-page",
 				type: "query",
 				message: "Hello"
 
@@ -76,7 +76,7 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				referenceId: "hub",
+				referenceId: "public-page",
 				type: "query",
 				message: "Hello"
 
@@ -90,7 +90,7 @@ describe("Create Communication", () => {
 
 	it("should create communication", async () => {
 
-		const token = await loginAlice();
+		const token = await login();
 
 		const response = await fetch(`${API}/communication`, {
 
@@ -105,9 +105,9 @@ describe("Create Communication", () => {
 
 			body: JSON.stringify({
 
-				referenceId: "hub",
+				referenceId: "public-page",
 				type: "query",
-				message: "I don't understand this lesson."
+				message: "I don't understand this page."
 
 			})
 
@@ -118,9 +118,9 @@ describe("Create Communication", () => {
 		const data = await response.json();
 
 		expect(data.id).toBeDefined();
-		expect(data.referenceId).toBe("hub");
+		expect(data.referenceId).toBe("public-page");
 		expect(data.type).toBe("query");
-		expect(data.message).toBe("I don't understand this lesson.");
+		expect(data.message).toBe("I don't understand this page.");
 
 	});
 

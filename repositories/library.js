@@ -65,3 +65,63 @@ export async function findActiveSubscription(userId, courseId) {
 	});
 
 }
+
+export async function index({
+	courseId,
+	page = 1,
+	pageSize = 20
+}) {
+
+	const where = {};
+
+	if (courseId) {
+
+		where.courseId = courseId;
+
+	}
+
+	const [totalItems, items] = await Promise.all([
+
+		prisma.library.count({
+			where
+		}),
+
+		prisma.library.findMany({
+
+			where,
+
+			include: {
+
+				course: true
+
+			},
+
+			orderBy: {
+
+				id: "asc"
+
+			},
+
+			skip: (page - 1) * pageSize,
+
+			take: pageSize
+
+		})
+
+	]);
+
+	return {
+
+		page,
+
+		pageSize,
+
+		totalItems,
+
+		totalPages: Math.ceil(totalItems / pageSize),
+
+		items
+
+	};
+
+}

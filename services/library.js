@@ -35,3 +35,55 @@ export async function getLibraryItem({ userId, slug }) {
 	return library;
 
 }
+
+export async function index({
+	userId,
+	courseId,
+	page = 1,
+	pageSize = 20
+}) {
+
+	const result = await libraryRepository.index({
+
+		courseId,
+		page,
+		pageSize
+
+	});
+
+	const items = [];
+
+	for (const library of result.items) {
+
+		if (library.course.access === "PUBLIC") {
+
+			items.push(library);
+			continue;
+
+		}
+
+		const subscription =
+			await libraryRepository.findActiveSubscription(
+				userId,
+				library.courseId
+			);
+
+		if (subscription) {
+
+			items.push(library);
+
+		}
+
+	}
+
+	return {
+
+		page: result.page,
+		pageSize: result.pageSize,
+		totalItems: items.length,
+		totalPages: result.totalPages,
+		items
+
+	};
+
+}

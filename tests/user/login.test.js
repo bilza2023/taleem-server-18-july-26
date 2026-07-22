@@ -1,12 +1,14 @@
 import { describe, it, expect } from "vitest";
 
+const API = "http://127.0.0.1:9000/api";
+
 describe("User Login", () => {
 
 	it("should login with valid credentials", async () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/login",
+			`${API}/user/login`,
 
 			{
 
@@ -20,7 +22,7 @@ describe("User Login", () => {
 
 				body: JSON.stringify({
 
-					email: "alice@example.com",
+					email: "test@example.com",
 					password: "12345678"
 
 				})
@@ -45,7 +47,7 @@ describe("User Login", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/login",
+			`${API}/user/login`,
 
 			{
 
@@ -76,7 +78,7 @@ describe("User Login", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/login",
+			`${API}/user/login`,
 
 			{
 
@@ -90,7 +92,7 @@ describe("User Login", () => {
 
 				body: JSON.stringify({
 
-					email: "alice@example.com",
+					email: "test@example.com",
 					password: "wrong-password"
 
 				})
@@ -107,7 +109,7 @@ describe("User Login", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/login",
+			`${API}/user/login`,
 
 			{
 
@@ -137,7 +139,7 @@ describe("User Login", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/login",
+			`${API}/user/login`,
 
 			{
 
@@ -151,7 +153,7 @@ describe("User Login", () => {
 
 				body: JSON.stringify({
 
-					email: "alice@example.com"
+					email: "test@example.com"
 
 				})
 

@@ -1,25 +1,36 @@
-
 import { describe, it, expect } from "vitest";
 
 const API = "http://127.0.0.1:9000/api";
 
-async function loginAlice() {
+async function login() {
+
 	const response = await fetch(`${API}/user/login`, {
+
 		method: "POST",
+
 		headers: {
+
 			"Content-Type": "application/json"
+
 		},
+
 		body: JSON.stringify({
-			email: "alice@example.com",
+
+			email: "test@example.com",
 			password: "12345678"
+
 		})
+
 	});
 
 	expect(response.status).toBe(200);
 
 	const data = await response.json();
 
+	expect(data.token).toBeDefined();
+
 	return data.token;
+
 }
 
 describe("My Communications", () => {
@@ -51,7 +62,7 @@ describe("My Communications", () => {
 
 	it("should return my communications", async () => {
 
-		const token = await loginAlice();
+		const token = await login();
 
 		const response = await fetch(
 			`${API}/communication/me`,
@@ -68,13 +79,13 @@ describe("My Communications", () => {
 
 		expect(Array.isArray(data)).toBe(true);
 
-		if (data.length > 0) {
-			expect(data[0]).toHaveProperty("id");
-			expect(data[0]).toHaveProperty("referenceId");
-			expect(data[0]).toHaveProperty("type");
-			expect(data[0]).toHaveProperty("message");
-			expect(data[0]).toHaveProperty("createdAt");
-		}
+		expect(data.length).toBe(3);
+
+		expect(data[0]).toHaveProperty("id");
+		expect(data[0]).toHaveProperty("referenceId");
+		expect(data[0]).toHaveProperty("type");
+		expect(data[0]).toHaveProperty("message");
+		expect(data[0]).toHaveProperty("createdAt");
 
 	});
 

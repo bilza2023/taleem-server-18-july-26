@@ -1,0 +1,11 @@
+### API Root
+GET http://127.0.0.1:9000/api
+
+### Health
+GET http://127.0.0.1:9000/api/health
+
+### About Page
+GET http://127.0.0.1:9000/api/page/about
+
+### Home Links
+GET http://127.0.0.1:9000/api/data/home-links

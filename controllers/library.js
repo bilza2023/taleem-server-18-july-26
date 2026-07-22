@@ -1,5 +1,3 @@
-
-
 import * as libraryService from "../services/library.js";
 
 export async function getLibraryItem(req, res) {
@@ -35,6 +33,38 @@ export async function getLibraryItem(req, res) {
 			});
 
 		}
+
+		console.error(error);
+
+		res.status(500).json({
+			message: "Internal server error."
+		});
+
+	}
+
+}
+
+export async function index(req, res) {
+
+	try {
+
+		const result = await libraryService.index({
+
+			userId: req.user.id,
+
+			courseId: req.query.courseId,
+
+			page: Number(req.query.page ?? 1),
+
+			pageSize: Number(req.query.pageSize ?? 20)
+
+		});
+
+		res.status(200).json(result);
+
+	}
+
+	catch (error) {
 
 		console.error(error);
 

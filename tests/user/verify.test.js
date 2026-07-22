@@ -14,7 +14,7 @@ async function login() {
 
 		body: JSON.stringify({
 
-			email: "alice@example.com",
+			email: "test@example.com",
 
 			password: "12345678"
 
@@ -54,7 +54,7 @@ describe("User Verify", () => {
 
 		expect(data.user).toBeDefined();
 		expect(data.user.id).toBeDefined();
-		expect(data.user.email).toBe("alice@example.com");
+		expect(data.user.email).toBe("test@example.com");
 		expect(data.user.role).toBe("student");
 
 	});

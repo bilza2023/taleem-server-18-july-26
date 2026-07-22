@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 
 const API = "http://127.0.0.1:9000/api";
 
-async function loginAlice() {
+async function login() {
 
 	const response = await fetch(`${API}/user/login`, {
 
@@ -16,7 +16,7 @@ async function loginAlice() {
 
 		body: JSON.stringify({
 
-			email: "alice@example.com",
+			email: "test@example.com",
 			password: "12345678"
 
 		})
@@ -48,7 +48,7 @@ async function createCommunication(token) {
 
 		body: JSON.stringify({
 
-			referenceId: "hub",
+			referenceId: "public-page",
 			type: "query",
 			message: "Reference test"
 
@@ -79,13 +79,9 @@ describe("Reference Communication", () => {
 		const response = await fetch(
 			`${API}/communication/1`,
 			{
-
 				headers: {
-
 					Authorization: "Bearer invalid-token"
-
 				}
-
 			}
 		);
 
@@ -95,18 +91,14 @@ describe("Reference Communication", () => {
 
 	it("should return 404 for unknown communication", async () => {
 
-		const token = await loginAlice();
+		const token = await login();
 
 		const response = await fetch(
 			`${API}/communication/999999`,
 			{
-
 				headers: {
-
 					Authorization: `Bearer ${token}`
-
 				}
-
 			}
 		);
 
@@ -116,20 +108,16 @@ describe("Reference Communication", () => {
 
 	it("should return a communication by id", async () => {
 
-		const token = await loginAlice();
+		const token = await login();
 
 		const created = await createCommunication(token);
 
 		const response = await fetch(
 			`${API}/communication/${created.id}`,
 			{
-
 				headers: {
-
 					Authorization: `Bearer ${token}`
-
 				}
-
 			}
 		);
 
@@ -138,7 +126,7 @@ describe("Reference Communication", () => {
 		const data = await response.json();
 
 		expect(data.id).toBe(created.id);
-		expect(data.referenceId).toBe("hub");
+		expect(data.referenceId).toBe("public-page");
 		expect(data.type).toBe("query");
 		expect(data.message).toBe("Reference test");
 

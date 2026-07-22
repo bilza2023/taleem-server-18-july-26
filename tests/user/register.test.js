@@ -1,17 +1,18 @@
 import { describe, it, expect } from "vitest";
 
+const API = "http://127.0.0.1:9000/api";
+
 describe("User Registration", () => {
 
 	it("should register a new user", async () => {
 
-		const email =
-			`test-${Date.now()}@example.com`;
+		const email = `test-${Date.now()}@example.com`;
 
 		const password = "12345678";
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/register",
+			`${API}/user/register`,
 
 			{
 
@@ -48,14 +49,13 @@ describe("User Registration", () => {
 
 	it("should reject duplicate email", async () => {
 
-		const email =
-			`duplicate-${Date.now()}@example.com`;
+		const email = `duplicate-${Date.now()}@example.com`;
 
 		const password = "12345678";
 
 		await fetch(
 
-			"http://127.0.0.1:9000/api/user/register",
+			`${API}/user/register`,
 
 			{
 
@@ -80,7 +80,7 @@ describe("User Registration", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/register",
+			`${API}/user/register`,
 
 			{
 
@@ -116,7 +116,7 @@ describe("User Registration", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/register",
+			`${API}/user/register`,
 
 			{
 
@@ -146,7 +146,7 @@ describe("User Registration", () => {
 
 		const response = await fetch(
 
-			"http://127.0.0.1:9000/api/user/register",
+			`${API}/user/register`,
 
 			{
 
