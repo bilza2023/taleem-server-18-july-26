@@ -60,8 +60,8 @@ export async function findPublicByLibrary(libraryId) {
 
 		where: {
 
-			libraryId,
-			isPublic: true
+			libraryId
+		
 
 		},
 
