@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-  "test": "vitest"
+    "seed": "node scripts/seed-23-jul-26.js",
+    "test": "npm run seed && vitest",
+    "test:watch": "vitest",
+    "test:run": "npm run seed && vitest run"
   },
   "author": "Bilal Tariq",
   "license": "ISC",

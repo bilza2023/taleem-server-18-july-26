@@ -160,36 +160,46 @@ describe("Communication API", () => {
 
 	it("should return all my communications", async () => {
 
-		const response = await fetch(`${API}/communication/me`, {
+	const response = await fetch(`${API}/communication/me`, {
 
-			headers: {
+		headers: {
 
-				Authorization: `Bearer ${token}`
-
-			}
-
-		});
-
-		expect(response.status).toBe(200);
-
-		const data = await response.json();
-
-		expect(Array.isArray(data)).toBe(true);
-
-		// 3 from seed + 2 created above
-		expect(data.length).toBe(5);
-
-		for (const item of data) {
-
-			expect(item).toHaveProperty("id");
-			expect(item).toHaveProperty("referenceId");
-			expect(item).toHaveProperty("type");
-			expect(item).toHaveProperty("message");
-			expect(item).toHaveProperty("createdAt");
+			Authorization: `Bearer ${token}`
 
 		}
 
 	});
+
+	expect(response.status).toBe(200);
+
+	const data = await response.json();
+
+	expect(Array.isArray(data)).toBe(true);
+
+	// Verify the communications created in THIS test exist.
+	const firstItem = data.find(item => item.id === first.id);
+	const secondItem = data.find(item => item.id === second.id);
+
+	expect(firstItem).toBeDefined();
+	expect(secondItem).toBeDefined();
+
+	expect(firstItem.referenceId).toBe("public-page");
+	expect(firstItem.message).toBe("First communication");
+
+	expect(secondItem.referenceId).toBe("members-page");
+	expect(secondItem.message).toBe("Second communication");
+
+	for (const item of data) {
+
+		expect(item).toHaveProperty("id");
+		expect(item).toHaveProperty("referenceId");
+		expect(item).toHaveProperty("type");
+		expect(item).toHaveProperty("message");
+		expect(item).toHaveProperty("createdAt");
+
+	}
+
+});
 
 	it("should return first communication by id", async () => {
 

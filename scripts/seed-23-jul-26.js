@@ -13,6 +13,7 @@ async function main() {
 	await prisma.user.deleteMany();
 	await prisma.course.deleteMany();
 
+
 	// --------------------------------------------------
 	// Courses
 	// --------------------------------------------------
@@ -146,6 +147,65 @@ async function main() {
 		}
 	});
 
+
+	// --------------------------------------------------
+	// Super Admin
+	// --------------------------------------------------
+
+	console.log("🛡️ Creating super admin...");
+
+	await prisma.user.create({
+	data: {
+		name: "Super Admin",
+		email: "admin@example.com",
+		password,
+		role: "SUPER_ADMIN",
+		resource: null
+		}
+	});
+
+	// --------------------------------------------------
+// Resource Admins
+// --------------------------------------------------
+
+await prisma.user.create({
+	data: {
+		name: "Library Admin",
+		email: "library-admin@example.com",
+		password,
+		role: "ADMIN",
+		resource: "library"
+	}
+});
+
+await prisma.user.create({
+	data: {
+		name: "Communication Admin",
+		email: "communication-admin@example.com",
+		password,
+		role: "ADMIN",
+		resource: "communication"
+	}
+});
+
+await prisma.user.create({
+	data: {
+		name: "Subscription Admin",
+		email: "subscription-admin@example.com",
+		password,
+		role: "ADMIN",
+		resource: "subscription"
+	}
+});
+await prisma.user.create({
+	data: {
+		name: "Course Admin",
+		email: "course-admin@example.com",
+		password,
+		role: "ADMIN",
+		resource: "course"
+	}
+});
 	// --------------------------------------------------
 	// Summary
 	// --------------------------------------------------
@@ -173,6 +233,16 @@ async function main() {
 	console.log("  public answered");
 	console.log("  private answered");
 	console.log("  unanswered");
+
+	console.log("Admins");
+console.log("  admin@example.com");
+console.log("  library-admin@example.com");
+console.log("  communication-admin@example.com");
+console.log("  subscription-admin@example.com");
+console.log("  password : 12345678");
+console.log("  course-admin@example.com");
+console.log("");
+
 	console.log("");
 
 }

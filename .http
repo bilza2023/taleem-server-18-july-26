@@ -1,11 +1,286 @@
+@host = http://127.0.0.1:9000
+@api = {{host}}/api
+
+####################################################
+# Public API
+####################################################
+
 ### API Root
-GET http://127.0.0.1:9000/api
+GET {{api}}
+
+###
 
 ### Health
-GET http://127.0.0.1:9000/api/health
+GET {{api}}/health
+
+###
 
 ### About Page
-GET http://127.0.0.1:9000/api/page/about
+GET {{api}}/page/about
+
+###
 
 ### Home Links
-GET http://127.0.0.1:9000/api/data/home-links
+GET {{api}}/data/home-links
+
+
+####################################################
+# Admin
+####################################################
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTIsImVtYWlsIjoiYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3ODQ4MTk0NDcsImV4cCI6MTc4NzQxMTQ0N30.2u3QJzjGhuVw4-xt9b1xEKi5XSyjHjo7FCHHgoHjyE4
+
+###
+
+### Login as Super Admin
+POST {{api}}/user/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "12345678"
+}
+
+###
+
+### Create Admin
+POST {{api}}/admin/admins
+Authorization: Bearer 
+Content-Type: application/json
+
+{
+  "name": "Library Admin",
+  "email": "library-admin@example.com",
+  "password": "12345678",
+  "role": "ADMIN"
+}
+
+###
+
+### List Admins
+GET {{api}}/admin/admins
+Authorization: Bearer {{token}}
+
+###
+####################################################
+# Library Admin
+####################################################
+
+@libraryAdminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcxLCJlbWFpbCI6ImxpYnJhcnktYWRtaW5AZXhhbXBsZS5jb20iLCJpYXQiOjE3ODQ4MjYyMzQsImV4cCI6MTc4NzQxODIzNH0.aA-2TwowaWZwFh3edyDuA8moCoao9xNAhYHohCPoxHc
+
+###
+
+### Login as Library Admin
+POST {{api}}/user/login
+Content-Type: application/json
+
+{
+  "email": "library-admin@example.com",
+  "password": "12345678"
+}
+
+###
+
+### Create Library Item
+POST {{api}}/admin/library
+Authorization: Bearer {{libraryAdminToken}}
+Content-Type: application/json
+
+{
+  "slug": "test-library-item",
+  "title": "Test Library Item",
+  "description": "Created from REST Client",
+  "type": "HTML",
+  "body": "<h1>Hello Taleem</h1>",
+  "thumbnail": null,
+  "courseId": "course-public"
+}
+
+###
+
+### List Library Items
+GET {{api}}/admin/library
+Authorization: Bearer {{libraryAdminToken}}
+
+###
+
+### Get Library Item
+GET {{api}}/admin/library/1
+Authorization: Bearer {{libraryAdminToken}}
+
+###
+
+### Update Library Item
+PUT {{api}}/admin/library/60
+Authorization: Bearer {{libraryAdminToken}}
+Content-Type: application/json
+
+{
+  "title": "Updated Library Title"
+}
+
+###
+
+### Delete Library Item
+DELETE {{api}}/admin/library/60
+Authorization: Bearer {{libraryAdminToken}}
+
+###
+
+####################################################
+# Subscription Admin
+####################################################
+
+@subscriptionAdminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTgxLCJlbWFpbCI6InN1YnNjcmlwdGlvbi1hZG1pbkBleGFtcGxlLmNvbSIsImlhdCI6MTc4NDgyNjgwNCwiZXhwIjoxNzg3NDE4ODA0fQ.8TKcNgdBMrlIgEEoL8IVWN3zAVMUk-rRHhsHOGz-qZ8
+
+###
+
+### Login as Subscription Admin
+POST {{api}}/user/login
+Content-Type: application/json
+
+{
+  "email": "subscription-admin@example.com",
+  "password": "12345678"
+}
+
+###
+
+### Create Subscription
+POST {{api}}/admin/subscription
+Authorization: Bearer {{subscriptionAdminToken}}
+Content-Type: application/json
+
+{
+  "userId": 177,
+  "courseId": "course-members"
+}
+
+###
+
+### List Subscriptions
+GET {{api}}/admin/subscription
+Authorization: Bearer {{subscriptionAdminToken}}
+
+###
+
+### Get Subscription
+GET {{api}}/admin/subscription/29
+Authorization: Bearer {{subscriptionAdminToken}}
+
+###
+
+### Update Subscription
+PUT {{api}}/admin/subscription/29
+Authorization: Bearer {{subscriptionAdminToken}}
+Content-Type: application/json
+
+{
+  "endsAt": "2027-01-01T00:00:00.000Z"
+}
+
+###
+
+### Delete Subscription
+DELETE {{api}}/admin/subscription/29
+Authorization: Bearer {{subscriptionAdminToken}}
+
+###
+
+
+
+####################################################
+# User
+####################################################
+
+@api = http://127.0.0.1:9000/api
+
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjI3LCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJpYXQiOjE3ODQ4MjkxNTEsImV4cCI6MTc4NzQyMTE1MX0.k2jYdhTOksoDfPqxjsyuyVPJyb1LtWNNMFpvpTyVlxc
+
+###
+
+### Login as Test User
+POST {{api}}/user/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "12345678"
+}
+
+###
+###
+
+### Verify User Token
+GET {{api}}/user/verify
+Authorization: Bearer {{userToken}}
+### Library Index
+GET {{api}}/library/index
+Authorization: Bearer {{userToken}}
+
+###
+
+### Library Index - Public Course
+GET {{api}}/library/public-page
+Authorization: Bearer {{userToken}}
+
+### Library Index - Public Course
+GET {{api}}/library/members-page
+Authorization: Bearer {{userToken}}
+
+###
+
+###
+
+### Course List
+GET {{api}}/course
+
+###
+
+### Get Public Course
+GET {{api}}/course/course-public
+
+###
+
+### Get Members Course
+GET {{api}}/course/course-members
+
+###
+
+### My Communications
+GET {{api}}/communication/me
+Authorization: Bearer {{userToken}}
+
+###
+
+### Get Communication #1
+GET {{api}}/communication/199
+Authorization: Bearer {{userToken}}
+
+###
+
+### Create Communication
+POST {{api}}/communication
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "referenceId": "public-page",
+  "type": "query",
+  "message": "This is a test communication."
+}
+
+###
+
+### Create Communication (Members Page)
+POST {{api}}/communication
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+  "referenceId": "members-page",
+  "type": "query",
+  "message": "Question about the members page."
+}
+
+###

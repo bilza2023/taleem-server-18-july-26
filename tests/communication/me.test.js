@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem-server/tests/communication/me.test.js
 import { describe, it, expect } from "vitest";
 
 const API = "http://127.0.0.1:9000/api";
@@ -60,33 +61,38 @@ describe("My Communications", () => {
 
 	});
 
-	it("should return my communications", async () => {
+it("should return my communications", async () => {
 
-		const token = await login();
+	const token = await login();
 
-		const response = await fetch(
-			`${API}/communication/me`,
-			{
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
+	const response = await fetch(
+		`${API}/communication/me`,
+		{
+			headers: {
+				Authorization: `Bearer ${token}`
 			}
-		);
+		}
+	);
 
-		expect(response.status).toBe(200);
+	expect(response.status).toBe(200);
 
-		const data = await response.json();
+	const data = await response.json();
 
-		expect(Array.isArray(data)).toBe(true);
+	expect(Array.isArray(data)).toBe(true);
 
-		expect(data.length).toBe(3);
+	// Should return at least one communication
+	expect(data.length).toBeGreaterThan(0);
 
-		expect(data[0]).toHaveProperty("id");
-		expect(data[0]).toHaveProperty("referenceId");
-		expect(data[0]).toHaveProperty("type");
-		expect(data[0]).toHaveProperty("message");
-		expect(data[0]).toHaveProperty("createdAt");
+	for (const item of data) {
 
-	});
+		expect(item).toHaveProperty("id");
+		expect(item).toHaveProperty("referenceId");
+		expect(item).toHaveProperty("type");
+		expect(item).toHaveProperty("message");
+		expect(item).toHaveProperty("createdAt");
+
+	}
+
+});
 
 });

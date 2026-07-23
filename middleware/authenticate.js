@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem-server/middleware/authenticate.js
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
@@ -37,7 +38,8 @@ export default async function authenticate(req, res, next) {
 				id: true,
 				email: true,
 				name: true,
-				role: true
+				role: true,
+				resource: true
 
 			}
 

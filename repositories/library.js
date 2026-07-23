@@ -65,7 +65,6 @@ export async function findActiveSubscription(userId, courseId) {
 	});
 
 }
-
 export async function index({
 	courseId,
 	page = 1,
@@ -90,9 +89,24 @@ export async function index({
 
 			where,
 
-			include: {
+			select: {
 
-				course: true
+				id: true,
+				slug: true,
+				title: true,
+				description: true,
+				thumbnail: true,
+				type: true,
+				courseId: true,
+
+				course: {
+					select: {
+						id: true,
+						slug: true,
+						title: true,
+						access: true
+					}
+				}
 
 			},
 

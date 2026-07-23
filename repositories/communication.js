@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem-server/repositories/communication.js
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

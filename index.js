@@ -6,6 +6,15 @@ import { fileURLToPath } from "url";
 import userRouter from "./routes/user.js";
 import libraryRouter from "./routes/library.js";
 import communicationRouter from "./routes/communication.js";
+import courseRouter from "./routes/course.js";
+//////////--admin Routes---
+import libraryAdminRouter from "./routes/admin/library.js";
+import courseAdminRouter from "./routes/admin/course.js";
+import subscriptionAdminRouter from "./routes/admin/subscription.js";
+import communicationAdminRouter from "./routes/admin/communication.js";
+import adminRouter from "./routes/admin/admin.js";
+
+
 
 dotenv.config();
 
@@ -54,20 +63,11 @@ app.use("/api/user", userRouter);
 
 app.use("/api/library", libraryRouter);
 
+app.use("/api/course", courseRouter);
+
 app.use("/api/communication", communicationRouter);
 
-//depricated
-app.get("/api/article/:slug", (req, res) => {
 
-	const file = path.join(
-		CONTENT_DIR,
-		"articles",
-		`${req.params.slug}.html`
-	);
-
-	res.sendFile(file);
-
-});
 // --------------------------------------------------
 // API
 // --------------------------------------------------
@@ -116,6 +116,20 @@ app.get("/api/page/:slug", (req, res) => {
 	res.sendFile(file);
 
 });
+
+// --------------------------------------------------
+// ADMIN API
+// --------------------------------------------------
+app.use("/api/admin/library", libraryAdminRouter);
+
+app.use("/api/admin/course", courseAdminRouter);
+
+app.use("/api/admin/subscription", subscriptionAdminRouter);
+
+app.use("/api/admin/communication", communicationAdminRouter);
+
+app.use("/api/admin/admins", adminRouter);
+// --------------------------------------------------
 
 // --------------------------------------------------
 // Public JSON Data
