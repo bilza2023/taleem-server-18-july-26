@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Taleem Server - Login</title>
+
+	<style>
+		body {
+			font-family: system-ui, sans-serif;
+			max-width: 500px;
+			margin: 40px auto;
+			padding: 20px;
+			line-height: 1.5;
+		}
+
+		input,
+		button,
+		textarea {
+			width: 100%;
+			padding: 10px;
+			margin: 8px 0;
+			box-sizing: border-box;
+			font-size: 1rem;
+		}
+
+		button {
+			cursor: pointer;
+		}
+
+		textarea {
+			height: 180px;
+		}
+
+		.success {
+			color: green;
+		}
+
+		.error {
+			color: crimson;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Taleem Server</h1>
+	<h2>Login</h2>
+
+	<form id="loginForm">
+
+		<label>Email</label>
+		<input
+			type="email"
+			id="email"
+			required
+		/>
+
+		<label>Password</label>
+		<input
+			type="password"
+			id="password"
+			required
+		/>
+
+		<button type="submit">
+			Login
+		</button>
+
+	</form>
+
+	<p id="status"></p>
+
+	<textarea
+		id="result"
+		readonly
+		placeholder="Server response..."
+	></textarea>
+
+	<script>
+		const form = document.getElementById("loginForm");
+		const status = document.getElementById("status");
+		const result = document.getElementById("result");
+
+		form.addEventListener("submit", async (event) => {
+
+			event.preventDefault();
+
+			status.textContent = "Logging in...";
+			status.className = "";
+
+			result.value = "";
+
+			try {
+
+				const response = await fetch("/api/user/login", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({
+						email: document.getElementById("email").value,
+						password: document.getElementById("password").value
+					})
+				});
+
+				const data = await response.json();
+
+				result.value = JSON.stringify(data, null, 2);
+
+				if (response.ok) {
+					status.textContent = "Login successful.";
+					status.className = "success";
+				} else {
+					status.textContent = data.error || "Login failed.";
+					status.className = "error";
+				}
+
+			} catch (err) {
+
+				status.textContent = err.message;
+				status.className = "error";
+
+			}
+
+		});
+	</script>
+
+</body>
+</html>

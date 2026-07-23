@@ -35,6 +35,19 @@ app.use(express.json());
 app.use("/api/content", express.static(CONTENT_DIR));
 
 // --------------------------------------------------
+// --------------------------------------------------
+// Utility Pages
+// --------------------------------------------------
+const SERVER_PAGES_DIR = path.join(__dirname, "server-pages");
+
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
+});
+
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
+});
+// --------------------------------------------------
 // Routes
 // --------------------------------------------------
 app.use("/api/user", userRouter);
