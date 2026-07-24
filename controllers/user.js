@@ -1,3 +1,4 @@
+// /home/bilal-tariq/00--TALEEM/taleem-server/controllers/user.js
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -158,17 +159,22 @@ export async function login(req, res) {
 
 	}
 
-	catch (err) {
+catch (err) {
 
-		console.error(err);
+    console.error("========== LOGIN ERROR ==========");
+    console.error(err);
+    console.error("MESSAGE:", err.message);
+    console.error("STACK:");
+    console.error(err.stack);
 
-		return res.status(500).json({
+    return res.status(500).json({
 
-			message: "Internal server error."
+        message: err.message,
+        type: err.constructor.name
 
-		});
+    });
 
-	}
+}
 
 }
 

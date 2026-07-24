@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="dark">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+
+        ➕ New Library Item
+
+    </title>
+
+  <link
+    rel="stylesheet"
+    href="../tools/simple.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../tools/utilities.css"
+>
+
+</head>
+
+<body>
+
+    <header>
+
+        <h1>
+
+            📚 Taleem Library
+
+        </h1>
+
+        <nav>
+
+            <a href="index.html">
+
+                🏠 Library
+
+            </a>
+
+            <a href="new.html">
+
+                ➕ New
+
+            </a>
+
+            <a href="../index.html">
+
+                🧰 Utilities
+
+            </a>
+
+        </nav>
+
+    </header>
+
+    <h2>
+
+        ➕ New Library Item
+
+    </h2>
+
+    <form id="libraryForm">
+
+        <p>
+
+            <label>Slug</label>
+
+            <input
+                name="slug"
+                required
+            >
+
+        </p>
+
+        <p>
+
+            <label>Title</label>
+
+            <input
+                name="title"
+                required
+            >
+
+        </p>
+
+        <p>
+
+            <label>Description</label>
+
+            <textarea
+                name="description"
+                rows="3"
+            ></textarea>
+
+        </p>
+
+        <p>
+
+            <label>Course</label>
+
+            <input
+                name="courseId"
+            >
+
+        </p>
+
+        <p>
+
+            <label>Type</label>
+
+            <select
+                name="type"
+            >
+
+                <option>HTML</option>
+                <option>MARKDOWN</option>
+                <option>TEXT</option>
+                <option>JSON</option>
+
+            </select>
+
+        </p>
+
+        <p>
+
+            <label>Body</label>
+
+            <textarea
+                name="body"
+                rows="20"
+            ></textarea>
+
+        </p>
+
+        <button type="submit">
+
+            ➕ Create
+
+        </button>
+
+    </form>
+
+    <script type="module">
+
+        import {
+
+            getTaleemConnection
+
+        } from "../tools/getTaleemConnection.js";
+
+        const taleem =
+            await getTaleemConnection();
+
+        const form =
+            document.getElementById(
+                "libraryForm"
+            );
+
+        form.onsubmit =
+            async (event) => {
+
+                event.preventDefault();
+
+                const data =
+                    Object.fromEntries(
+
+                        new FormData(
+                            form
+
+                        )
+
+                    );
+
+                await taleem.library.create(
+                    data
+                );
+
+                location.href =
+                    "index.html";
+
+            };
+
+    </script>
+
+</body>
+
+</html>

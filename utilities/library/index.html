@@ -1,24 +1,147 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
 
-	<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-	<meta
-		name="viewport"
-		content="width=device-width, initial-scale=1.0"
-	>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-	<title>Taleem Library Utility</title>
+    <title>
 
-  <script type="module" crossorigin src="./assets/index-B6b1yOMa.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-D8EQcWBt.css">
+        📚 Taleem Library
+
+    </title>
+
+ <link
+    rel="stylesheet"
+    href="../tools/simple.css"
+>
+
+<link
+    rel="stylesheet"
+    href="../tools/utilities.css"
+>
+
 </head>
 
 <body>
 
+    <header>
+
+        <h1>
+
+            📚 Taleem Library
+
+        </h1>
+
+        <nav>
+
+            <a href="index.html">
+
+                🏠 Library
+
+            </a>
+
+            <a href="new.html">
+
+                ➕ New
+
+            </a>
+
+            <a href="../index.html">
+
+                🧰 Utilities
+
+            </a>
+
+        </nav>
+
+    </header>
+
+    <table id="libraryTable">
+
+        <thead>
+
+            <tr>
+
+                <th>🔗 Slug</th>
+                <th>📝 Title</th>
+                <th>📦 Course</th>
+                <th>📄 Type</th>
+                <th>⚙️</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+
+    <script type="module">
+
+        import {
+
+            getTaleemConnection
+
+        } from "../tools/getTaleemConnection.js";
+
+        const taleem =
+            await getTaleemConnection();
+
+        const items =
+            await taleem.library.list();
+
+        const tbody =
+            document.querySelector(
+                "#libraryTable tbody"
+            );
+
+        for (const item of items) {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+            row.innerHTML = `
+
+                <td><code>${item.slug}</code></td>
+
+                <td>${item.title}</td>
+
+                <td>${item.courseId ?? "—"}</td>
+
+                <td>${item.type}</td>
+
+                <td>
+
+                    <a
+                        href="edit.html?slug=${item.slug}"
+                    >
+
+                        ✏️ Edit
+
+                    </a>
+
+                </td>
+
+            `;
+
+            tbody.appendChild(
+                row
+            );
+
+        }
+
+    </script>
 
 </body>
 
