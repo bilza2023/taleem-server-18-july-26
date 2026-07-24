@@ -1,3 +1,4 @@
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -29,7 +30,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CONTENT_DIR = path.join(__dirname, "content");
-
+const UTILITIES_DIR = path.join(__dirname, "utilities");
 // --------------------------------------------------
 // Middleware
 // --------------------------------------------------
@@ -42,7 +43,7 @@ app.use(express.json());
 // --------------------------------------------------
 
 app.use("/api/content", express.static(CONTENT_DIR));
-
+app.use("/api/utilities", express.static(UTILITIES_DIR));
 // --------------------------------------------------
 // --------------------------------------------------
 // Utility Pages
@@ -87,18 +88,6 @@ app.get("/api/health", (req, res) => {
 	});
 });
 
-//depricated
-app.get("/api/home-links", (req, res) => {
-
-	res.sendFile(
-		path.join(
-			CONTENT_DIR,
-			"data",
-			"home-links.json"
-		)
-	);
-
-});
 // --------------------------------------------------
 //--new API
 // --------------------------------------------------
@@ -152,4 +141,5 @@ app.get("/api/data/:name", (req, res) => {
 app.listen(PORT, "127.0.0.1", () => {
 	console.log(`🚀 Taleem API running on http://127.0.0.1:${PORT}`);
 	console.log(`📁 Serving content from: ${CONTENT_DIR}`);
+	console.log(`🛠️  Serving utilities from: ${UTILITIES_DIR}`);
 });

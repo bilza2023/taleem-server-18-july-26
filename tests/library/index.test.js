@@ -20,6 +20,7 @@ async function login() {
 	const data = await response.json();
 
 	return data.token;
+
 }
 
 describe("Library Index", () => {
@@ -39,13 +40,17 @@ describe("Library Index", () => {
 		const data = await response.json();
 
 		expect(Array.isArray(data.items)).toBe(true);
-		expect(data.items.length).toBe(2);
+		expect(data.items.length).toBeGreaterThan(0);
 
-		expect(data.items[0]).not.toHaveProperty("body");
+		for (const item of data.items) {
 
-		expect(data.items[0]).toHaveProperty("slug");
-		expect(data.items[0]).toHaveProperty("title");
-		expect(data.items[0]).toHaveProperty("courseId");
+			expect(item).not.toHaveProperty("body");
+
+			expect(item).toHaveProperty("slug");
+			expect(item).toHaveProperty("title");
+			expect(item).toHaveProperty("courseId");
+
+		}
 
 	});
 

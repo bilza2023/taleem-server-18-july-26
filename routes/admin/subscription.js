@@ -90,14 +90,21 @@ router.get("/:id", async (req, res) => {
 // POST /
 // Create
 // --------------------------------------------------
-
 router.post("/", async (req, res) => {
 
 	try {
 
+		const { userId, ...data } = req.body;
+
 		const item = await prisma.subscription.create({
 
-			data: req.body
+			data: {
+
+				...data,
+
+				userId: req.user.id
+
+			}
 
 		});
 

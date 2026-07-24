@@ -95,11 +95,17 @@ router.post("/", async (req, res) => {
 
 	try {
 
-		const item = await prisma.communication.create({
+	const item = await prisma.communication.create({
 
-			data: req.body
+	data: {
 
-		});
+		...req.body,
+
+		userId: req.user.id
+
+	}
+
+	});
 
 		res.status(201).json(item);
 

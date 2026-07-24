@@ -7,9 +7,6 @@ export default function requireResource(resource) {
 		// --------------------------------------------------
 		// Super Admin
 		// --------------------------------------------------
-
-		console.log("Requested:", resource);
-		console.log("User:", req.user);
 		
 		if (req.user.role === "SUPER_ADMIN") {
 			return next();

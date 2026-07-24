@@ -5,9 +5,10 @@ import { describe, it, expect } from "vitest";
 const API = "http://127.0.0.1:9000/api";
 
 let token;
-let libraryId;
+let librarySlug;
 
 async function login() {
+
 	const response = await fetch(`${API}/user/login`, {
 		method: "POST",
 		headers: {
@@ -24,6 +25,7 @@ async function login() {
 	const data = await response.json();
 
 	return data.token;
+
 }
 
 describe("Library Admin CRUD", () => {
@@ -38,6 +40,8 @@ describe("Library Admin CRUD", () => {
 
 	it("should create library item", async () => {
 
+		librarySlug = `test-${Date.now()}`;
+
 		const response = await fetch(`${API}/admin/library`, {
 			method: "POST",
 			headers: {
@@ -45,7 +49,7 @@ describe("Library Admin CRUD", () => {
 				"Content-Type": "application/json"
 			},
 			body: JSON.stringify({
-				slug: `test-${Date.now()}`,
+				slug: librarySlug,
 				title: "Test Library Item",
 				description: "Created by test",
 				type: "HTML",
@@ -59,9 +63,7 @@ describe("Library Admin CRUD", () => {
 
 		const data = await response.json();
 
-		libraryId = data.id;
-
-		expect(libraryId).toBeDefined();
+		expect(data.slug).toBe(librarySlug);
 
 	});
 
@@ -79,13 +81,13 @@ describe("Library Admin CRUD", () => {
 
 		expect(Array.isArray(data)).toBe(true);
 
-		expect(data.some(item => item.id === libraryId)).toBe(true);
+		expect(data.some(item => item.slug === librarySlug)).toBe(true);
 
 	});
 
 	it("should read library item", async () => {
 
-		const response = await fetch(`${API}/admin/library/${libraryId}`, {
+		const response = await fetch(`${API}/admin/library/${librarySlug}`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}
@@ -95,13 +97,13 @@ describe("Library Admin CRUD", () => {
 
 		const data = await response.json();
 
-		expect(data.id).toBe(libraryId);
+		expect(data.slug).toBe(librarySlug);
 
 	});
 
 	it("should update library item", async () => {
 
-		const response = await fetch(`${API}/admin/library/${libraryId}`, {
+		const response = await fetch(`${API}/admin/library/${librarySlug}`, {
 			method: "PUT",
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -117,12 +119,13 @@ describe("Library Admin CRUD", () => {
 		const data = await response.json();
 
 		expect(data.title).toBe("Updated Library Title");
+		expect(data.slug).toBe(librarySlug);
 
 	});
 
 	it("should delete library item", async () => {
 
-		const response = await fetch(`${API}/admin/library/${libraryId}`, {
+		const response = await fetch(`${API}/admin/library/${librarySlug}`, {
 			method: "DELETE",
 			headers: {
 				Authorization: `Bearer ${token}`
@@ -135,7 +138,7 @@ describe("Library Admin CRUD", () => {
 
 	it("should confirm library item was deleted", async () => {
 
-		const response = await fetch(`${API}/admin/library/${libraryId}`, {
+		const response = await fetch(`${API}/admin/library/${librarySlug}`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}
