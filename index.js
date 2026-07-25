@@ -14,6 +14,7 @@ import courseAdminRouter from "./routes/admin/course.js";
 import subscriptionAdminRouter from "./routes/admin/subscription.js";
 import communicationAdminRouter from "./routes/admin/communication.js";
 import adminRouter from "./routes/admin/admin.js";
+import publicRouter from "./routes/public.js";
 
 
 
@@ -67,6 +68,7 @@ app.use("/api/library", libraryRouter);
 app.use("/api/course", courseRouter);
 
 app.use("/api/communication", communicationRouter);
+app.use("/api/public", publicRouter);
 
 
 // --------------------------------------------------
