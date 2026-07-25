@@ -13,7 +13,7 @@
 
     <title>
 
-        📚 Taleem Library
+        📚 Taleem Courses
 
     </title>
 
@@ -35,7 +35,7 @@
 
         <h1>
 
-            📚 Taleem Library
+            📚 Taleem Courses
 
         </h1>
 
@@ -43,7 +43,7 @@
 
             <a href="index.html">
 
-                🏠 Library
+                🏠 Courses
 
             </a>
 
@@ -63,7 +63,7 @@
 
     </header>
 
-    <table id="libraryTable">
+    <table id="courseTable">
 
         <thead>
 
@@ -71,8 +71,8 @@
 
                 <th>🔗 Slug</th>
                 <th>📝 Title</th>
-                <th>📦 Course</th>
-                <th>📄 Type</th>
+                <th>📄 Description</th>
+                <th>🔐 Access</th>
                 <th>⚙️</th>
 
             </tr>
@@ -90,29 +90,24 @@
 import "../tools/toolbar.js";
 
 import {
-    Connector
-}
-from "../tools/Connector.js";
 
-const connector =
-    new Connector(
+    getTaleemConnection
 
-        localStorage.getItem(
-            "taleem-server-url"
-        )
-
-    );
+} from "../tools/getTaleemConnection.js";
 
 try {
 
+    const api =
+        await getTaleemConnection();
+
     const items =
-        await connector.fetch(
-            "/api/admin/library"
+        await api.fetch(
+            "/api/course"
         );
 
     const tbody =
         document.querySelector(
-            "#libraryTable tbody"
+            "#courseTable tbody"
         );
 
     for (const item of items) {
@@ -128,9 +123,9 @@ try {
 
             <td>${item.title}</td>
 
-            <td>${item.courseId ?? "—"}</td>
+            <td>${item.description ?? "—"}</td>
 
-            <td>${item.type}</td>
+            <td>${item.access}</td>
 
             <td>
 
@@ -157,8 +152,6 @@ try {
 catch (err) {
 
     console.error(err);
-
-    alert(err.message);
 
 }
 

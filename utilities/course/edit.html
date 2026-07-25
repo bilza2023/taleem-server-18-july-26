@@ -13,7 +13,7 @@
 
     <title>
 
-        ➕ New Library Item
+        ✏️ Edit Course
 
     </title>
 
@@ -35,7 +35,7 @@
 
         <h1>
 
-            📚 Taleem Library
+            🎓 Taleem Courses
 
         </h1>
 
@@ -43,7 +43,7 @@
 
             <a href="index.html">
 
-                🏠 Library
+                🏠 Courses
 
             </a>
 
@@ -65,11 +65,11 @@
 
     <h2>
 
-        ➕ New Library Item
+        ✏️ Edit Course
 
     </h2>
 
-    <form id="libraryForm">
+    <form id="courseForm">
 
         <p>
 
@@ -77,7 +77,7 @@
 
             <input
                 name="slug"
-                required
+                readonly
             >
 
         </p>
@@ -106,52 +106,29 @@
 
         <p>
 
-            <label>Course</label>
+            <label>Access</label>
 
             <select
-                id="courseId"
-                name="courseId"
-            ></select>
-
-        </p>
-
-        <p>
-
-            <label>Type</label>
-
-            <select
-                name="type"
+                name="access"
             >
 
-                <option>HTML</option>
-                <option>MARKDOWN</option>
-                <option>TEXT</option>
-                <option>JSON</option>
+                <option>PUBLIC</option>
+                <option>MEMBERS</option>
+                <option>SUBSCRIPTION</option>
 
             </select>
 
         </p>
 
-        <p>
-
-            <label>Body</label>
-
-            <textarea
-                name="body"
-                rows="20"
-            ></textarea>
-
-        </p>
-
         <button type="submit">
 
-            ➕ Create
+            💾 Save
 
         </button>
 
     </form>
 
-   <script type="module">
+<script type="module">
 
     import "../tools/toolbar.js";
 
@@ -161,31 +138,53 @@
 
     } from "../tools/getTaleemConnection.js";
 
-    import {
-
-        populateCourses
-
-    } from "../tools/populateCourses.js";
-
     try {
 
         const taleem =
             await getTaleemConnection();
 
-        await populateCourses(
+        const slug =
+            new URLSearchParams(
 
-            document.getElementById(
-                "courseId"
-            ),
+                location.search
 
-            taleem
+            ).get(
 
-        );
+                "slug"
+
+            );
+
+        if (!slug) {
+
+            location.href =
+                "index.html";
+
+        }
 
         const form =
             document.getElementById(
-                "libraryForm"
+                "courseForm"
             );
+
+        const item =
+            await taleem.course.read(
+                slug
+            );
+
+        for (const key in item) {
+
+            if (
+
+                form.elements[key]
+
+            ) {
+
+                form.elements[key].value =
+                    item[key] ?? "";
+
+            }
+
+        }
 
         form.onsubmit =
             async (event) => {
@@ -201,8 +200,12 @@
 
                     );
 
-                await taleem.library.create(
+                await taleem.course.update(
+
+                    slug,
+
                     data
+
                 );
 
                 location.href =

@@ -151,19 +151,23 @@
 
     </form>
 
-    <script type="module">
+  <script type="module">
 
-        import {
+    import "../tools/toolbar.js";
 
-            getTaleemConnection
+    import {
 
-        } from "../tools/getTaleemConnection.js";
+        getTaleemConnection
 
-        import {
+    } from "../tools/getTaleemConnection.js";
 
-            populateCourses
+    import {
 
-        } from "../tools/populateCourses.js";
+        populateCourses
+
+    } from "../tools/populateCourses.js";
+
+    try {
 
         const taleem =
             await getTaleemConnection();
@@ -257,7 +261,15 @@
 
             };
 
-    </script>
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+    }
+
+</script>
 
 </body>
 

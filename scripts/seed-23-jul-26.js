@@ -22,7 +22,6 @@ async function main() {
 
 	const publicCourse = await prisma.course.create({
 		data: {
-			id: "course-public",
 			slug: "course-public",
 			title: "Public Course",
 			description: "Public course used for platform testing.",
@@ -34,7 +33,6 @@ async function main() {
 
 	const membersCourse = await prisma.course.create({
 		data: {
-			id: "course-members",
 			slug: "course-members",
 			title: "Members Course",
 			description: "Members course used for platform testing.",

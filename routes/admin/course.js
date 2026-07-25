@@ -46,18 +46,18 @@ router.get("/", async (req, res) => {
 });
 
 // --------------------------------------------------
-// GET /:id
+// GET /:slug
 // Read
 // --------------------------------------------------
 
-router.get("/:id", async (req, res) => {
+router.get("/:slug", async (req, res) => {
 
 	try {
 
 		const item = await prisma.course.findUnique({
 
 			where: {
-				id: req.params.id
+				slug: req.params.slug
 			}
 
 		});
@@ -95,9 +95,25 @@ router.post("/", async (req, res) => {
 
 	try {
 
+		const {
+			slug,
+			title,
+			description,
+			thumbnail,
+			access,
+			price
+		} = req.body;
+
 		const item = await prisma.course.create({
 
-			data: req.body
+			data: {
+				slug,
+				title,
+				description,
+				thumbnail,
+				access,
+				price
+			}
 
 		});
 
@@ -118,21 +134,35 @@ router.post("/", async (req, res) => {
 });
 
 // --------------------------------------------------
-// PUT /:id
+// PUT /:slug
 // Update
 // --------------------------------------------------
 
-router.put("/:id", async (req, res) => {
+router.put("/:slug", async (req, res) => {
 
 	try {
+
+		const {
+			title,
+			description,
+			thumbnail,
+			access,
+			price
+		} = req.body;
 
 		const item = await prisma.course.update({
 
 			where: {
-				id: req.params.id
+				slug: req.params.slug
 			},
 
-			data: req.body
+			data: {
+				title,
+				description,
+				thumbnail,
+				access,
+				price
+			}
 
 		});
 
@@ -153,18 +183,18 @@ router.put("/:id", async (req, res) => {
 });
 
 // --------------------------------------------------
-// DELETE /:id
+// DELETE /:slug
 // Delete
 // --------------------------------------------------
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:slug", async (req, res) => {
 
 	try {
 
 		await prisma.course.delete({
 
 			where: {
-				id: req.params.id
+				slug: req.params.slug
 			}
 
 		});

@@ -88,23 +88,6 @@ app.get("/api/health", (req, res) => {
 	});
 });
 
-// --------------------------------------------------
-//--new API
-// --------------------------------------------------
-// Public HTML Pages
-// --------------------------------------------------
-
-app.get("/api/page/:slug", (req, res) => {
-
-	const file = path.join(
-		CONTENT_DIR,
-		"pages",
-		`${req.params.slug}.html`
-	);
-
-	res.sendFile(file);
-
-});
 
 // --------------------------------------------------
 // ADMIN API
@@ -135,6 +118,22 @@ app.get("/api/data/:name", (req, res) => {
 	res.sendFile(file);
 
 });
+// --------------------------------------------------
+// Public HTML Pages
+// --------------------------------------------------
+
+app.get("/api/page/:slug", (req, res) => {
+
+	const file = path.join(
+		CONTENT_DIR,
+		"pages",
+		`${req.params.slug}.html`
+	);
+
+	res.sendFile(file);
+
+});
+
 // --------------------------------------------------
 // Start Server
 // --------------------------------------------------

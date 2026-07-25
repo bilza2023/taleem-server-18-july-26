@@ -95,9 +95,43 @@ router.post("/", async (req, res) => {
 
 	try {
 
+		const {
+			slug,
+			title,
+			description,
+			type,
+			body,
+			thumbnail,
+			courseId
+		} = req.body;
+
+		const course = await prisma.course.findUnique({
+
+			where: {
+				slug: courseId
+			}
+
+		});
+
+		if (!course) {
+
+			return res.status(400).json({
+				message: "Course not found."
+			});
+
+		}
+
 		const item = await prisma.library.create({
 
-			data: req.body
+			data: {
+				slug,
+				title,
+				description,
+				type,
+				body,
+				thumbnail,
+				courseId: course.id
+			}
 
 		});
 
@@ -126,13 +160,45 @@ router.put("/:slug", async (req, res) => {
 
 	try {
 
+		const {
+			title,
+			description,
+			type,
+			body,
+			thumbnail,
+			courseId
+		} = req.body;
+
+		const course = await prisma.course.findUnique({
+
+			where: {
+				slug: courseId
+			}
+
+		});
+
+		if (!course) {
+
+			return res.status(400).json({
+				message: "Course not found."
+			});
+
+		}
+
 		const item = await prisma.library.update({
 
 			where: {
 				slug: req.params.slug
 			},
 
-			data: req.body
+			data: {
+				title,
+				description,
+				type,
+				body,
+				thumbnail,
+				courseId: course.id
+			}
 
 		});
 

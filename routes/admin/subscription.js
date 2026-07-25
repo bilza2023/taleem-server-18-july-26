@@ -27,7 +27,34 @@ router.get("/", async (req, res) => {
 
 	try {
 
-		const items = await prisma.subscription.findMany();
+		const items = await prisma.subscription.findMany({
+
+			include: {
+
+				user: {
+
+					select: {
+
+						email: true
+
+					}
+
+				},
+
+				course: {
+
+					select: {
+
+						slug: true,
+						title: true
+
+					}
+
+				}
+
+			}
+
+		});
 
 		res.json(items);
 
@@ -38,7 +65,7 @@ router.get("/", async (req, res) => {
 		console.error(err);
 
 		res.status(500).json({
-			message: "Internal server error."
+			message: err.message
 		});
 
 	}
@@ -57,7 +84,34 @@ router.get("/:id", async (req, res) => {
 		const item = await prisma.subscription.findUnique({
 
 			where: {
+
 				id: Number(req.params.id)
+
+			},
+
+			include: {
+
+				user: {
+
+					select: {
+
+						email: true
+
+					}
+
+				},
+
+				course: {
+
+					select: {
+
+						slug: true,
+						title: true
+
+					}
+
+				}
+
 			}
 
 		});
@@ -65,7 +119,9 @@ router.get("/:id", async (req, res) => {
 		if (!item) {
 
 			return res.status(404).json({
+
 				message: "Not found."
+
 			});
 
 		}
@@ -79,7 +135,7 @@ router.get("/:id", async (req, res) => {
 		console.error(err);
 
 		res.status(500).json({
-			message: "Internal server error."
+			message: err.message
 		});
 
 	}
@@ -90,19 +146,71 @@ router.get("/:id", async (req, res) => {
 // POST /
 // Create
 // --------------------------------------------------
+
 router.post("/", async (req, res) => {
 
 	try {
 
-		const { userId, ...data } = req.body;
+		const {
+
+			email,
+			courseSlug,
+			startsAt,
+			endsAt
+
+		} = req.body;
+
+		const user = await prisma.user.findUnique({
+
+			where: {
+
+				email
+
+			}
+
+		});
+
+		if (!user) {
+
+			return res.status(404).json({
+
+				message: "User not found."
+
+			});
+
+		}
+
+		const course = await prisma.course.findUnique({
+
+			where: {
+
+				slug: courseSlug
+
+			}
+
+		});
+
+		if (!course) {
+
+			return res.status(404).json({
+
+				message: "Course not found."
+
+			});
+
+		}
 
 		const item = await prisma.subscription.create({
 
 			data: {
 
-				...data,
+				userId: user.id,
 
-				userId: req.user.id
+				courseId: course.id,
+
+				startsAt,
+
+				endsAt
 
 			}
 
@@ -117,7 +225,7 @@ router.post("/", async (req, res) => {
 		console.error(err);
 
 		res.status(500).json({
-			message: "Internal server error."
+			message: err.message
 		});
 
 	}
@@ -133,13 +241,74 @@ router.put("/:id", async (req, res) => {
 
 	try {
 
+		const {
+
+			email,
+			courseSlug,
+			startsAt,
+			endsAt
+
+		} = req.body;
+
+		const user = await prisma.user.findUnique({
+
+			where: {
+
+				email
+
+			}
+
+		});
+
+		if (!user) {
+
+			return res.status(404).json({
+
+				message: "User not found."
+
+			});
+
+		}
+
+		const course = await prisma.course.findUnique({
+
+			where: {
+
+				slug: courseSlug
+
+			}
+
+		});
+
+		if (!course) {
+
+			return res.status(404).json({
+
+				message: "Course not found."
+
+			});
+
+		}
+
 		const item = await prisma.subscription.update({
 
 			where: {
+
 				id: Number(req.params.id)
+
 			},
 
-			data: req.body
+			data: {
+
+				userId: user.id,
+
+				courseId: course.id,
+
+				startsAt,
+
+				endsAt
+
+			}
 
 		});
 
@@ -152,7 +321,7 @@ router.put("/:id", async (req, res) => {
 		console.error(err);
 
 		res.status(500).json({
-			message: "Internal server error."
+			message: err.message
 		});
 
 	}
@@ -171,13 +340,17 @@ router.delete("/:id", async (req, res) => {
 		await prisma.subscription.delete({
 
 			where: {
+
 				id: Number(req.params.id)
+
 			}
 
 		});
 
 		res.json({
+
 			message: "Deleted."
+
 		});
 
 	}
@@ -187,7 +360,7 @@ router.delete("/:id", async (req, res) => {
 		console.error(err);
 
 		res.status(500).json({
-			message: "Internal server error."
+			message: err.message
 		});
 
 	}

@@ -27,8 +27,6 @@ export async function getTaleemConnection() {
 		!password
 	) {
 
-		showLoginToolbar();
-
 		throw new Error(
 			"Not connected."
 		);
@@ -40,155 +38,16 @@ export async function getTaleemConnection() {
 			server
 		);
 
-	try {
+	await taleem.connection.login(
 
-		await taleem.connection.login(
+		email,
 
-			email,
-
-			password
-
-		);
-
-		const ok =
-			await taleem.connection.verify();
-
-		if (!ok) {
-
-			showLoginToolbar();
-
-			throw new Error(
-				"Not connected."
-			);
-
-		}
-
-		return taleem;
-
-	}
-
-	catch (err) {
-
-		console.error(err);
-
-		showLoginToolbar();
-
-		throw err;
-
-	}
-
-}
-
-// --------------------------------------------------
-// Login Toolbar
-// --------------------------------------------------
-
-function showLoginToolbar() {
-
-	if (
-		document.getElementById(
-			"login-toolbar"
-		)
-	) {
-
-		return;
-
-	}
-
-	document.body.insertAdjacentHTML(
-
-		"afterbegin",
-
-		`
-		<div
-			id="login-toolbar"
-			style="
-				padding:10px;
-				background:#eee;
-				border-bottom:1px solid #ccc;
-			"
-		>
-
-			Server<br>
-
-			<input
-				id="server"
-				style="width:100%"
-				value="${localStorage.getItem("taleem-server-url") ?? "http://127.0.0.1:9000"}"
-			>
-
-			<br><br>
-
-			Email<br>
-
-			<input
-				id="email"
-				style="width:100%"
-				value="${localStorage.getItem("taleem-server-email") ?? ""}"
-			>
-
-			<br><br>
-
-			Password<br>
-
-			<input
-				id="password"
-				type="password"
-				style="width:100%"
-				value="${localStorage.getItem("taleem-server-password") ?? ""}"
-			>
-
-			<br><br>
-
-			<button id="connect">
-
-				Connect
-
-			</button>
-
-		</div>
-		`
+		password
 
 	);
 
-	document
-		.getElementById(
-			"connect"
-		)
-		.onclick = () => {
+	await taleem.connection.verify();
 
-			localStorage.setItem(
-
-				"taleem-server-url",
-
-				document.getElementById(
-					"server"
-				).value
-
-			);
-
-			localStorage.setItem(
-
-				"taleem-server-email",
-
-				document.getElementById(
-					"email"
-				).value
-
-			);
-
-			localStorage.setItem(
-
-				"taleem-server-password",
-
-				document.getElementById(
-					"password"
-				).value
-
-			);
-
-			location.reload();
-
-		};
+	return taleem;
 
 }

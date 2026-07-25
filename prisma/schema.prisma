@@ -28,7 +28,8 @@ enum ContentType {
 }
 
 model Course {
-  id          String  @id
+ 
+  id    String @id @default(cuid())
   slug        String  @unique
   title       String
   description String?
