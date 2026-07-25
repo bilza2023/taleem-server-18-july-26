@@ -91,6 +91,11 @@ router.get("/:slug", async (req, res) => {
 // Create
 // --------------------------------------------------
 
+// --------------------------------------------------
+// POST /
+// Create
+// --------------------------------------------------
+
 router.post("/", async (req, res) => {
 
 	try {
@@ -112,7 +117,7 @@ router.post("/", async (req, res) => {
 				description,
 				thumbnail,
 				access,
-				price
+				price: Number(price)
 			}
 
 		});
@@ -132,6 +137,11 @@ router.post("/", async (req, res) => {
 	}
 
 });
+
+// --------------------------------------------------
+// PUT /:slug
+// Update
+// --------------------------------------------------
 
 // --------------------------------------------------
 // PUT /:slug
@@ -161,7 +171,7 @@ router.put("/:slug", async (req, res) => {
 				description,
 				thumbnail,
 				access,
-				price
+				price: Number(price)
 			}
 
 		});

@@ -50,11 +50,11 @@ app.use("/api/utilities", express.static(UTILITIES_DIR));
 // --------------------------------------------------
 const SERVER_PAGES_DIR = path.join(__dirname, "server-pages");
 
-app.get("/api/login", (req, res) => {
+app.get("/api/forms/login", (req, res) => {
   res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
 });
 
-app.get("/api/register", (req, res) => {
+app.get("/api/forms/register", (req, res) => {
   res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
 });
 // --------------------------------------------------

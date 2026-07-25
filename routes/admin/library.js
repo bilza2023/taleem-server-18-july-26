@@ -27,9 +27,25 @@ router.get("/", async (req, res) => {
 
 	try {
 
-		const items = await prisma.library.findMany();
+		const items = await prisma.library.findMany({
 
-		res.json(items);
+			include: {
+				course: true
+			}
+
+		});
+
+		res.json(
+
+			items.map(({ course, ...item }) => ({
+
+				...item,
+
+				courseSlug: course.slug
+
+			}))
+
+		);
 
 	}
 
@@ -58,6 +74,10 @@ router.get("/:slug", async (req, res) => {
 
 			where: {
 				slug: req.params.slug
+			},
+
+			include: {
+				course: true
 			}
 
 		});
@@ -65,12 +85,18 @@ router.get("/:slug", async (req, res) => {
 		if (!item) {
 
 			return res.status(404).json({
-				message: "Not found."
+				message: "Library item not found."
 			});
 
 		}
 
-		res.json(item);
+		res.json({
+
+			...item,
+
+			courseSlug: item.course.slug
+
+		});
 
 	}
 
@@ -156,6 +182,11 @@ router.post("/", async (req, res) => {
 // Update
 // --------------------------------------------------
 
+// --------------------------------------------------
+// PUT /:slug
+// Update
+// --------------------------------------------------
+
 router.put("/:slug", async (req, res) => {
 
 	try {
@@ -165,25 +196,8 @@ router.put("/:slug", async (req, res) => {
 			description,
 			type,
 			body,
-			thumbnail,
-			courseId
+			thumbnail
 		} = req.body;
-
-		const course = await prisma.course.findUnique({
-
-			where: {
-				slug: courseId
-			}
-
-		});
-
-		if (!course) {
-
-			return res.status(400).json({
-				message: "Course not found."
-			});
-
-		}
 
 		const item = await prisma.library.update({
 
@@ -196,8 +210,7 @@ router.put("/:slug", async (req, res) => {
 				description,
 				type,
 				body,
-				thumbnail,
-				courseId: course.id
+				thumbnail
 			}
 
 		});

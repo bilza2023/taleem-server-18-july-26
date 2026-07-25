@@ -1,8 +1,9 @@
-// --------------------------------------------------
-// Populate Courses
-// --------------------------------------------------
+import apiFetch from "./fetch.js";
 
-export async function populateCourses(select, api, options = {}) {
+export async function populateCourses(
+	select,
+	options = {}
+) {
 
 	const {
 
@@ -12,32 +13,46 @@ export async function populateCourses(select, api, options = {}) {
 
 	} = options;
 
-	const courses = await api.course.index();
+	const courses =
+		await apiFetch(
+			"GET",
+			"/api/course"
+		);
 
 	select.innerHTML = "";
 
 	if (includeBlank) {
 
 		select.append(
-			new Option(placeholder, "")
+			new Option(
+				placeholder,
+				""
+			)
 		);
 
 	}
 
 	for (const course of courses) {
 
-		const option = new Option(
-			course.title,
-			course.id
-		);
+		const option =
+			new Option(
+				course.title,
+				course.id
+			);
 
-		if (course.id === selected) {
+		if (
+
+			course.id === selected
+
+		) {
 
 			option.selected = true;
 
 		}
 
-		select.append(option);
+		select.append(
+			option
+		);
 
 	}
 

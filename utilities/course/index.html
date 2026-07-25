@@ -4,158 +4,220 @@
 
 <head>
 
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
 
-    <title>
+	<title>
 
-        📚 Taleem Courses
+		📚 Taleem Courses
 
-    </title>
+	</title>
 
-    <link
-        rel="stylesheet"
-        href="../tools/simple.css"
-    >
+	<link
+		rel="stylesheet"
+		href="../tools/simple.css"
+	>
 
-    <link
-        rel="stylesheet"
-        href="../tools/utilities.css"
-    >
+	<link
+		rel="stylesheet"
+		href="../tools/utilities.css"
+	>
 
 </head>
 
 <body>
 
-    <header>
+	<header>
 
-        <h1>
+		<h1>
 
-            📚 Taleem Courses
+			📚 Taleem Courses
 
-        </h1>
+		</h1>
 
-        <nav>
+		<nav>
 
-            <a href="index.html">
+			<a href="index.html">
 
-                🏠 Courses
+				🏠 Courses
 
-            </a>
+			</a>
 
-            <a href="new.html">
+			<a href="new.html">
 
-                ➕ New
+				➕ New
 
-            </a>
+			</a>
 
-            <a href="../index.html">
+			<a
+				href="../index.html"
+			>
 
-                🧰 Utilities
+				🧰 Utilities
 
-            </a>
+			</a>
 
-        </nav>
+		</nav>
 
-    </header>
+	</header>
 
-    <table id="courseTable">
+	<table id="courseTable">
 
-        <thead>
+		<thead>
 
-            <tr>
+			<tr>
 
-                <th>🔗 Slug</th>
-                <th>📝 Title</th>
-                <th>📄 Description</th>
-                <th>🔐 Access</th>
-                <th>⚙️</th>
+				<th>🔗 Slug</th>
 
-            </tr>
+				<th>📝 Title</th>
 
-        </thead>
+				<th>🔒 Access</th>
 
-        <tbody>
+				<th>💰 Price</th>
 
-        </tbody>
+				<th>⚙️</th>
 
-    </table>
+			</tr>
 
-<script type="module">
+		</thead>
 
-import "../tools/toolbar.js";
+		<tbody>
 
-import {
+		</tbody>
 
-    getTaleemConnection
+	</table>
 
-} from "../tools/getTaleemConnection.js";
+	<script type="module">
 
-try {
+		import {
+			config
+		}
+		from "../tools/config.js";
 
-    const api =
-        await getTaleemConnection();
+		import apiFetch
+		from "../tools/fetch.js";
 
-    const items =
-        await api.fetch(
-            "/api/course"
-        );
+		const token =
+			localStorage.getItem(
+				"taleem-token"
+			);
 
-    const tbody =
-        document.querySelector(
-            "#courseTable tbody"
-        );
+		if (
 
-    for (const item of items) {
+			!token
 
-        const row =
-            document.createElement(
-                "tr"
-            );
+		) {
 
-        row.innerHTML = `
+			location.href =
+				config.serverUrl +
+				"/api/forms/login";
 
-            <td><code>${item.slug}</code></td>
+			throw new Error(
+				"taleem-token not found."
+			);
 
-            <td>${item.title}</td>
+		}
 
-            <td>${item.description ?? "—"}</td>
+		try {
 
-            <td>${item.access}</td>
+			const items =
+				await apiFetch(
 
-            <td>
+					"GET",
 
-                <a
-                    href="edit.html?slug=${item.slug}"
-                >
+					"/api/admin/course"
 
-                    ✏️ Edit
+				);
 
-                </a>
+			const tbody =
+				document.querySelector(
+					"#courseTable tbody"
+				);
 
-            </td>
+			for (
 
-        `;
+				const item of items
 
-        tbody.appendChild(
-            row
-        );
+			) {
 
-    }
+				const row =
+					document.createElement(
+						"tr"
+					);
 
-}
+				row.innerHTML = `
 
-catch (err) {
+					<td>
 
-    console.error(err);
+						<code>
 
-}
+							${item.slug}
 
-</script>
+						</code>
+
+					</td>
+
+					<td>
+
+						${item.title}
+
+					</td>
+
+					<td>
+
+						${item.access}
+
+					</td>
+
+					<td>
+
+						${item.price}
+
+					</td>
+
+					<td>
+
+						<a
+							href="edit.html?slug=${item.slug}"
+						>
+
+							✏️ Edit
+
+						</a>
+
+					</td>
+
+				`;
+
+				tbody.appendChild(
+					row
+				);
+
+			}
+
+		}
+
+		catch (
+
+			err
+
+		) {
+
+			console.error(
+				err
+			);
+
+			alert(
+				err.message
+			);
+
+		}
+
+	</script>
 
 </body>
 

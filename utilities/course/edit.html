@@ -4,224 +4,271 @@
 
 <head>
 
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
 
-    <title>
+	<title>
 
-        ✏️ Edit Course
+		✏️ Edit Course
 
-    </title>
+	</title>
 
-    <link
-        rel="stylesheet"
-        href="../tools/simple.css"
-    >
+	<link
+		rel="stylesheet"
+		href="../tools/simple.css"
+	>
 
-    <link
-        rel="stylesheet"
-        href="../tools/utilities.css"
-    >
+	<link
+		rel="stylesheet"
+		href="../tools/utilities.css"
+	>
 
 </head>
 
 <body>
 
-    <header>
+	<header>
 
-        <h1>
+		<h1>
 
-            🎓 Taleem Courses
+			📚 Taleem Courses
 
-        </h1>
+		</h1>
 
-        <nav>
+		<nav>
 
-            <a href="index.html">
+			<a href="index.html">
 
-                🏠 Courses
+				🏠 Courses
 
-            </a>
+			</a>
 
-            <a href="new.html">
+			<a href="new.html">
 
-                ➕ New
+				➕ New
 
-            </a>
+			</a>
 
-            <a href="../index.html">
+			<a href="../index.html">
 
-                🧰 Utilities
+				🧰 Utilities
 
-            </a>
+			</a>
 
-        </nav>
+		</nav>
 
-    </header>
+	</header>
 
-    <h2>
+	<h2>
 
-        ✏️ Edit Course
+		✏️ Edit Course
 
-    </h2>
+	</h2>
 
-    <form id="courseForm">
+	<form id="courseForm">
 
-        <p>
+		<p>
 
-            <label>Slug</label>
+			<label>Slug</label>
 
-            <input
-                name="slug"
-                readonly
-            >
+			<input
+				name="slug"
+				readonly
+			>
 
-        </p>
+		</p>
 
-        <p>
+		<p>
 
-            <label>Title</label>
+			<label>Title</label>
 
-            <input
-                name="title"
-                required
-            >
+			<input
+				name="title"
+				required
+			>
 
-        </p>
+		</p>
 
-        <p>
+		<p>
 
-            <label>Description</label>
+			<label>Description</label>
 
-            <textarea
-                name="description"
-                rows="3"
-            ></textarea>
+			<textarea
+				name="description"
+				rows="3"
+			></textarea>
 
-        </p>
+		</p>
 
-        <p>
+		<p>
 
-            <label>Access</label>
+			<label>Access</label>
 
-            <select
-                name="access"
-            >
+			<select
+				name="access"
+			>
 
-                <option>PUBLIC</option>
-                <option>MEMBERS</option>
-                <option>SUBSCRIPTION</option>
+				<option>PUBLIC</option>
+				<option>MEMBERS</option>
+				<option>SUBSCRIPTION</option>
 
-            </select>
+			</select>
 
-        </p>
+		</p>
 
-        <button type="submit">
+		<p>
 
-            💾 Save
+			<label>Price</label>
 
-        </button>
+			<input
+				type="number"
+				name="price"
+			>
 
-    </form>
+		</p>
 
-<script type="module">
+		<button type="submit">
 
-    import "../tools/toolbar.js";
+			💾 Save
 
-    import {
+		</button>
 
-        getTaleemConnection
+	</form>
 
-    } from "../tools/getTaleemConnection.js";
+	<script type="module">
 
-    try {
+		import {
+			config
+		}
+		from "../tools/config.js";
 
-        const taleem =
-            await getTaleemConnection();
+		import apiFetch
+		from "../tools/fetch.js";
 
-        const slug =
-            new URLSearchParams(
+		const token =
+			localStorage.getItem(
+				"taleem-token"
+			);
 
-                location.search
+		if (!token) {
 
-            ).get(
+			location.href =
+				config.serverUrl +
+				"/api/forms/login";
 
-                "slug"
+			throw new Error(
+				"taleem-token not found."
+			);
 
-            );
+		}
 
-        if (!slug) {
+		const slug =
+			new URLSearchParams(
+				location.search
+			).get(
+				"slug"
+			);
 
-            location.href =
-                "index.html";
+		if (!slug) {
 
-        }
+			location.href =
+				"index.html";
 
-        const form =
-            document.getElementById(
-                "courseForm"
-            );
+		}
 
-        const item =
-            await taleem.course.read(
-                slug
-            );
+		const form =
+			document.getElementById(
+				"courseForm"
+			);
 
-        for (const key in item) {
+		try {
 
-            if (
+			const item =
+				await apiFetch(
 
-                form.elements[key]
+					"GET",
 
-            ) {
+					`/api/admin/course/${slug}`
 
-                form.elements[key].value =
-                    item[key] ?? "";
+				);
 
-            }
+			for (
 
-        }
+				const key in item
 
-        form.onsubmit =
-            async (event) => {
+			) {
 
-                event.preventDefault();
+				if (
 
-                const data =
-                    Object.fromEntries(
+					form.elements[key]
 
-                        new FormData(
-                            form
-                        )
+				) {
 
-                    );
+					form.elements[key].value =
+						item[key] ?? "";
 
-                await taleem.course.update(
+				}
 
-                    slug,
+			}
 
-                    data
+			form.onsubmit =
+				async (
 
-                );
+					event
 
-                location.href =
-                    "index.html";
+				) => {
 
-            };
+					event.preventDefault();
 
-    }
+					const data =
+						Object.fromEntries(
 
-    catch (err) {
+							new FormData(
+								form
+							)
 
-        console.error(err);
+						);
 
-    }
+					delete data.slug;
 
-</script>
+					await apiFetch(
+
+						"PUT",
+
+						`/api/admin/course/${slug}`,
+
+						data
+
+					);
+
+					location.href =
+						"index.html";
+
+				};
+
+		}
+
+		catch (
+
+			err
+
+		) {
+
+			console.error(
+				err
+			);
+
+			alert(
+				err.message
+			);
+
+		}
+
+	</script>
 
 </body>
 

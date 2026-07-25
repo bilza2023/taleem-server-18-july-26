@@ -4,165 +4,225 @@
 
 <head>
 
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
 
-    <title>
+	<title>
 
-        📚 Taleem Library
+		📚 Taleem Library
 
-    </title>
+	</title>
 
-    <link
-        rel="stylesheet"
-        href="../tools/simple.css"
-    >
+	<link
+		rel="stylesheet"
+		href="../tools/simple.css"
+	>
 
-    <link
-        rel="stylesheet"
-        href="../tools/utilities.css"
-    >
+	<link
+		rel="stylesheet"
+		href="../tools/utilities.css"
+	>
 
 </head>
 
 <body>
 
-    <header>
+	<header>
 
-        <h1>
+		<h1>
 
-            📚 Taleem Library
+			📚 Taleem Library
 
-        </h1>
+		</h1>
 
-        <nav>
+		<nav>
 
-            <a href="index.html">
+			<a href="index.html">
 
-                🏠 Library
+				🏠 Library
 
-            </a>
+			</a>
 
-            <a href="new.html">
+			<a href="new.html">
 
-                ➕ New
+				➕ New
 
-            </a>
+			</a>
 
-            <a href="../index.html">
+			<a
+				href="../index.html"
+			>
 
-                🧰 Utilities
+				🧰 Utilities
 
-            </a>
+			</a>
 
-        </nav>
+		</nav>
 
-    </header>
+	</header>
 
-    <table id="libraryTable">
+	<table id="libraryTable">
 
-        <thead>
+		<thead>
 
-            <tr>
+			<tr>
 
-                <th>🔗 Slug</th>
-                <th>📝 Title</th>
-                <th>📦 Course</th>
-                <th>📄 Type</th>
-                <th>⚙️</th>
+				<th>🔗 Slug</th>
 
-            </tr>
+				<th>📝 Title</th>
 
-        </thead>
+				<th>📦 Course</th>
 
-        <tbody>
+				<th>📄 Type</th>
 
-        </tbody>
+				<th>⚙️</th>
 
-    </table>
+			</tr>
 
-<script type="module">
+		</thead>
 
-import "../tools/toolbar.js";
+		<tbody>
 
-import {
-    Connector
-}
-from "../tools/Connector.js";
+		</tbody>
 
-const connector =
-    new Connector(
+	</table>
 
-        localStorage.getItem(
-            "taleem-server-url"
-        )
+	<script type="module">
 
-    );
+		import {
+			config
+		}
+		from "../tools/config.js";
 
-try {
+		import {
+			TaleemAdminClient
+		}
+		from "../tools/taleem-admin-client.js";
 
-    const items =
-        await connector.fetch(
-            "/api/admin/library"
-        );
+		const token =
+			localStorage.getItem(
+				"taleem-token"
+			);
 
-    const tbody =
-        document.querySelector(
-            "#libraryTable tbody"
-        );
+		if (
 
-    for (const item of items) {
+			!token
 
-        const row =
-            document.createElement(
-                "tr"
-            );
+		) {
 
-        row.innerHTML = `
+			location.href =
+				config.serverUrl +
+				"/api/forms/login";
 
-            <td><code>${item.slug}</code></td>
+			throw new Error(
+				"taleem-token not found."
+			);
 
-            <td>${item.title}</td>
+		}
 
-            <td>${item.courseId ?? "—"}</td>
+		const client =
+			new TaleemAdminClient(
 
-            <td>${item.type}</td>
+				config.serverUrl,
 
-            <td>
+				token
 
-                <a
-                    href="edit.html?slug=${item.slug}"
-                >
+			);
 
-                    ✏️ Edit
+		try {
 
-                </a>
+			const items =
+				await client.library.list();
 
-            </td>
+			const tbody =
+				document.querySelector(
+					"#libraryTable tbody"
+				);
 
-        `;
+			for (
 
-        tbody.appendChild(
-            row
-        );
+				const item of items
 
-    }
+			) {
 
-}
+				const row =
+					document.createElement(
+						"tr"
+					);
 
-catch (err) {
+				row.innerHTML = `
 
-    console.error(err);
+					<td>
 
-    alert(err.message);
+						<code>
 
-}
+							${item.slug}
 
-</script>
+						</code>
+
+					</td>
+
+					<td>
+
+						${item.title}
+
+					</td>
+
+					<td>
+
+						${item.courseSlug ?? "—"}
+
+					</td>
+
+					<td>
+
+						${item.type}
+
+					</td>
+
+					<td>
+
+						<a
+							href="edit.html?slug=${item.slug}"
+						>
+
+							✏️ Edit
+
+						</a>
+
+					</td>
+
+				`;
+
+				tbody.appendChild(
+					row
+				);
+
+			}
+
+		}
+
+		catch (
+
+			err
+
+		) {
+
+			console.error(
+				err
+			);
+
+			alert(
+				err.message
+			);
+
+		}
+
+	</script>
 
 </body>
 

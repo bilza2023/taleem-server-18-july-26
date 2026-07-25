@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem-server/routes/course.js
 import express from "express";
 import {
 	index,
