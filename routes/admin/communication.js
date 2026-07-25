@@ -46,6 +46,75 @@ router.get("/", async (req, res) => {
 });
 
 // --------------------------------------------------
+// GET /inbox
+// Unanswered student communications
+// --------------------------------------------------
+
+router.get("/inbox", async (req, res) => {
+
+	try {
+
+		const items =
+			await prisma.communication.findMany({
+
+				where: {
+
+				OR: [
+
+		{ authorResponse: null },
+
+		{ authorResponse: "" }
+
+	],
+
+					user: {
+
+						role: "student"
+
+					}
+
+				},
+
+				include: {
+
+					user: {
+
+						select: {
+
+							email: true
+
+						}
+
+					}
+
+				},
+
+				orderBy: {
+
+					createdAt: "asc"
+
+				}
+
+			});
+
+		res.json(items);
+
+	}
+
+	catch (err) {
+
+		console.error(err);
+
+		res.status(500).json({
+
+			message: "Internal server error."
+
+		});
+
+	}
+
+});
+// --------------------------------------------------
 // GET /:id
 // Read
 // --------------------------------------------------

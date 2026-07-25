@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="dark">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
+
+	<title>
+
+		💳 Taleem Subscriptions
+
+	</title>
+
+	<link
+		rel="stylesheet"
+		href="../tools/simple.css"
+	>
+
+	<link
+		rel="stylesheet"
+		href="../tools/utilities.css"
+	>
+
+</head>
+
+<body>
+
+	<header>
+
+		<h1>
+
+			💳 Taleem Subscriptions
+
+		</h1>
+
+		<nav>
+
+			<a href="index.html">
+
+				🏠 Subscriptions
+
+			</a>
+
+			<a href="new.html">
+
+				➕ New
+
+			</a>
+
+			<a
+				href="../index.html"
+			>
+
+				🧰 Utilities
+
+			</a>
+
+		</nav>
+
+	</header>
+
+	<table id="subscriptionTable">
+
+		<thead>
+
+			<tr>
+
+				<th>#</th>
+
+				<th>User</th>
+
+				<th>Course</th>
+
+				<th>Starts</th>
+
+				<th>Ends</th>
+
+			</tr>
+
+		</thead>
+
+		<tbody>
+
+		</tbody>
+
+	</table>
+
+	<script type="module">
+
+		import {
+			config
+		}
+		from "../tools/config.js";
+
+		import apiFetch
+		from "../tools/fetch.js";
+
+		const token =
+			localStorage.getItem(
+				"taleem-token"
+			);
+
+		if (
+
+			!token
+
+		) {
+
+			location.href =
+				config.serverUrl +
+				"/api/forms/login";
+
+			throw new Error(
+				"taleem-token not found."
+			);
+
+		}
+
+		try {
+
+			const items =
+				await apiFetch(
+
+					"GET",
+
+					"/api/admin/subscription"
+
+				);
+
+			const tbody =
+				document.querySelector(
+					"#subscriptionTable tbody"
+				);
+
+			for (
+
+				const item of items
+
+			) {
+
+				const row =
+					document.createElement(
+						"tr"
+					);
+
+				row.innerHTML = `
+
+					<td>
+
+						${item.id}
+
+					</td>
+
+					<td>
+
+						${item.user.email}
+
+					</td>
+
+					<td>
+
+						${item.course.slug}
+
+					</td>
+
+					<td>
+
+						${item.startsAt ?? ""}
+
+					</td>
+
+					<td>
+
+						${item.endsAt ?? ""}
+
+					</td>
+
+				`;
+
+				tbody.appendChild(
+					row
+				);
+
+			}
+
+		}
+
+		catch (
+
+			err
+
+		) {
+
+			console.error(
+				err
+			);
+
+			alert(
+				err.message
+			);
+
+		}
+
+	</script>
+
+</body>
+
+</html>

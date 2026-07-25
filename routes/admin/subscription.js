@@ -208,9 +208,11 @@ router.post("/", async (req, res) => {
 
 				courseId: course.id,
 
-				startsAt,
+				startsAt: new Date(startsAt),
 
-				endsAt
+				endsAt: endsAt
+					? new Date(endsAt)
+					: null
 
 			}
 
