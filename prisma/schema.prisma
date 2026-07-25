@@ -11,6 +11,14 @@ enum LibraryStatus {
   PUBLISHED
   ARCHIVED
 }
+
+enum ContentType {
+  HTML
+  JSON
+  TEXT
+  MARKDOWN
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -22,13 +30,6 @@ model User {
 
   subscriptions  Subscription[]
   communications Communication[]
-}
-
-enum ContentType {
-  HTML
-  JSON
-  TEXT
-  MARKDOWN
 }
 
 model Course {
@@ -58,12 +59,14 @@ model Library {
 
   thumbnail String?
 
+
   type ContentType
 
   body String?
 
   courseId String
 
+  allowCommunication Boolean @default(true)
   status      LibraryStatus  @default(DRAFT)
 
   createdAt DateTime @default(now())
