@@ -1,244 +1,122 @@
 <!DOCTYPE html>
-
 <html lang="en" data-theme="dark">
 
 <head>
 
-	<meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<meta
-		name="viewport"
-		content="width=device-width, initial-scale=1.0"
-	>
+<title>➕ New Library Item</title>
 
-	<title>
-
-		➕ New Library Item
-
-	</title>
-
-	<link
-		rel="stylesheet"
-		href="../tools/simple.css"
-	>
-
-	<link
-		rel="stylesheet"
-		href="../tools/utilities.css"
-	>
+<link rel="stylesheet" href="../tools/simple.css">
+<link rel="stylesheet" href="../tools/utilities.css">
 
 </head>
 
 <body>
 
-	<header>
+<header>
 
-		<h1>
+<h1>📚 Taleem Library</h1>
 
-			📚 Taleem Library
+<nav>
+<a href="index.html">🏠 Library</a>
+<a href="new.html">➕ New</a>
+<a href="../index.html">🧰 Utilities</a>
+</nav>
 
-		</h1>
+</header>
 
-		<nav>
+<h2>➕ New Library Item</h2>
 
-			<a href="index.html">
-
-				🏠 Library
-
-			</a>
-
-			<a href="new.html">
-
-				➕ New
-
-			</a>
-
-			<a href="../index.html">
-
-				🧰 Utilities
-
-			</a>
-
-		</nav>
-
-	</header>
-
-	<h2>
-
-		➕ New Library Item
-
-	</h2>
-
-	<form id="libraryForm">
-
-		<p>
-
-			<label>Slug</label>
-
-			<input
-				name="slug"
-				required
-			>
-
-		</p>
-
-		<p>
-
-			<label>Title</label>
-
-			<input
-				name="title"
-				required
-			>
-
-		</p>
-
-		<p>
-
-			<label>Description</label>
-
-			<textarea
-				name="description"
-				rows="3"
-			></textarea>
-
-		</p>
+<form id="libraryForm">
 
 <p>
-
-	<label>Course</label>
-
-	<select
-		id="courseId"
-		name="courseId"
-	></select>
-
+<label>Slug</label>
+<input name="slug" required>
 </p>
 
-		<p>
+<p>
+<label>Title</label>
+<input name="title" required>
+</p>
 
-			<label>Type</label>
+<p>
+<label>Description</label>
+<textarea name="description" rows="3"></textarea>
+</p>
+<p>
+<label>Thumbnail</label>
+<input
+	name="thumbnail"
+	placeholder="box.webp"
+>
+</p>
+<p>
+<label>Course</label>
+<select id="courseId" name="courseId"></select>
+</p>
 
-			<select
-				name="type"
-			>
+<p>
+<label>Type</label>
+<select name="type">
+<option>HTML</option>
+<option>MARKDOWN</option>
+<option>TEXT</option>
+<option>JSON</option>
+</select>
+</p>
 
-				<option>HTML</option>
-				<option>MARKDOWN</option>
-				<option>TEXT</option>
-				<option>JSON</option>
+<p>
+<label>Body</label>
+<textarea name="body" rows="20"></textarea>
+</p>
 
-			</select>
+<button type="submit">➕ Create</button>
 
-		</p>
+</form>
 
-		<p>
+<script type="module">
 
-			<label>Body</label>
+import { populateCourses } from "../tools/populateCourses.js";
+import { config } from "../tools/config.js";
+import apiFetch from "../tools/fetch.js";
 
-			<textarea
-				name="body"
-				rows="20"
-			></textarea>
+if (!localStorage.getItem("taleem-token")) {
+	location.href = config.serverUrl + "/api/forms/login";
+}
 
-		</p>
+const form = document.querySelector("#libraryForm");
 
-		<button type="submit">
+await populateCourses(document.getElementById("courseId"));
 
-			➕ Create
+form.addEventListener("submit", async (event) => {
 
-		</button>
+	event.preventDefault();
 
-	</form>
+	try {
 
-	<script type="module">
-import {populateCourses}from "../tools/populateCourses.js";
-import {config}from "../tools/config.js";
-
-		import apiFetch
-		from "../tools/fetch.js";
-
-		if (
-
-			!localStorage.getItem(
-				"taleem-token"
-			)
-
-		) {
-
-			location.href =
-				config.serverUrl +
-				"/api/forms/login";
-
-		}
-
-		const form =
-			document.querySelector(
-				"#libraryForm"
-			);
-await populateCourses(
-
-	document.getElementById(
-		"courseId"
-	)
-
-);
-		form.addEventListener(
-
-			"submit",
-
-			async (
-
-				event
-
-			) => {
-
-				event.preventDefault();
-
-				try {
-
-					const data =
-						Object.fromEntries(
-
-							new FormData(
-								form
-							)
-
-						);
-
-					await apiFetch(
-
-						"POST",
-
-						"/api/admin/library",
-
-						data
-
-					);
-
-					location.href =
-						"index.html";
-
-				}
-
-				catch (
-
-					err
-
-				) {
-
-					alert(
-						err.message
-					);
-
-				}
-
-			}
-
+		const data = Object.fromEntries(new FormData(form));
+console.log("data" ,data);
+		await apiFetch(
+			"POST",
+			"/api/admin/library",
+			data
 		);
 
-	</script>
+		location.href = "index.html";
+
+	}
+
+	catch (err) {
+
+		alert(err.message);
+
+	}
+
+});
+
+</script>
 
 </body>
-
 </html>

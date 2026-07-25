@@ -117,6 +117,11 @@ router.get("/:slug", async (req, res) => {
 // Create
 // --------------------------------------------------
 
+// --------------------------------------------------
+// POST /
+// Create
+// --------------------------------------------------
+
 router.post("/", async (req, res) => {
 
 	try {
@@ -131,22 +136,6 @@ router.post("/", async (req, res) => {
 			courseId
 		} = req.body;
 
-		const course = await prisma.course.findUnique({
-
-			where: {
-				slug: courseId
-			}
-
-		});
-
-		if (!course) {
-
-			return res.status(400).json({
-				message: "Course not found."
-			});
-
-		}
-
 		const item = await prisma.library.create({
 
 			data: {
@@ -156,7 +145,7 @@ router.post("/", async (req, res) => {
 				type,
 				body,
 				thumbnail,
-				courseId: course.id
+				courseId
 			}
 
 		});
@@ -168,6 +157,14 @@ router.post("/", async (req, res) => {
 	catch (err) {
 
 		console.error(err);
+
+		if (err.code === "P2003") {
+
+			return res.status(400).json({
+				message: "Course not found."
+			});
+
+		}
 
 		res.status(500).json({
 			message: "Internal server error."
