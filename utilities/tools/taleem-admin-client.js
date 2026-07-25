@@ -73,11 +73,11 @@ var e = class {
 	constructor(e) {
 		this.connection = e;
 	}
-	async list() {
-		return await this.connection.fetch("/api/admin/course");
+	async index() {
+		return await this.connection.fetch("/api/course");
 	}
 	async read(e) {
-		return await this.connection.fetch(`/api/admin/course/${e}`);
+		return await this.connection.fetch(`/api/course/${e}`);
 	}
 	async create(e) {
 		return await this.connection.fetch("/api/admin/course", {

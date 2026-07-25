@@ -17,15 +17,15 @@
 
     </title>
 
-  <link
-    rel="stylesheet"
-    href="../tools/simple.css"
->
+    <link
+        rel="stylesheet"
+        href="../tools/simple.css"
+    >
 
-<link
-    rel="stylesheet"
-    href="../tools/utilities.css"
->
+    <link
+        rel="stylesheet"
+        href="../tools/utilities.css"
+    >
 
 </head>
 
@@ -108,9 +108,10 @@
 
             <label>Course</label>
 
-            <input
+            <select
+                id="courseId"
                 name="courseId"
-            >
+            ></select>
 
         </p>
 
@@ -158,6 +159,12 @@
 
         } from "../tools/getTaleemConnection.js";
 
+        import {
+
+            populateCourses
+
+        } from "../tools/populateCourses.js";
+
         const taleem =
             await getTaleemConnection();
 
@@ -189,9 +196,28 @@
                 slug
             );
 
+        await populateCourses(
+
+            document.getElementById(
+                "courseId"
+            ),
+
+            taleem,
+
+            {
+
+                selected:
+                    item.courseId
+
+            }
+
+        );
+
         for (const key in item) {
 
             if (
+
+                key !== "courseId" &&
 
                 form.elements[key]
 
