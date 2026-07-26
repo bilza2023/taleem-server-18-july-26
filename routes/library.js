@@ -1,5 +1,7 @@
 import express from "express";
 import authenticate from "../middleware/authenticate.js";
+import AuthTagger from "../middleware/AuthTagger.js";
+
 import {
 	index,
 	getLibraryItem
@@ -7,10 +9,15 @@ import {
 
 const router = express.Router();
 
-// GET /api/library/index
-router.get("/index", authenticate, index);
+// // GET /api/library/index
+// router.get("/index", authenticate, index);
 
 // GET /api/library/:slug
-router.get("/:slug", authenticate, getLibraryItem);
+router.get(
+	"/:slug",
+	authenticate,
+	AuthTagger,
+	getLibraryItem
+);
 
 export default router;
