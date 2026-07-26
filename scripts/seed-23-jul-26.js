@@ -184,39 +184,6 @@ await prisma.admin.createMany({
 	// --------------------------------------------------
 
 	console.log("");
-	console.log("✅ Taleem Reference Database Ready");
-	console.log("");
-
-	console.log("User");
-	console.log("  email    : test@example.com");
-	console.log("  password : 12345678");
-	console.log("");
-
-	console.log("Courses");
-	console.log("  course-public");
-	console.log("  course-members");
-	console.log("");
-
-	console.log("Library");
-	console.log("  public-page");
-	console.log("  members-page");
-	console.log("");
-
-	console.log("Communications");
-	console.log("  public answered");
-	console.log("  private answered");
-	console.log("  unanswered");
-
-	console.log("Admins");
-console.log("  admin@example.com");
-console.log("  library-admin@example.com");
-console.log("  communication-admin@example.com");
-console.log("  subscription-admin@example.com");
-console.log("  password : 12345678");
-console.log("  course-admin@example.com");
-console.log("");
-
-	console.log("");
 
 }
 
