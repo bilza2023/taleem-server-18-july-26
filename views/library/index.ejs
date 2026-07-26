@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
+
+	<title>
+
+		📚 Library
+
+	</title>
+
+	<style>
+
+		body {
+			font-family: sans-serif;
+			padding: 2rem;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px solid #ccc;
+			padding: .5rem;
+			text-align: left;
+		}
+
+		code {
+			background: #eee;
+			padding: 2px 4px;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<h1>
+
+		📚 Library
+
+	</h1>
+
+	<p>
+
+		Welcome
+
+		<strong>
+
+			<%= user.email %>
+
+		</strong>
+
+	</p>
+
+	<p>
+
+		<a href="/api/views/library/new">
+
+			➕ New Library Item
+
+		</a>
+
+	</p>
+
+	<table>
+
+		<thead>
+
+			<tr>
+
+				<th>Slug</th>
+				<th>Title</th>
+				<th>Course</th>
+				<th>Type</th>
+				<th></th>
+
+			</tr>
+
+		</thead>
+
+		<tbody>
+
+			<% items.forEach(item => { %>
+
+				<tr>
+
+					<td>
+
+						<code>
+
+							<%= item.slug %>
+
+						</code>
+
+					</td>
+
+					<td>
+
+						<%= item.title %>
+
+					</td>
+
+					<td>
+
+						<%= item.course?.slug ?? "" %>
+
+					</td>
+
+					<td>
+
+						<%= item.type %>
+
+					</td>
+
+					<td>
+
+						<a href="/api/views/library/<%= item.slug %>">
+
+							✏️ Edit
+
+						</a>
+
+					</td>
+
+				</tr>
+
+			<% }) %>
+
+		</tbody>
+
+	</table>
+
+</body>
+
+</html>

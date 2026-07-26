@@ -12,6 +12,7 @@ async function main() {
 	await prisma.library.deleteMany();
 	await prisma.user.deleteMany();
 	await prisma.course.deleteMany();
+	await prisma.admin.deleteMany();
 
 
 	// --------------------------------------------------
@@ -147,64 +148,36 @@ async function main() {
 		}
 	});
 
-
-	// --------------------------------------------------
-	// Super Admin
-	// --------------------------------------------------
-
-	console.log("🛡️ Creating super admin...");
-
-	await prisma.user.create({
-	data: {
-		name: "Super Admin",
-		email: "admin@example.com",
-		password,
-		role: "SUPER_ADMIN",
-		resource: null
-		}
-	});
-
 	// --------------------------------------------------
 // Resource Admins
 // --------------------------------------------------
-
-await prisma.user.create({
-	data: {
-		name: "Library Admin",
-		email: "library-admin@example.com",
-		password,
-		role: "ADMIN",
-		resource: "library"
-	}
-});
-
-await prisma.user.create({
-	data: {
-		name: "Communication Admin",
-		email: "communication-admin@example.com",
-		password,
-		role: "ADMIN",
-		resource: "communication"
-	}
-});
-
-await prisma.user.create({
-	data: {
-		name: "Subscription Admin",
-		email: "subscription-admin@example.com",
-		password,
-		role: "ADMIN",
-		resource: "subscription"
-	}
-});
-await prisma.user.create({
-	data: {
-		name: "Course Admin",
-		email: "course-admin@example.com",
-		password,
-		role: "ADMIN",
-		resource: "course"
-	}
+await prisma.admin.createMany({
+	data: [
+		{
+			email: "library@taleem.help",
+			password,
+			name: "Library Admin",
+			resource: "library"
+		},
+		{
+			email: "course@taleem.help",
+			password,
+			name: "Course Admin",
+			resource: "course"
+		},
+		{
+			email: "subscription@taleem.help",
+			password,
+			name: "Subscription Admin",
+			resource: "subscription"
+		},
+		{
+			email: "communication@taleem.help",
+			password,
+			name: "Communication Admin",
+			resource: "communication"
+		}
+	]
 });
 	// --------------------------------------------------
 	// Summary

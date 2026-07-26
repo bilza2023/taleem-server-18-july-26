@@ -1,8 +1,8 @@
-// tests/middleware/requireResource.test.js
+// tests/middleware/authenticateAdmin.test.js
 
 import { describe, it, expect } from "vitest";
 
-describe("requireResource middleware", () => {
+describe("authenticateAdmin middleware", () => {
 
 	it("placeholder", () => {
 

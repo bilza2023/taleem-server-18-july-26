@@ -1,8 +1,8 @@
-// tests/middleware/requireResource.test.js
+// tests/middleware/AuthTagger.test.js
 
 import { describe, it, expect } from "vitest";
 
-describe("requireResource middleware", () => {
+describe("AuthTagger middleware", () => {
 
 	it("placeholder", () => {
 

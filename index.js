@@ -13,10 +13,11 @@ import libraryAdminRouter from "./routes/admin/library.js";
 import courseAdminRouter from "./routes/admin/course.js";
 import subscriptionAdminRouter from "./routes/admin/subscription.js";
 import communicationAdminRouter from "./routes/admin/communication.js";
-import adminRouter from "./routes/admin/admin.js";
+// import adminRouter from "./routes/admin/admin.js";
 import publicRouter from "./routes/public.js";
-
-
+import viewsRouter from "./routes/views.js";
+/////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
 
 dotenv.config();
 
@@ -38,6 +39,8 @@ const UTILITIES_DIR = path.join(__dirname, "utilities");
 
 app.use(cors());
 app.use(express.json());
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // --------------------------------------------------
 // Static Content
@@ -62,13 +65,16 @@ app.get("/api/forms/register", (req, res) => {
 // Routes
 // --------------------------------------------------
 app.use("/api/user", userRouter);
-
+app.use("/api/views", viewsRouter);
 app.use("/api/library", libraryRouter);
+
 
 app.use("/api/course", courseRouter);
 
 app.use("/api/communication", communicationRouter);
+
 app.use("/api/public", publicRouter);
+
 
 
 // --------------------------------------------------
@@ -94,15 +100,15 @@ app.get("/api/health", (req, res) => {
 // --------------------------------------------------
 // ADMIN API
 // --------------------------------------------------
-app.use("/api/admin/library", libraryAdminRouter);
+// app.use("/api/admin/library", libraryAdminRouter);
 
-app.use("/api/admin/course", courseAdminRouter);
+// app.use("/api/admin/course", courseAdminRouter);
 
-app.use("/api/admin/subscription", subscriptionAdminRouter);
+// app.use("/api/admin/subscription", subscriptionAdminRouter);
 
-app.use("/api/admin/communication", communicationAdminRouter);
+// app.use("/api/admin/communication", communicationAdminRouter);
 
-app.use("/api/admin/admins", adminRouter);
+// app.use("/api/admin/admins", adminRouter);
 // --------------------------------------------------
 
 // --------------------------------------------------

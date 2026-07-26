@@ -4,37 +4,22 @@ export default function requireResource(resource) {
 
 	return (req, res, next) => {
 
-		// --------------------------------------------------
-		// Super Admin
-		// --------------------------------------------------
-		
-		if (req.user.role === "SUPER_ADMIN") {
-			return next();
-		}
+		if (!req.admin) {
 
-		// --------------------------------------------------
-		// Must be an Admin
-		// --------------------------------------------------
-
-		if (req.user.role !== "ADMIN") {
-			return res.status(403).json({
-				message: "Administrator access required."
+			return res.status(401).json({
+				message: "Administrator authentication required."
 			});
+
 		}
 
-		// --------------------------------------------------
-		// Must own this resource
-		// --------------------------------------------------
+		if (req.admin.resource !== resource) {
 
-		if (req.user.resource !== resource) {
 			return res.status(403).json({
 				message: `Access denied for resource '${resource}'.`
 			});
+
 		}
 
-		// --------------------------------------------------
-		// Allowed
-		// --------------------------------------------------
 		next();
 
 	};

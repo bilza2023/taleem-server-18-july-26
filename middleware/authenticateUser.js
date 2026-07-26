@@ -1,10 +1,11 @@
-///home/bilal-tariq/00--TALEEM/taleem-server/middleware/authenticate.js
+// middleware/authenticateUser.js
+
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export default async function authenticate(req, res, next) {
+export default async function authenticateUser(req, res, next) {
 
 	try {
 
@@ -13,9 +14,7 @@ export default async function authenticate(req, res, next) {
 		if (!auth || !auth.startsWith("Bearer ")) {
 
 			return res.status(401).json({
-
 				message: "Token required."
-
 			});
 
 		}
@@ -37,9 +36,7 @@ export default async function authenticate(req, res, next) {
 
 				id: true,
 				email: true,
-				name: true,
-				role: true,
-				resource: true
+				name: true
 
 			}
 
@@ -48,9 +45,7 @@ export default async function authenticate(req, res, next) {
 		if (!user) {
 
 			return res.status(401).json({
-
 				message: "User not found."
-
 			});
 
 		}
@@ -64,9 +59,7 @@ export default async function authenticate(req, res, next) {
 	catch (err) {
 
 		return res.status(401).json({
-
 			message: "Invalid token."
-
 		});
 
 	}
