@@ -70,6 +70,7 @@ async function main() {
 			title: "Public Page",
 			description: "Public page used for testing.",
 			type: ContentType.HTML,
+			thumbnail : "box.webp",
 			body: "<h1>Public Page</h1>",
 			thumbnail: null,
 			courseId: publicCourse.id
@@ -82,6 +83,7 @@ async function main() {
 			title: "Members Page",
 			description: "Members page used for testing.",
 			type: ContentType.HTML,
+			thumbnail : "box.webp",
 			body: "<h1>Members Page</h1>",
 			thumbnail: null,
 			courseId: membersCourse.id

@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem-server/routes/public.js
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 
@@ -62,8 +63,8 @@ router.get("/library", async (req, res) => {
 				courseTitle: course.title
 
 			}))
-
 		);
+		console.log("items" , items);
 
 	}
 
