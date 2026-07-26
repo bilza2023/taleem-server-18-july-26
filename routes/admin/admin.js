@@ -1,20 +1,19 @@
-// routes/admin/admin.js
+// /home/bilal-tariq/00--TALEEM/taleem-server/routes/admin/admin.js
 
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-
-import authenticate from "../../middleware/authenticate.js";
+import authenticateAdmin from "../../middleware/authenticateAdmin.js";
 import requireResource from "../../middleware/requireResource.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-// --------------------------------------------------
-// Middleware
-// --------------------------------------------------
 
 router.use(
-	authenticate,
+	authenticateAdmin,
 	requireResource("admin")
 );
 

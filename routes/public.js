@@ -1,9 +1,27 @@
 ///home/bilal-tariq/00--TALEEM/taleem-server/routes/public.js
 import express from "express";
 import { PrismaClient } from "@prisma/client";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const prisma = new PrismaClient();
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// --------------------------------------------------
+// GET /admin/login
+// Admin login page
+// --------------------------------------------------
+
+
+router.get("/admin/login", (req, res) => {
+
+    res.render("admin/login");
+
+});
+
 
 // --------------------------------------------------
 // GET /library

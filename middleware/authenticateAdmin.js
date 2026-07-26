@@ -1,7 +1,7 @@
 // middleware/authenticateAdmin.js
 
+import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -9,20 +9,27 @@ export default async function authenticateAdmin(req, res, next) {
 
 	try {
 
-		const { email, password } = req.body;
+		const auth = req.headers.authorization;
 
-		if (!email || !password) {
+		if (!auth || !auth.startsWith("Bearer ")) {
 
-			return res.status(400).json({
-				message: "Email and password are required."
+			return res.status(401).json({
+				message: "Token required."
 			});
 
 		}
 
+		const token = auth.substring(7);
+
+		const payload = jwt.verify(
+			token,
+			process.env.JWT_SECRET
+		);
+
 		const admin = await prisma.admin.findUnique({
 
 			where: {
-				email
+				id: payload.id
 			}
 
 		});
@@ -30,7 +37,7 @@ export default async function authenticateAdmin(req, res, next) {
 		if (!admin) {
 
 			return res.status(401).json({
-				message: "Invalid email or password."
+				message: "Administrator not found."
 			});
 
 		}
@@ -43,16 +50,6 @@ export default async function authenticateAdmin(req, res, next) {
 
 		}
 
-		const valid = await bcrypt.compare(password, admin.password);
-
-		if (!valid) {
-
-			return res.status(401).json({
-				message: "Invalid email or password."
-			});
-
-		}
-		// We are using req.admin not req.user
 		req.admin = admin;
 
 		next();
@@ -63,8 +60,8 @@ export default async function authenticateAdmin(req, res, next) {
 
 		console.error(err);
 
-		return res.status(500).json({
-			message: "Authentication failed."
+		return res.status(401).json({
+			message: "Invalid token."
 		});
 
 	}

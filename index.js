@@ -4,16 +4,17 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import userRouter from "./routes/user.js";
-import libraryRouter from "./routes/library.js";
-import communicationRouter from "./routes/communication.js";
-import courseRouter from "./routes/course.js";
+// import userRouter from "./routes/user.js";
+// import libraryRouter from "./routes/library.js";
+// import communicationRouter from "./routes/communication.js";
+// import courseRouter from "./routes/course.js";
 //////////--admin Routes---
-import libraryAdminRouter from "./routes/admin/library.js";
-import courseAdminRouter from "./routes/admin/course.js";
-import subscriptionAdminRouter from "./routes/admin/subscription.js";
-import communicationAdminRouter from "./routes/admin/communication.js";
-// import adminRouter from "./routes/admin/admin.js";
+// import libraryAdminRouter from "./routes/admin/library.js";
+// import courseAdminRouter from "./routes/admin/course.js";
+// import subscriptionAdminRouter from "./routes/admin/subscription.js";
+// import communicationAdminRouter from "./routes/admin/communication.js";
+import adminRouter from "./routes/admin/admin.js";
+import adminAuthRouter from "./routes/admin/auth.js";
 import publicRouter from "./routes/public.js";
 import viewsRouter from "./routes/views.js";
 /////////////////////////////////////////////////////////////////
@@ -64,14 +65,17 @@ app.get("/api/forms/register", (req, res) => {
 // --------------------------------------------------
 // Routes
 // --------------------------------------------------
-app.use("/api/user", userRouter);
+// app.use("/api/user", userRouter);
 app.use("/api/views", viewsRouter);
-app.use("/api/library", libraryRouter);
+app.use("/api/admin", adminAuthRouter);
+
+app.use("/api/admin/admin", adminRouter);
+// app.use("/api/library", libraryRouter);
 
 
-app.use("/api/course", courseRouter);
+// app.use("/api/course", courseRouter);
 
-app.use("/api/communication", communicationRouter);
+// app.use("/api/communication", communicationRouter);
 
 app.use("/api/public", publicRouter);
 
