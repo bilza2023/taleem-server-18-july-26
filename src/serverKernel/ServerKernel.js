@@ -18,41 +18,121 @@ class ServerKernel {
 
 	constructor() {
 
-		// --------------------------------------------------
-		// Core
-		// --------------------------------------------------
-
-		this.config = new Config();
-
 		this.logger = new Logger();
 
-		this.db = new PrismaClient();
+		this.logger.info("========================================");
+		this.logger.info("Starting Taleem Server Kernel");
+		this.logger.info("========================================");
 
-		this.jwt = new JWT(this);
+		try {
 
-		this.auth = new Auth(this);
+			// --------------------------------------------------
+			// Core
+			// --------------------------------------------------
 
-		// --------------------------------------------------
-		// Modules
-		// --------------------------------------------------
+			this.config = this.initialize("Config", () => new Config());
 
-		this.user = new User(this);
+			this.db = this.initialize("Prisma", () => new PrismaClient());
 
-		this.admin = new Admin(this);
+			this.jwt = this.initialize("JWT", () => new JWT(this));
 
-		this.library = new Library(this);
+			this.auth = this.initialize("Auth", () => new Auth(this));
 
-		this.course = new Course(this);
+			// --------------------------------------------------
+			// Modules
+			// --------------------------------------------------
 
-		this.communication = new Communication(this);
+			this.user = this.initialize("User", () => new User(this));
 
-		this.subscription = new Subscription(this);
+			this.admin = this.initialize("Admin", () => new Admin(this));
+
+			this.library = this.initialize("Library", () => new Library(this));
+
+			this.course = this.initialize("Course", () => new Course(this));
+
+			this.communication = this.initialize(
+				"Communication",
+				() => new Communication(this)
+			);
+
+			this.subscription = this.initialize(
+				"Subscription",
+				() => new Subscription(this)
+			);
+
+			this.logger.info("Server Kernel started successfully.");
+
+		}
+		catch (error) {
+
+			this.logger.error(error.message);
+
+			throw error;
+
+		}
+
+	}
+
+	initialize(name, factory) {
+
+		this.logger.info(`Initializing ${name}...`);
+
+		try {
+
+			const instance = factory();
+
+			this.logger.info(`${name} initialized.`);
+
+			return instance;
+
+		}
+		catch (error) {
+
+			throw new Error(
+				[
+					"",
+					"========================================",
+					"SERVER KERNEL INITIALIZATION FAILED",
+					"----------------------------------------",
+					`Component : ${name}`,
+					`Reason    : ${error.message}`,
+					"",
+					"Server Kernel startup aborted.",
+					"========================================"
+				].join("\n")
+			);
+
+		}
 
 	}
 
 	async shutdown() {
 
-		await this.db.$disconnect();
+		this.logger.info("Shutting down Server Kernel...");
+
+		try {
+
+			await this.db.$disconnect();
+
+			this.logger.info("Database disconnected.");
+
+			this.logger.info("Server Kernel shutdown complete.");
+
+		}
+		catch (error) {
+
+			throw new Error(
+				[
+					"",
+					"========================================",
+					"SERVER KERNEL SHUTDOWN FAILED",
+					"----------------------------------------",
+					`Reason : ${error.message}`,
+					"========================================"
+				].join("\n")
+			);
+
+		}
 
 	}
 
