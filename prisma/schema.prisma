@@ -48,7 +48,7 @@ model Admin {
 }
 model Course {
  
-  id    String @id @default(cuid())
+  id          Int @id @default(autoincrement())
   slug        String  @unique
   title       String
   description String?
@@ -78,7 +78,7 @@ model Library {
 
   body String?
 
-  courseId String
+  courseId Int
 
   allowCommunication Boolean @default(true)
   status      LibraryStatus  @default(DRAFT)
@@ -96,7 +96,7 @@ model Subscription {
   id Int @id @default(autoincrement())
 
   userId   Int
-  courseId String
+  courseId Int
 
   startsAt DateTime  @default(now())
   endsAt   DateTime?

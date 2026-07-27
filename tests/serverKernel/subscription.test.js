@@ -1,3 +1,5 @@
+// tests/serverKernel/subscription.test.js
+
 import { describe, it, expect } from "vitest";
 
 import kernel from "../../src/serverKernel/ServerKernel.js";
@@ -17,7 +19,7 @@ describe("Subscription", () => {
 
 		const subscription = (await kernel.subscription.list())[0];
 
-		const found = await kernel.subscription.get(
+		const found = await kernel.subscription.getById(
 			subscription.id
 		);
 
@@ -28,7 +30,7 @@ describe("Subscription", () => {
 
 	it("should list subscriptions by user", async () => {
 
-		const user = await kernel.user.findByEmail(
+		const user = await kernel.user.getByEmail(
 			"test@example.com"
 		);
 
@@ -60,7 +62,7 @@ describe("Subscription", () => {
 
 	it("should return null for unknown id", async () => {
 
-		const subscription = await kernel.subscription.get(
+		const subscription = await kernel.subscription.getById(
 			999999
 		);
 

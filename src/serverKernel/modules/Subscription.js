@@ -20,7 +20,7 @@ export default class Subscription {
 
 	}
 
-	async get(id) {
+	async getById(id) {
 
 		return this.kernel.db.subscription.findUnique({
 

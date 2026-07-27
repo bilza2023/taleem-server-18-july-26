@@ -20,7 +20,7 @@ export default class Course {
 
 	}
 
-	async get(id) {
+	async getById(id) {
 
 		return this.kernel.db.course.findUnique({
 

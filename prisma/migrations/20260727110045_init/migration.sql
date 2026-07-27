@@ -10,8 +10,20 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Admin" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "name" TEXT,
+    "resource" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "Course" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "slug" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -29,7 +41,7 @@ CREATE TABLE "Library" (
     "thumbnail" TEXT,
     "type" TEXT NOT NULL,
     "body" TEXT,
-    "courseId" TEXT NOT NULL,
+    "courseId" INTEGER NOT NULL,
     "allowCommunication" BOOLEAN NOT NULL DEFAULT true,
     "status" TEXT NOT NULL DEFAULT 'DRAFT',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -41,7 +53,7 @@ CREATE TABLE "Library" (
 CREATE TABLE "Subscription" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "userId" INTEGER NOT NULL,
-    "courseId" TEXT NOT NULL,
+    "courseId" INTEGER NOT NULL,
     "startsAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "endsAt" DATETIME,
     CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -65,6 +77,9 @@ CREATE TABLE "Communication" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");

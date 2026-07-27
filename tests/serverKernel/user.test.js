@@ -1,3 +1,5 @@
+// tests/serverKernel/user.test.js
+
 import { describe, it, expect } from "vitest";
 
 import kernel from "../../src/serverKernel/ServerKernel.js";
@@ -15,7 +17,7 @@ describe("User", () => {
 
 	it("should find user by email", async () => {
 
-		const user = await kernel.user.findByEmail(
+		const user = await kernel.user.getByEmail(
 			"test@example.com"
 		);
 
@@ -26,11 +28,11 @@ describe("User", () => {
 
 	it("should get user by id", async () => {
 
-		const user = await kernel.user.findByEmail(
+		const user = await kernel.user.getByEmail(
 			"test@example.com"
 		);
 
-		const found = await kernel.user.get(user.id);
+		const found = await kernel.user.getById(user.id);
 
 		expect(found).toBeDefined();
 		expect(found.id).toBe(user.id);
@@ -52,27 +54,31 @@ describe("User", () => {
 
 	it("should reject invalid password", async () => {
 
-		const token = await kernel.user.login(
+		await expect(
 
-			"test@example.com",
-			"wrong-password"
+			kernel.user.login(
+				"test@example.com",
+				"wrong-password"
+			)
 
+		).rejects.toThrow(
+			"User.login(): Invalid password."
 		);
-
-		expect(token).toBeNull();
 
 	});
 
 	it("should reject unknown email", async () => {
 
-		const token = await kernel.user.login(
+		await expect(
 
-			"missing@example.com",
-			"12345678"
+			kernel.user.login(
+				"missing@example.com",
+				"12345678"
+			)
 
+		).rejects.toThrow(
+			"User.login(): User 'missing@example.com' not found."
 		);
-
-		expect(token).toBeNull();
 
 	});
 

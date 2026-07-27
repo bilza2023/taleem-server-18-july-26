@@ -10,107 +10,82 @@ export default class User {
 
 	}
 
+	// --------------------------------------------------
+	// Queries
+	// --------------------------------------------------
+
 	async list() {
 
 		return this.kernel.db.user.findMany({
-
-			orderBy: {
-				createdAt: "desc"
-			}
-
+			orderBy: { createdAt: "desc" }
 		});
 
 	}
 
-	async get(id) {
+	async getById(id) {
 
 		return this.kernel.db.user.findUnique({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}
 
-	async findByEmail(email) {
+	async getByEmail(email) {
 
 		return this.kernel.db.user.findUnique({
-
-			where: {
-				email
-			}
-
+			where: { email }
 		});
 
 	}
+
+	// --------------------------------------------------
+	// Authentication
+	// --------------------------------------------------
 
 	async register(data) {
 
-		const password = await bcrypt.hash(
-			data.password,
-			10
-		);
+		const password = await bcrypt.hash(data.password, 10);
 
 		return this.kernel.db.user.create({
-
 			data: {
-
 				...data,
-
 				password
-
 			}
-
 		});
 
 	}
 
 	async login(email, password) {
 
-		const user = await this.findByEmail(email);
+		const user = await this.getByEmail(email);
 
-		if (!user) {
+		if (!user)
+			throw new Error(`User.login(): User '${email}' not found.`);
 
-			return null;
+		const ok = await bcrypt.compare(password, user.password);
 
-		}
-
-		const ok = await bcrypt.compare(
-			password,
-			user.password
-		);
-
-		if (!ok) {
-
-			return null;
-
-		}
+		if (!ok)
+			throw new Error(`User.login(): Invalid password.`);
 
 		return this.kernel.auth.createUserToken(user);
 
 	}
 
+	// --------------------------------------------------
+	// CRUD
+	// --------------------------------------------------
+
 	async update(id, data) {
 
 		if (data.password) {
 
-			data.password = await bcrypt.hash(
-				data.password,
-				10
-			);
+			data.password = await bcrypt.hash(data.password, 10);
 
 		}
 
 		return this.kernel.db.user.update({
-
-			where: {
-				id
-			},
-
+			where: { id },
 			data
-
 		});
 
 	}
@@ -118,11 +93,7 @@ export default class User {
 	async delete(id) {
 
 		return this.kernel.db.user.delete({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}

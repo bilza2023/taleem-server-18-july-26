@@ -1,3 +1,5 @@
+// tests/serverKernel/Admin.test.js
+
 import { describe, it, expect } from "vitest";
 
 import kernel from "../../src/serverKernel/ServerKernel.js";
@@ -6,7 +8,7 @@ describe("Admin", () => {
 
 	it("should find admin by email", async () => {
 
-		const admin = await kernel.admin.findByEmail(
+		const admin = await kernel.admin.getByEmail(
 			"library@taleem.help"
 		);
 
@@ -17,11 +19,11 @@ describe("Admin", () => {
 
 	it("should find admin by id", async () => {
 
-		const admin = await kernel.admin.findByEmail(
+		const admin = await kernel.admin.getByEmail(
 			"library@taleem.help"
 		);
 
-		const found = await kernel.admin.findById(admin.id);
+		const found = await kernel.admin.getById(admin.id);
 
 		expect(found).toBeDefined();
 		expect(found.id).toBe(admin.id);
@@ -43,27 +45,35 @@ describe("Admin", () => {
 
 	it("should reject invalid password", async () => {
 
-		const token = await kernel.admin.login(
+		await expect(
 
-			"library@taleem.help",
-			"wrong-password"
+			kernel.admin.login(
 
+				"library@taleem.help",
+				"wrong-password"
+
+			)
+
+		).rejects.toThrow(
+			"Admin.login(): Invalid password."
 		);
-
-		expect(token).toBeNull();
 
 	});
 
 	it("should reject unknown email", async () => {
 
-		const token = await kernel.admin.login(
+		await expect(
 
-			"missing@taleem.help",
-			"12345678"
+			kernel.admin.login(
 
+				"missing@taleem.help",
+				"12345678"
+
+			)
+
+		).rejects.toThrow(
+			"Admin.login(): Admin 'missing@taleem.help' not found."
 		);
-
-		expect(token).toBeNull();
 
 	});
 

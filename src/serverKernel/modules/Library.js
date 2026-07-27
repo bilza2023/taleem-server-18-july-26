@@ -8,26 +8,22 @@ export default class Library {
 
 	}
 
+	// --------------------------------------------------
+	// Queries
+	// --------------------------------------------------
+
 	async list() {
 
 		return this.kernel.db.library.findMany({
-
-			orderBy: {
-				createdAt: "desc"
-			}
-
+			orderBy: { createdAt: "desc" }
 		});
 
 	}
 
-	async get(id) {
+	async getById(id) {
 
 		return this.kernel.db.library.findUnique({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}
@@ -35,47 +31,42 @@ export default class Library {
 	async getBySlug(slug) {
 
 		return this.kernel.db.library.findUnique({
-
-			where: {
-				slug
-			}
-
+			where: { slug }
 		});
 
 	}
 
-	async create(data) {
+	// --------------------------------------------------
+	// CRUD
+	// --------------------------------------------------
+
+	async create(admin, data) {
+
+		// TODO: authorize admin for "library"
 
 		return this.kernel.db.library.create({
-
 			data
-
 		});
 
 	}
 
-	async update(id, data) {
+	async update(admin, id, data) {
+
+		// TODO: authorize admin for "library"
 
 		return this.kernel.db.library.update({
-
-			where: {
-				id
-			},
-
+			where: { id },
 			data
-
 		});
 
 	}
 
-	async delete(id) {
+	async delete(admin, id) {
+
+		// TODO: authorize admin for "library"
 
 		return this.kernel.db.library.delete({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}

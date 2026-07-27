@@ -1,3 +1,5 @@
+// tests/serverKernel/course.test.js
+
 import { describe, it, expect } from "vitest";
 
 import kernel from "../../src/serverKernel/ServerKernel.js";
@@ -30,7 +32,9 @@ describe("Course", () => {
 			"course-public"
 		);
 
-		const found = await kernel.course.get(course.id);
+		const found = await kernel.course.getById(
+			course.id
+		);
 
 		expect(found).toBeDefined();
 		expect(found.id).toBe(course.id);
@@ -49,8 +53,8 @@ describe("Course", () => {
 
 	it("should return null for unknown id", async () => {
 
-		const course = await kernel.course.get(
-			"does-not-exist"
+		const course = await kernel.course.getById(
+			999999
 		);
 
 		expect(course).toBeNull();

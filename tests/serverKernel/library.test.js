@@ -1,3 +1,5 @@
+// tests/serverKernel/library.test.js
+
 import { describe, it, expect } from "vitest";
 
 import kernel from "../../src/serverKernel/ServerKernel.js";
@@ -30,7 +32,9 @@ describe("Library", () => {
 			"public-page"
 		);
 
-		const found = await kernel.library.get(item.id);
+		const found = await kernel.library.getById(
+			item.id
+		);
 
 		expect(found).toBeDefined();
 		expect(found.id).toBe(item.id);
@@ -49,7 +53,7 @@ describe("Library", () => {
 
 	it("should return null for unknown id", async () => {
 
-		const item = await kernel.library.get(
+		const item = await kernel.library.getById(
 			999999
 		);
 

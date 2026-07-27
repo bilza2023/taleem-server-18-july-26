@@ -10,56 +10,36 @@ export default class Admin {
 
 	}
 
-	async findById(id) {
+	async getById(id) {
 
 		return this.kernel.db.admin.findUnique({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}
 
-	async findByEmail(email) {
+	async getByEmail(email) {
 
 		return this.kernel.db.admin.findUnique({
-
-			where: {
-				email
-			}
-
+			where: { email }
 		});
 
 	}
 
 	async login(email, password) {
 
-		const admin = await this.findByEmail(email);
+		const admin = await this.getByEmail(email);
 
-		if (!admin) {
+		if (!admin)
+			throw new Error(`Admin.login(): Admin '${email}' not found.`);
 
-			return null;
+		if (!admin.isActive)
+			throw new Error(`Admin.login(): Admin '${email}' is inactive.`);
 
-		}
+		const ok = await bcrypt.compare(password, admin.password);
 
-		if (!admin.isActive) {
-
-			return null;
-
-		}
-
-		const ok = await bcrypt.compare(
-			password,
-			admin.password
-		);
-
-		if (!ok) {
-
-			return null;
-
-		}
+		if (!ok)
+			throw new Error(`Admin.login(): Invalid password.`);
 
 		return this.kernel.auth.createAdminToken(admin);
 
