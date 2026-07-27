@@ -110,4 +110,19 @@ async listUnanswered() {
     });
 
 }
+async listByUser(userId) {
+
+	return this.kernel.db.communication.findMany({
+
+		where: {
+			userId
+		},
+
+		orderBy: {
+			createdAt: "desc"
+		}
+
+	});
+
+}
 }

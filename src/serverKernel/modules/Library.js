@@ -189,4 +189,35 @@ async getBySlug(slug) {
 
 	}
 
+	async listByCourse(courseSlug) {
+
+	 const items = await this.kernel.db.library.findMany({
+
+		where: {
+			course: {
+				slug: courseSlug
+			}
+		},
+
+		include: {
+			course: true
+		},
+
+		orderBy: {
+			createdAt: "desc"
+		}
+
+	});
+
+	return items.map(item => ({
+
+    slug: item.slug,
+    title: item.title,
+    type: item.type,
+    courseSlug: item.course.slug
+
+}));
+
+}
+
 }

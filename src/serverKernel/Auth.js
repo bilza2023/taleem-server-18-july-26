@@ -1,3 +1,4 @@
+///home/bilal-tariq/00--TALEEM/taleem-server/src/serverKernel/Auth.js
 export default class Auth {
 
 	constructor(kernel) {this.kernel = kernel;}

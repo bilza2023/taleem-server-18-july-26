@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 import userRouter from "./routes/user.js";
 import adminRouter from "./routes/admin.js";
 import adminPagesRouter from "./routes/admin-pages.js";
+import publicRouter from "./routes/public.js";
+import libraryRouter from "./routes/library.js";
 
 dotenv.config();
 
@@ -83,6 +85,7 @@ app.get("/api/page/:slug", (req, res) => {
 
 });
 
+
 // --------------------------------------------------
 // API
 // --------------------------------------------------
@@ -110,9 +113,11 @@ app.get("/api/health", (req, res) => {
 // --------------------------------------------------
 // Routes
 // --------------------------------------------------
+app.use("/api/public", publicRouter);
 app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/pages", adminPagesRouter);
+app.use("/api/library", libraryRouter);
 
 // --------------------------------------------------
 // Start Server
