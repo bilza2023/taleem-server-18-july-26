@@ -17,6 +17,10 @@ router.get("/login", (req, res) => {
 
 });
 
+// --------------------------------------------------
+// Library
+// --------------------------------------------------
+
 router.get("/library", (req, res) => {
 
 	res.sendFile(
@@ -37,6 +41,34 @@ router.get("/library/edit", (req, res) => {
 
 	res.sendFile(
 		path.join(pages, "library-edit.html")
+	);
+
+});
+
+// --------------------------------------------------
+// Courses
+// --------------------------------------------------
+
+router.get("/course", (req, res) => {
+
+	res.sendFile(
+		path.join(pages, "course-index.html")
+	);
+
+});
+
+router.get("/course/new", (req, res) => {
+
+	res.sendFile(
+		path.join(pages, "course-new.html")
+	);
+
+});
+
+router.get("/course/edit", (req, res) => {
+
+	res.sendFile(
+		path.join(pages, "course-edit.html")
 	);
 
 });

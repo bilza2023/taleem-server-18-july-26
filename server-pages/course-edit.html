@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8" />
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	/>
+
+	<title>Taleem Server - Edit Course</title>
+
+	<style>
+
+		:root {
+			color-scheme: dark;
+		}
+
+		body {
+			font-family: system-ui, sans-serif;
+			max-width: 900px;
+			margin: 40px auto;
+			padding: 24px;
+			background: #181818;
+			color: #eee;
+		}
+
+		h1 {
+			margin-top: 0;
+		}
+
+		label {
+			display: block;
+			margin-top: 16px;
+			margin-bottom: 6px;
+			font-weight: 600;
+		}
+
+		input,
+		select,
+		textarea {
+			width: 100%;
+			padding: 10px;
+			box-sizing: border-box;
+			font-size: 1rem;
+			border: 1px solid #555;
+			border-radius: 4px;
+			background: #262626;
+			color: #eee;
+		}
+
+		input[readonly] {
+			background: #202020;
+			color: #bbb;
+		}
+
+		textarea {
+			height: 140px;
+			font-family: inherit;
+		}
+
+		button {
+			margin-top: 20px;
+			padding: 10px 18px;
+			border: none;
+			border-radius: 4px;
+			background: #2f6fed;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background: #4780f5;
+		}
+
+		.toolbar {
+			display: flex;
+			gap: 10px;
+			margin-top: 24px;
+		}
+
+		.success {
+			color: #7CFC8A;
+			font-weight: bold;
+		}
+
+		.error {
+			color: #ff8080;
+			font-weight: bold;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<h1>Edit Course</h1>
+
+	<form id="form">
+
+		<label>Slug</label>
+		<input
+			id="slug"
+			readonly
+		/>
+
+		<label>Title</label>
+		<input
+			id="title"
+			required
+		/>
+
+		<label>Description</label>
+		<textarea id="description"></textarea>
+
+		<label>Thumbnail</label>
+		<input
+			id="thumbnail"
+			placeholder="/content/images/course.png"
+		/>
+
+		<label>Access</label>
+
+		<select id="access">
+
+			<option value="PUBLIC">PUBLIC</option>
+			<option value="MEMBERS">MEMBERS</option>
+			<option value="SUBSCRIPTION">SUBSCRIPTION</option>
+
+		</select>
+
+		<label>Price</label>
+
+		<input
+			id="price"
+			type="number"
+			min="0"
+		/>
+
+		<div class="toolbar">
+
+			<button type="submit">
+				Save
+			</button>
+
+			<button
+				type="button"
+				onclick="location.href='/api/admin/pages/course'"
+			>
+				Cancel
+			</button>
+
+		</div>
+
+	</form>
+
+	<p id="status"></p>
+
+	<script>
+
+		const token = localStorage.getItem("taleem-token");
+
+		const slug = new URLSearchParams(location.search).get("slug");
+
+		const status = document.getElementById("status");
+
+		async function loadCourse() {
+
+			try {
+
+				const response = await fetch(
+					`/api/admin/course/${encodeURIComponent(slug)}`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`
+						}
+					}
+				);
+
+				const course = await response.json();
+
+				if (!response.ok) {
+
+					status.className = "error";
+					status.textContent =
+						course.error || "Unable to load course.";
+
+					return;
+
+				}
+
+				document.getElementById("slug").value = course.slug;
+				document.getElementById("title").value = course.title;
+				document.getElementById("description").value = course.description || "";
+				document.getElementById("thumbnail").value = course.thumbnail || "";
+				document.getElementById("access").value = course.access;
+				document.getElementById("price").value = course.price;
+
+			}
+			catch (err) {
+
+				status.className = "error";
+				status.textContent = err.message;
+
+			}
+
+		}
+
+		document
+			.getElementById("form")
+			.addEventListener("submit", async (event) => {
+
+				event.preventDefault();
+
+				try {
+
+					const response = await fetch(
+						`/api/admin/course/${encodeURIComponent(slug)}`,
+						{
+							method: "PUT",
+
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${token}`
+							},
+
+							body: JSON.stringify({
+
+								slug: document.getElementById("slug").value.trim(),
+
+								title: document.getElementById("title").value.trim(),
+
+								description: document.getElementById("description").value.trim(),
+
+								thumbnail: document.getElementById("thumbnail").value.trim(),
+
+								access: document.getElementById("access").value,
+
+								price: Number(document.getElementById("price").value)
+
+							})
+
+						}
+					);
+
+					const data = await response.json();
+
+					if (!response.ok) {
+
+						status.className = "error";
+						status.textContent =
+							data.error || "Unable to update course.";
+
+						return;
+
+					}
+
+					location.href = "/api/admin/pages/course";
+
+				}
+				catch (err) {
+
+					status.className = "error";
+					status.textContent = err.message;
+
+				}
+
+			});
+
+		loadCourse();
+
+	</script>
+
+</body>
+
+</html>

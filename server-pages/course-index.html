@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8" />
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	/>
+
+	<title>Taleem Server - Courses</title>
+
+	<style>
+
+		:root {
+			color-scheme: dark;
+		}
+
+		body {
+			font-family: system-ui, sans-serif;
+			max-width: 1100px;
+			margin: 40px auto;
+			padding: 24px;
+			background: #181818;
+			color: #eee;
+		}
+
+		h1 {
+			margin-top: 0;
+		}
+
+		.toolbar {
+			display: flex;
+			gap: 12px;
+			margin-bottom: 20px;
+		}
+
+		button {
+			padding: 10px 16px;
+			border: none;
+			border-radius: 4px;
+			background: #2f6fed;
+			color: white;
+			cursor: pointer;
+			font-weight: bold;
+		}
+
+		button:hover {
+			background: #4780f5;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px solid #444;
+			padding: 10px;
+			text-align: left;
+			vertical-align: top;
+		}
+
+		th {
+			background: #252525;
+		}
+
+		tr:nth-child(even) {
+			background: #202020;
+		}
+
+		a {
+			color: #8ec8ff;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		#error {
+			color: #ff8080;
+			font-weight: bold;
+			margin-bottom: 20px;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<h1>Courses</h1>
+
+	<div class="toolbar">
+
+		<button onclick="location.href='/api/admin/pages/course/new'">
+			New Course
+		</button>
+
+		<button onclick="loadCourses()">
+			Refresh
+		</button>
+
+	</div>
+
+	<div id="error"></div>
+
+	<table>
+
+		<thead>
+
+			<tr>
+				<th>Slug</th>
+				<th>Title</th>
+				<th>Access</th>
+				<th>Price</th>
+				<th>Actions</th>
+			</tr>
+
+		</thead>
+
+		<tbody id="tbody"></tbody>
+
+	</table>
+
+	<script>
+
+		const token = localStorage.getItem("taleem-token");
+
+		const tbody = document.getElementById("tbody");
+
+		const error = document.getElementById("error");
+
+		async function loadCourses() {
+
+			error.textContent = "";
+
+			tbody.innerHTML = "";
+
+			try {
+
+				const response = await fetch(
+					"/api/admin/course",
+					{
+						headers: {
+							Authorization: `Bearer ${token}`
+						}
+					}
+				);
+
+				const courses = await response.json();
+
+				if (!response.ok) {
+
+					error.textContent =
+						courses.error || "Unable to load courses.";
+
+					return;
+
+				}
+
+				for (const course of courses) {
+
+					const tr = document.createElement("tr");
+
+					tr.innerHTML = `
+						<td>${course.slug}</td>
+						<td>${course.title}</td>
+						<td>${course.access}</td>
+						<td>${course.price ?? ""}</td>
+						<td>
+							<a href="/api/admin/pages/course/edit?slug=${encodeURIComponent(course.slug)}">
+								Edit
+							</a>
+						</td>
+					`;
+
+					tbody.appendChild(tr);
+
+				}
+
+			}
+			catch (err) {
+
+				error.textContent = err.message;
+
+			}
+
+		}
+
+		loadCourses();
+
+	</script>
+
+</body>
+
+</html>

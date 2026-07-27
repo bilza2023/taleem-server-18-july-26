@@ -159,4 +159,132 @@ router.delete("/library/:slug", async (req, res) => {
 
 });
 
+//course 
+
+// --------------------------------------------------
+// GET /api/admin/course
+// --------------------------------------------------
+
+router.get("/course", async (req, res) => {
+
+	try {
+
+		const items = await kernel.course.list();
+
+		res.json(items);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+
+// --------------------------------------------------
+// GET /api/admin/course/:slug
+// --------------------------------------------------
+
+router.get("/course/:slug", async (req, res) => {
+
+	try {
+
+		const item = await kernel.course.getBySlug(
+			req.params.slug
+		);
+
+		res.json(item);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+
+// --------------------------------------------------
+// POST /api/admin/course
+// --------------------------------------------------
+
+router.post("/course", async (req, res) => {
+
+	try {
+
+		const item = await kernel.course.createBySlug(
+			req.body
+		);
+
+		res.status(201).json(item);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+
+// --------------------------------------------------
+// PUT /api/admin/course/:slug
+// --------------------------------------------------
+
+router.put("/course/:slug", async (req, res) => {
+
+	try {
+
+		const item = await kernel.course.updateBySlug(
+			req.params.slug,
+			req.body
+		);
+
+		res.json(item);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+
+// --------------------------------------------------
+// DELETE /api/admin/course/:slug
+// --------------------------------------------------
+
+router.delete("/course/:slug", async (req, res) => {
+
+	try {
+
+		await kernel.course.deleteBySlug(
+			req.params.slug
+		);
+
+		res.json({
+			success: true
+		});
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+
 export default router;
