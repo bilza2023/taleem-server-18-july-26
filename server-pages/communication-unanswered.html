@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Communication Inbox</title>
+
+<style>
+
+body{
+    font-family:sans-serif;
+    background:#f5f5f5;
+    max-width:900px;
+    margin:30px auto;
+}
+
+.card{
+    background:white;
+    border:1px solid #ddd;
+    border-radius:8px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.meta{
+    color:#666;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.message{
+    background:#fafafa;
+    border-left:4px solid #999;
+    padding:12px;
+    margin:15px 0;
+    white-space:pre-wrap;
+}
+
+textarea{
+    width:100%;
+    min-height:120px;
+    padding:10px;
+    box-sizing:border-box;
+}
+
+.buttons{
+    margin-top:10px;
+}
+
+button{
+    padding:8px 16px;
+    margin-right:10px;
+    cursor:pointer;
+}
+
+.private{
+    background:#666;
+    color:white;
+}
+
+.public{
+    background:#0a8f35;
+    color:white;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Unanswered Communications</h1>
+
+<div id="cards"></div>
+
+<script>
+
+const cards=document.getElementById("cards");
+
+async function load(){
+
+    const response=await fetch("/api/admin/communication/unanswered");
+
+    const items=await response.json();
+
+    cards.innerHTML="";
+
+    if(items.length===0){
+
+        cards.innerHTML="<h2>Inbox Zero 🎉</h2>";
+        return;
+
+    }
+
+    for(const item of items){
+
+        cards.insertAdjacentHTML("beforeend",`
+
+<div class="card" id="card-${item.id}">
+
+<div class="meta">
+<b>${item.referenceId}</b><br>
+User: ${item.user.name}<br>
+Type: ${item.type}<br>
+${new Date(item.createdAt).toLocaleString()}
+</div>
+
+<div class="message">
+${item.message}
+</div>
+
+<textarea
+id="reply-${item.id}"
+placeholder="Write your response..."
+></textarea>
+
+<div class="buttons">
+
+<button
+class="private"
+onclick="save(${item.id},false)">
+Private
+</button>
+
+<button
+class="public"
+onclick="save(${item.id},true)">
+Public
+</button>
+
+</div>
+
+</div>
+
+        `);
+
+    }
+
+}
+
+async function save(id,isPublic){
+
+    const authorResponse=document
+        .getElementById(`reply-${id}`)
+        .value
+        .trim();
+
+    if(!authorResponse){
+
+        alert("Please enter a response.");
+        return;
+
+    }
+
+    const response=await fetch("/api/admin/communication/respond",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            id,
+            authorResponse,
+            isPublic
+        })
+
+    });
+
+    if(response.ok){
+
+        document.getElementById(`card-${id}`).remove();
+
+        if(cards.children.length===0){
+
+            cards.innerHTML="<h2>Inbox Zero 🎉</h2>";
+
+        }
+
+    }
+    else{
+
+        alert("Unable to save response.");
+
+    }
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>

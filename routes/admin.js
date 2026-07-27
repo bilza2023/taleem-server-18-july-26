@@ -260,9 +260,6 @@ router.put("/course/:slug", async (req, res) => {
 
 });
 
-// --------------------------------------------------
-// DELETE /api/admin/course/:slug
-// --------------------------------------------------
 
 router.delete("/course/:slug", async (req, res) => {
 
@@ -287,4 +284,56 @@ router.delete("/course/:slug", async (req, res) => {
 
 });
 
+// --------------------------------------------------
+// GET /api/admin/communication/unanswered
+// --------------------------------------------------
+
+router.get("/communication/unanswered", async (req, res) => {
+
+	try {
+
+		const items = await kernel.communication.listUnanswered();
+
+		res.json(items);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+
+// --------------------------------------------------
+// POST /api/admin/communication/respond
+// --------------------------------------------------
+
+router.post("/communication/respond", async (req, res) => {
+
+	try {
+
+		const { id, authorResponse, isPublic } = req.body;
+
+		await kernel.communication.update(id, {
+			authorResponse,
+			isPublic
+		});
+
+		res.json({
+			success: true
+		});
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
 export default router;

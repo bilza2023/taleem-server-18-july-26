@@ -83,5 +83,31 @@ export default class Communication {
 		});
 
 	}
+async listUnanswered() {
 
+    return this.kernel.db.communication.findMany({
+
+        where: {
+            OR: [
+                { authorResponse: null },
+                { authorResponse: "" }
+            ]
+        },
+
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true
+                }
+            }
+        },
+
+        orderBy: {
+            createdAt: "asc"
+        }
+
+    });
+
+}
 }

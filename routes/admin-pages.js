@@ -73,4 +73,12 @@ router.get("/course/edit", (req, res) => {
 
 });
 
+router.get("/communication/unanswered", (req, res) => {
+
+	res.sendFile(
+		path.join(pages, "communication-unanswered.html")
+	);
+
+});
+
 export default router;
