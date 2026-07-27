@@ -55,4 +55,27 @@ router.get("/course/:slug/list", async (req, res) => {
 
 });
 
+// --------------------------------------------------
+// GET /api/public/library
+// List all library items (without body)
+// --------------------------------------------------
+
+router.get("/library", async (req, res) => {
+
+	try {
+
+		const items = await kernel.library.list();
+
+		res.json(items);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
 export default router;

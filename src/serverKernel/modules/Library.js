@@ -32,6 +32,7 @@ async list() {
 		title: item.title,
 		type: item.type,
 		body: item.body,
+		thumbnail : item.thumbnail,
 		courseSlug: item.course.slug
 
 	}));
