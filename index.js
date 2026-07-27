@@ -1,24 +1,11 @@
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-// import userRouter from "./routes/user.js";
-// import libraryRouter from "./routes/library.js";
-// import communicationRouter from "./routes/communication.js";
-// import courseRouter from "./routes/course.js";
-//////////--admin Routes---
-// import libraryAdminRouter from "./routes/admin/library.js";
-// import courseAdminRouter from "./routes/admin/course.js";
-// import subscriptionAdminRouter from "./routes/admin/subscription.js";
-// import communicationAdminRouter from "./routes/admin/communication.js";
-import adminRouter from "./routes/admin/admin.js";
-import adminAuthRouter from "./routes/admin/auth.js";
-import publicRouter from "./routes/public.js";
-import viewsRouter from "./routes/views.js";
-/////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
+import userRouter from "./routes/user.js";
+import adminRouter from "./routes/admin.js";
+import adminPagesRouter from "./routes/admin-pages.js";
 
 dotenv.config();
 
@@ -34,123 +21,107 @@ const __dirname = path.dirname(__filename);
 
 const CONTENT_DIR = path.join(__dirname, "content");
 const UTILITIES_DIR = path.join(__dirname, "utilities");
+const SERVER_PAGES_DIR = path.join(__dirname, "server-pages");
+
 // --------------------------------------------------
 // Middleware
 // --------------------------------------------------
 
 app.use(cors());
 app.use(express.json());
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // --------------------------------------------------
-// Static Content
+// Static Resources
 // --------------------------------------------------
 
 app.use("/api/content", express.static(CONTENT_DIR));
 app.use("/api/utilities", express.static(UTILITIES_DIR));
+
 // --------------------------------------------------
+// Server Pages
 // --------------------------------------------------
-// Utility Pages
-// --------------------------------------------------
-const SERVER_PAGES_DIR = path.join(__dirname, "server-pages");
 
 app.get("/api/forms/login", (req, res) => {
-  res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
+	res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
+});
+app.get("/api/forms/admin-login", (req, res) => {
+	res.sendFile(path.join(SERVER_PAGES_DIR, "admin-login.html"));
 });
 
 app.get("/api/forms/register", (req, res) => {
-  res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
+	res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
 });
+
 // --------------------------------------------------
-// Routes
+// Public Content
 // --------------------------------------------------
-// app.use("/api/user", userRouter);
-app.use("/api/views", viewsRouter);
-app.use("/api/admin", adminAuthRouter);
 
-app.use("/api/admin/admin", adminRouter);
-// app.use("/api/library", libraryRouter);
+app.get("/api/data/:name", (req, res) => {
 
+	res.sendFile(
+		path.join(
+			CONTENT_DIR,
+			"data",
+			`${req.params.name}.json`
+		)
+	);
 
-// app.use("/api/course", courseRouter);
+});
 
-// app.use("/api/communication", communicationRouter);
+app.get("/api/page/:slug", (req, res) => {
 
-app.use("/api/public", publicRouter);
+	res.sendFile(
+		path.join(
+			CONTENT_DIR,
+			"pages",
+			`${req.params.slug}.html`
+		)
+	);
 
-
+});
 
 // --------------------------------------------------
 // API
 // --------------------------------------------------
+
 app.get("/api", (req, res) => {
+
 	res.json({
 		name: "Taleem API",
 		version: "1.0.0",
 		status: "running",
 		message: "Welcome to Taleem Server 🚀"
 	});
+
 });
 
 app.get("/api/health", (req, res) => {
+
 	res.json({
 		status: "ok",
 		time: new Date().toISOString()
 	});
-});
-
-
-// --------------------------------------------------
-// ADMIN API
-// --------------------------------------------------
-// app.use("/api/admin/library", libraryAdminRouter);
-
-// app.use("/api/admin/course", courseAdminRouter);
-
-// app.use("/api/admin/subscription", subscriptionAdminRouter);
-
-// app.use("/api/admin/communication", communicationAdminRouter);
-
-// app.use("/api/admin/admins", adminRouter);
-// --------------------------------------------------
-
-// --------------------------------------------------
-// Public JSON Data
-// --------------------------------------------------
-
-app.get("/api/data/:name", (req, res) => {
-
-	const file = path.join(
-		CONTENT_DIR,
-		"data",
-		`${req.params.name}.json`
-	);
-
-	res.sendFile(file);
 
 });
+
 // --------------------------------------------------
-// Public HTML Pages
+// Routes
 // --------------------------------------------------
-
-app.get("/api/page/:slug", (req, res) => {
-
-	const file = path.join(
-		CONTENT_DIR,
-		"pages",
-		`${req.params.slug}.html`
-	);
-
-	res.sendFile(file);
-
-});
+app.use("/api/user", userRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/admin/pages", adminPagesRouter);
 
 // --------------------------------------------------
 // Start Server
 // --------------------------------------------------
+
 app.listen(PORT, "127.0.0.1", () => {
+
 	console.log(`🚀 Taleem API running on http://127.0.0.1:${PORT}`);
-	console.log(`📁 Serving content from: ${CONTENT_DIR}`);
-	console.log(`🛠️  Serving utilities from: ${UTILITIES_DIR}`);
+	console.log(`📁 Content:   ${CONTENT_DIR}`);
+	console.log(`🛠️  Utilities: ${UTILITIES_DIR}`);
+
 });

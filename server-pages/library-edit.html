@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8" />
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	/>
+
+	<title>Taleem Server - Edit Library Item</title>
+
+	<style>
+
+		:root {
+			color-scheme: dark;
+		}
+
+		body {
+			font-family: system-ui, sans-serif;
+			max-width: 900px;
+			margin: 40px auto;
+			padding: 24px;
+			background: #181818;
+			color: #eee;
+		}
+
+		h1 {
+			margin-top: 0;
+		}
+
+		label {
+			display: block;
+			margin-top: 16px;
+			margin-bottom: 6px;
+			font-weight: 600;
+		}
+
+		input,
+		select,
+		textarea {
+			width: 100%;
+			padding: 10px;
+			box-sizing: border-box;
+			font-size: 1rem;
+			border: 1px solid #555;
+			border-radius: 4px;
+			background: #262626;
+			color: #eee;
+		}
+
+		textarea {
+			height: 320px;
+			font-family: monospace;
+		}
+
+		button {
+			margin-top: 20px;
+			padding: 10px 18px;
+			border: none;
+			border-radius: 4px;
+			background: #2f6fed;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background: #4780f5;
+		}
+
+		.toolbar {
+			display: flex;
+			gap: 10px;
+			margin-top: 24px;
+		}
+
+		.success {
+			color: #7CFC8A;
+			font-weight: bold;
+		}
+
+		.error {
+			color: #ff8080;
+			font-weight: bold;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<h1>Edit Library Item</h1>
+
+	<form id="form">
+
+		<label>Slug</label>
+		<input id="slug" required />
+
+		<label>Title</label>
+		<input id="title" required />
+
+		<label>Type</label>
+
+		<select id="type">
+			<option value="HTML">HTML</option>
+			<option value="TEXT">TEXT</option>
+			<option value="MARKDOWN">MARKDOWN</option>
+			<option value="JSON">JSON</option>
+		</select>
+
+		<label>Course Slug</label>
+		<input
+			id="courseSlug"
+			placeholder="course-public"
+		/>
+
+		<label>Body</label>
+		<textarea id="body"></textarea>
+
+		<div class="toolbar">
+
+			<button type="submit">
+				Save
+			</button>
+
+			<button
+				type="button"
+				onclick="location.href='/api/admin/pages/library'"
+			>
+				Cancel
+			</button>
+
+		</div>
+
+	</form>
+
+	<p id="status"></p>
+
+	<script>
+
+		const token = localStorage.getItem("taleem-token");
+
+		const slug = new URLSearchParams(location.search).get("slug");
+
+		const status = document.getElementById("status");
+
+		async function loadItem() {
+
+			try {
+
+				const response = await fetch(
+					`/api/admin/library/${encodeURIComponent(slug)}`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`
+						}
+					}
+				);
+
+				const item = await response.json();
+
+				if (!response.ok) {
+
+					status.className = "error";
+					status.textContent =
+						item.error || "Unable to load library item.";
+
+					return;
+
+				}
+
+				document.getElementById("slug").value = item.slug;
+				document.getElementById("title").value = item.title;
+				document.getElementById("type").value = item.type;
+				document.getElementById("courseSlug").value = item.courseSlug || "";
+				document.getElementById("body").value = item.body || "";
+
+			}
+			catch (err) {
+
+				status.className = "error";
+				status.textContent = err.message;
+
+			}
+
+		}
+
+		document.getElementById("form")
+			.addEventListener("submit", async (event) => {
+
+				event.preventDefault();
+
+				try {
+
+					const response = await fetch(
+						`/api/admin/library/${encodeURIComponent(slug)}`,
+						{
+							method: "PUT",
+
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${token}`
+							},
+
+							body: JSON.stringify({
+
+								slug: document.getElementById("slug").value.trim(),
+
+								title: document.getElementById("title").value.trim(),
+
+								type: document.getElementById("type").value,
+
+								courseSlug: document.getElementById("courseSlug").value.trim(),
+
+								body: document.getElementById("body").value
+
+							})
+
+						}
+					);
+
+					const data = await response.json();
+
+					if (!response.ok) {
+
+						status.className = "error";
+						status.textContent =
+							data.error || "Unable to update library item.";
+
+						return;
+
+					}
+
+					location.href = "/api/admin/pages/library";
+
+				}
+				catch (err) {
+
+					status.className = "error";
+					status.textContent = err.message;
+
+				}
+
+			});
+
+		loadItem();
+
+	</script>
+
+</body>
+
+</html>
