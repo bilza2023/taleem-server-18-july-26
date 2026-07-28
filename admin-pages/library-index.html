@@ -97,7 +97,7 @@
 
 	<div class="toolbar">
 
-		<button onclick="location.href='/api/admin/pages/library/new'">
+		<button onclick="location.href='/api/admin/library/new'">
 			New Library Item
 		</button>
 
@@ -144,7 +144,7 @@
 			try {
 
 				const response = await fetch(
-					"/api/admin/library",
+					"/api/public/library",
 					{
 						headers: {
 							Authorization: `Bearer ${token}`
@@ -173,7 +173,7 @@
 						<td>${item.type}</td>
 						<td>${item.courseSlug ?? ""}</td>
 						<td>
-							<a href="/api/admin/pages/library/edit?slug=${encodeURIComponent(item.slug)}">
+							<a href="/api/admin/library/edit?slug=${encodeURIComponent(item.slug)}">
 								Edit
 							</a>
 						</td>

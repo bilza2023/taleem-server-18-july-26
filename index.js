@@ -5,7 +5,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import userRouter from "./routes/user.js";
 import adminRouter from "./routes/admin.js";
-import adminPagesRouter from "./routes/admin-pages.js";
 import publicRouter from "./routes/public.js";
 import libraryRouter from "./routes/library.js";
 import communicationRouter from "./routes/communication.js";
@@ -36,25 +35,10 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // --------------------------------------------------
-// Static Resources
+// Content
 // --------------------------------------------------
 
 app.use("/api/content", express.static(CONTENT_DIR));
-
-// --------------------------------------------------
-// Server Pages
-// --------------------------------------------------
-
-// app.get("/api/forms/login", (req, res) => {
-// 	res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
-// });
-// app.get("/api/forms/admin-login", (req, res) => {
-// 	res.sendFile(path.join(SERVER_PAGES_DIR, "admin-login.html"));
-// });
-
-// app.get("/api/forms/register", (req, res) => {
-// 	res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
-// });
 
 // --------------------------------------------------
 // Public Content
@@ -72,17 +56,6 @@ app.get("/api/data/:name", (req, res) => {
 
 });
 
-app.get("/api/pages/:slug", (req, res) => {
-
-	res.sendFile(
-		path.join(
-			CONTENT_DIR,
-			"pages",
-			`${req.params.slug}.html`
-		)
-	);
-
-});
 app.get("/api/js/:name", (req, res) => {
 
     res.sendFile(
@@ -126,10 +99,8 @@ app.get("/api/health", (req, res) => {
 app.use("/api/public", publicRouter);
 app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/admin/pages", adminPagesRouter);
 app.use("/api/library", libraryRouter);
 app.use("/api/communication", communicationRouter);
-// app.use("/api/comm", communicationRouter);
 
 // --------------------------------------------------
 // Start Server

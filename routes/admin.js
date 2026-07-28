@@ -1,33 +1,66 @@
-// routes/admin.js
-
 import express from "express";
 import kernel from "../src/serverKernel/ServerKernel.js";
 import path from "path";
+
 const router = express.Router();
 
+const ADMIN_PAGES = path.resolve("admin-pages");
 
-router.get("/login", (req, res) => {
-
-	res.sendFile(
-		path.join(
-			process.cwd(),
-			"server-pages",
-			"login.html"
-		)
-	);
-
-});
+// --------------------------------------------------
+// Admin Pages
+// --------------------------------------------------
 
 router.get("/", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "index.html"));
+});
 
+router.get("/login", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "login.html"));
+});
+
+// --------------------------------------------------
+// Library Pages
+// --------------------------------------------------
+
+router.get("/library", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "library-index.html"));
+});
+
+router.get("/library/new", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "library-new.html"));
+});
+
+router.get("/library/edit", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "library-edit.html"));
+});
+
+// --------------------------------------------------
+// Course Pages
+// --------------------------------------------------
+
+router.get("/course", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "course-index.html"));
+});
+
+router.get("/course/new", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "course-new.html"));
+});
+
+router.get("/course/edit", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "course-edit.html"));
+});
+
+// --------------------------------------------------
+// Communication Pages
+// --------------------------------------------------
+
+router.get("/communication/unanswered", (req, res) => {
 	res.sendFile(
 		path.join(
-			process.cwd(),
-			"server-pages",
-			"index.html"
+			ADMIN_PAGES,
+			"communication-unanswered.html"
 		)
 	);
-
 });
 
 // --------------------------------------------------
@@ -48,7 +81,7 @@ router.post("/login", async (req, res) => {
 	catch (error) {
 
 		res.status(401).json({
-			error: error.message
+			error: "login_failed"
 		});
 
 	}
@@ -56,109 +89,72 @@ router.post("/login", async (req, res) => {
 });
 
 // --------------------------------------------------
-// GET /api/admin/library
-// --------------------------------------------------
-
-router.get("/library", async (req, res) => {
-
-	try {
-
-		const items = await kernel.library.list();
-
-		res.json(items);
-
-	}
-	catch (error) {
-
-		res.status(500).json({
-			error: error.message
-		});
-
-	}
-
-});
-
-// --------------------------------------------------
-// GET /api/admin/library/:slug
+// Library API
 // --------------------------------------------------
 
 router.get("/library/:slug", async (req, res) => {
 
 	try {
 
-		const item = await kernel.library.getBySlug(
-			req.params.slug
+		res.json(
+			await kernel.library.getBySlug(req.params.slug)
 		);
 
-		res.json(item);
-
 	}
-	catch (error) {
+	catch {
 
-		res.status(500).json({
-			error: error.message
+		res.status(404).json({
+			error: "library_not_found"
 		});
 
 	}
 
 });
-
-// --------------------------------------------------
-// POST /api/admin/library
-// --------------------------------------------------
 
 router.post("/library", async (req, res) => {
 
 	try {
-console.log(req.body);
-		const item = await kernel.library.createBySlug(
-			null,
-			req.body
+
+		res.status(201).json(
+			await kernel.library.createBySlug(
+				null,
+				req.body
+			)
 		);
 
-		res.status(201).json(item);
-
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "create_failed"
 		});
 
 	}
 
 });
-
-// --------------------------------------------------
-// PUT /api/admin/library/:slug
-// --------------------------------------------------
 
 router.put("/library/:slug", async (req, res) => {
 
 	try {
 
-		const item = await kernel.library.updateBySlug(
-			null,
-			req.params.slug,
-			req.body
+		res.json(
+			await kernel.library.updateBySlug(
+				null,
+				req.params.slug,
+				req.body
+			)
 		);
 
-		res.json(item);
-
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "update_failed"
 		});
 
 	}
 
 });
-
-// --------------------------------------------------
-// DELETE /api/admin/library/:slug
-// --------------------------------------------------
 
 router.delete("/library/:slug", async (req, res) => {
 
@@ -174,35 +170,10 @@ router.delete("/library/:slug", async (req, res) => {
 		});
 
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
-		});
-
-	}
-
-});
-
-//course 
-
-// --------------------------------------------------
-// GET /api/admin/course
-// --------------------------------------------------
-
-router.get("/course", async (req, res) => {
-
-	try {
-
-		const items = await kernel.course.list();
-
-		res.json(items);
-
-	}
-	catch (error) {
-
-		res.status(500).json({
-			error: error.message
+			error: "delete_failed"
 		});
 
 	}
@@ -210,81 +181,68 @@ router.get("/course", async (req, res) => {
 });
 
 // --------------------------------------------------
-// GET /api/admin/course/:slug
+// Course API
 // --------------------------------------------------
 
 router.get("/course/:slug", async (req, res) => {
 
 	try {
 
-		const item = await kernel.course.getBySlug(
-			req.params.slug
+		res.json(
+			await kernel.course.getBySlug(req.params.slug)
 		);
 
-		res.json(item);
-
 	}
-	catch (error) {
+	catch {
 
-		res.status(500).json({
-			error: error.message
+		res.status(404).json({
+			error: "course_not_found"
 		});
 
 	}
 
 });
-
-// --------------------------------------------------
-// POST /api/admin/course
-// --------------------------------------------------
 
 router.post("/course", async (req, res) => {
 
 	try {
 
-		const item = await kernel.course.createBySlug(
-			req.body
+		res.status(201).json(
+			await kernel.course.createBySlug(req.body)
 		);
 
-		res.status(201).json(item);
-
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "create_failed"
 		});
 
 	}
 
 });
-
-// --------------------------------------------------
-// PUT /api/admin/course/:slug
-// --------------------------------------------------
 
 router.put("/course/:slug", async (req, res) => {
 
 	try {
 
-		const item = await kernel.course.updateBySlug(
-			req.params.slug,
-			req.body
+		res.json(
+			await kernel.course.updateBySlug(
+				req.params.slug,
+				req.body
+			)
 		);
 
-		res.json(item);
-
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "update_failed"
 		});
 
 	}
 
 });
-
 
 router.delete("/course/:slug", async (req, res) => {
 
@@ -299,10 +257,10 @@ router.delete("/course/:slug", async (req, res) => {
 		});
 
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "delete_failed"
 		});
 
 	}
@@ -310,31 +268,27 @@ router.delete("/course/:slug", async (req, res) => {
 });
 
 // --------------------------------------------------
-// GET /api/admin/communication/unanswered
+// Communication API
 // --------------------------------------------------
 
-router.get("/communication/unanswered", async (req, res) => {
+router.get("/communication/unanswered/list", async (req, res) => {
 
 	try {
 
-		const items = await kernel.communication.listUnanswered();
-
-		res.json(items);
+		res.json(
+			await kernel.communication.listUnanswered()
+		);
 
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "server_error"
 		});
 
 	}
 
 });
-
-// --------------------------------------------------
-// POST /api/admin/communication/respond
-// --------------------------------------------------
 
 router.post("/communication/respond", async (req, res) => {
 
@@ -352,13 +306,14 @@ router.post("/communication/respond", async (req, res) => {
 		});
 
 	}
-	catch (error) {
+	catch {
 
 		res.status(500).json({
-			error: error.message
+			error: "update_failed"
 		});
 
 	}
 
 });
+
 export default router;
