@@ -10,11 +10,25 @@ const router = express.Router();
 // List all courses
 // --------------------------------------------------
 
+// --------------------------------------------------
+// GET /api/public/course
+// Query courses
+//
+// Examples:
+//   /course
+//   /course?access=OPEN
+//   /course?access=SUBSCRIPTION
+// --------------------------------------------------
+
 router.get("/course", async (req, res) => {
 
 	try {
 
-		const courses = await kernel.course.list();
+		const courses = await kernel.course.list({
+
+			access: req.query.access
+
+		});
 
 		res.json(courses);
 
@@ -28,7 +42,6 @@ router.get("/course", async (req, res) => {
 	}
 
 });
-
 // --------------------------------------------------
 // GET /api/public/course/:slug/list
 // List library items for a course
@@ -59,12 +72,26 @@ router.get("/course/:slug/list", async (req, res) => {
 // GET /api/public/library
 // List all library items (without body)
 // --------------------------------------------------
-
+// --------------------------------------------------
+// GET /api/public/library
+// Query library items
+//
+// Examples:
+//   /library
+//   /library?course=blog
+//   /library?course=pre-algebra
+// --------------------------------------------------
 router.get("/library", async (req, res) => {
 
 	try {
 
-		const items = await kernel.library.list();
+		const items = await kernel.library.list({
+
+			course: req.query.course,
+			access: req.query.access,
+			type: req.query.type
+
+		});
 
 		res.json(items);
 

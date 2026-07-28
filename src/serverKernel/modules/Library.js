@@ -12,9 +12,39 @@ export default class Library {
 	// Queries
 	// --------------------------------------------------
 
-async list() {
+async list(filters = {}) {
+
+	const where = {};
+
+	// Library filters
+	if (filters.type) {
+
+		where.type = filters.type;
+
+	}
+
+	// Course filters
+	if (filters.course || filters.access) {
+
+		where.course = {};
+
+		if (filters.course) {
+
+			where.course.slug = filters.course;
+
+		}
+
+		if (filters.access) {
+
+			where.course.access = filters.access;
+
+		}
+
+	}
 
 	const items = await this.kernel.db.library.findMany({
+
+		where,
 
 		include: {
 			course: true
@@ -32,8 +62,9 @@ async list() {
 		title: item.title,
 		type: item.type,
 		body: item.body,
-		thumbnail : item.thumbnail,
-		courseSlug: item.course.slug
+		thumbnail: item.thumbnail,
+		courseSlug: item.course.slug,
+		access: item.course.access
 
 	}));
 
@@ -54,7 +85,6 @@ async getById(id) {
 	});
 
 }
-
 async getBySlug(slug) {
 
 	const item = await this.kernel.db.library.findUnique({
@@ -82,14 +112,13 @@ async getBySlug(slug) {
 		title: item.title,
 		type: item.type,
 		body: item.body,
-		thumbnail:item.thumbnail,
-		courseSlug: item.course.slug
+		thumbnail: item.thumbnail,
+		courseSlug: item.course.slug,
+		access: item.course.access
 
 	};
 
 }
-
-
 
 
 	// --------------------------------------------------

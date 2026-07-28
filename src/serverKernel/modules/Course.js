@@ -12,15 +12,27 @@ export default class Course {
 	// Queries
 	// --------------------------------------------------
 
-	async list() {
+async list(filters = {}) {
 
-		return this.kernel.db.course.findMany({
-			orderBy: {
-				title: "asc"
-			}
-		});
+	const where = {};
+
+	if (filters.access) {
+
+		where.access = filters.access;
 
 	}
+
+	return this.kernel.db.course.findMany({
+
+		where,
+
+		orderBy: {
+			title: "asc"
+		}
+
+	});
+
+}
 
 	async getById(id) {
 

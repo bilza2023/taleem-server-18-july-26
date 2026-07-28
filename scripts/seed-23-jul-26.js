@@ -65,7 +65,7 @@ await prisma.library.create({
 		slug: "open-page",
 		title: "Open Page",
 		description: "Open page used for testing.",
-		type: ContentType.HTML,
+		type: ContentType.ARTICLE,
 		thumbnail: "box.webp",
 		body: "<h1>Open Page</h1>",
 		courseId: openCourse.id
@@ -77,7 +77,7 @@ await prisma.library.create({
 		slug: "members-page",
 		title: "Members Page",
 		description: "Members page used for testing.",
-		type: ContentType.HTML,
+		type: ContentType.ARTICLE,
 		thumbnail: "box.webp",
 		body: "<h1>Members Page</h1>",
 		courseId: membersCourse.id
@@ -89,7 +89,7 @@ await prisma.library.create({
 		slug: "subscription-page",
 		title: "Subscription Page",
 		description: "Subscription page used for testing.",
-		type: ContentType.HTML,
+		type: ContentType.ARTICLE,
 		thumbnail: "box.webp",
 		body: "<h1>Subscription Page</h1>",
 		courseId: subscriptionCourse.id
