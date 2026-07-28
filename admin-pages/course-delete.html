@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
+
+	<title>Delete Course</title>
+
+	<style>
+
+		:root {
+			color-scheme: dark;
+		}
+
+		body {
+			font-family: system-ui, sans-serif;
+			max-width: 700px;
+			margin: 40px auto;
+			padding: 24px;
+			background: #181818;
+			color: #eee;
+		}
+
+		h1 {
+			margin-top: 0;
+		}
+
+		.card {
+			padding: 20px;
+			border: 1px solid #444;
+			background: #202020;
+			border-radius: 6px;
+		}
+
+		.buttons {
+			margin-top: 24px;
+			display: flex;
+			gap: 12px;
+		}
+
+		button,
+		a {
+			padding: 10px 18px;
+			border: none;
+			border-radius: 4px;
+			font-size: 15px;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.delete {
+			background: #c0392b;
+			color: white;
+		}
+
+		.delete:hover {
+			background: #d94a3a;
+		}
+
+		.cancel {
+			background: #444;
+			color: white;
+		}
+
+		.cancel:hover {
+			background: #555;
+		}
+
+		#status {
+			margin-top: 20px;
+			font-weight: bold;
+			color: #ff8080;
+		}
+
+	</style>
+
+</head>
+
+<body>
+
+	<h1>Delete Course</h1>
+
+	<div class="card">
+
+		<p>Are you sure you want to permanently delete:</p>
+
+		<h2 id="slug"></h2>
+
+		<p>
+			This action cannot be undone.
+		</p>
+
+		<div class="buttons">
+
+			<button
+				class="delete"
+				onclick="deleteCourse()"
+			>
+				Delete
+			</button>
+
+			<a
+				class="cancel"
+				href="/api/admin/course"
+			>
+				Cancel
+			</a>
+
+		</div>
+
+		<div id="status"></div>
+
+	</div>
+
+	<script>
+
+		const token = localStorage.getItem("taleem-token");
+
+		const params = new URLSearchParams(location.search);
+
+		const slug = params.get("slug");
+
+		document.getElementById("slug").textContent = slug;
+
+		async function deleteCourse() {
+
+			const status = document.getElementById("status");
+
+			status.textContent = "";
+
+			try {
+
+				const response = await fetch(
+
+					`/api/admin/course/${encodeURIComponent(slug)}`,
+
+					{
+						method: "DELETE",
+
+						headers: {
+							Authorization: `Bearer ${token}`
+						}
+					}
+
+				);
+
+				const result = await response.json();
+
+				if (!response.ok) {
+
+					status.textContent =
+						result.error || "Delete failed.";
+
+					return;
+
+				}
+
+				location.href = "/api/admin/course";
+
+			}
+			catch (err) {
+
+				status.textContent = err.message;
+
+			}
+
+		}
+
+	</script>
+
+</body>
+
+</html>

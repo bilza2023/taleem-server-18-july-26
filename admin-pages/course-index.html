@@ -144,7 +144,7 @@
 			try {
 
 				const response = await fetch(
-					"/api/admin/course",
+					"/api/public/course",
 					{
 						headers: {
 							Authorization: `Bearer ${token}`
@@ -173,8 +173,13 @@
 						<td>${course.access}</td>
 						<td>${course.price ?? ""}</td>
 						<td>
-							<a href="/api/admin/pages/course/edit?slug=${encodeURIComponent(course.slug)}">
+							<a href="/api/admin/course/edit?slug=${encodeURIComponent(course.slug)}">
 								Edit
+							</a>
+						</td>
+						<td>
+							<a href="/api/admin/course/delete?slug=${encodeURIComponent(course.slug)}">
+								Delete
 							</a>
 						</td>
 					`;

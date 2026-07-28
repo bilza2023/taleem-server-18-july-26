@@ -22,9 +22,6 @@ router.get("/login", (req, res) => {
 // Library Pages
 // --------------------------------------------------
 
-router.get("/library", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "library-index.html"));
-});
 
 router.get("/library/new", (req, res) => {
 	res.sendFile(path.join(ADMIN_PAGES, "library-new.html"));
@@ -33,6 +30,40 @@ router.get("/library/new", (req, res) => {
 router.get("/library/edit", (req, res) => {
 	res.sendFile(path.join(ADMIN_PAGES, "library-edit.html"));
 });
+router.get("/library/delete", (req, res) => {
+
+	res.sendFile(
+		path.join(
+			ADMIN_PAGES,
+			"library-delete.html"
+		)
+	);
+
+});
+
+router.get("/library", (req, res) => {
+	res.sendFile(path.join(ADMIN_PAGES, "library-index.html"));
+});
+
+router.get("/library/:slug", async (req, res) => {
+
+	try {
+
+		res.json(
+			await kernel.library.getBySlug(req.params.slug)
+		);
+
+	}
+	catch {
+
+		res.status(404).json({
+			error: "library_not_found"
+		});
+
+	}
+
+});
+
 
 // --------------------------------------------------
 // Course Pages
@@ -92,24 +123,6 @@ router.post("/login", async (req, res) => {
 // Library API
 // --------------------------------------------------
 
-router.get("/library/:slug", async (req, res) => {
-
-	try {
-
-		res.json(
-			await kernel.library.getBySlug(req.params.slug)
-		);
-
-	}
-	catch {
-
-		res.status(404).json({
-			error: "library_not_found"
-		});
-
-	}
-
-});
 
 router.post("/library", async (req, res) => {
 
@@ -177,6 +190,18 @@ router.delete("/library/:slug", async (req, res) => {
 		});
 
 	}
+
+});
+
+
+router.get("/course/delete", (req, res) => {
+
+	res.sendFile(
+		path.join(
+			ADMIN_PAGES,
+			"course-delete.html"
+		)
+	);
 
 });
 
@@ -257,15 +282,25 @@ router.delete("/course/:slug", async (req, res) => {
 		});
 
 	}
-	catch {
+	// catch {
 
-		res.status(500).json({
-			error: "delete_failed"
-		});
+	// 	res.status(500).json({
+	// 		error: "delete_failed"
+	// 	});
 
-	}
+	// }
+	catch (error) {
+
+	console.error(error);
+
+	res.status(500).json({
+		error: error.message
+	});
+
+}
 
 });
+
 
 // --------------------------------------------------
 // Communication API
@@ -315,5 +350,8 @@ router.post("/communication/respond", async (req, res) => {
 	}
 
 });
+
+
+
 
 export default router;
