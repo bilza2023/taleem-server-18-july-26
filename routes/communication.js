@@ -8,19 +8,29 @@ const router = express.Router();
 // --------------------------------------------------
 // POST /api/communication
 // --------------------------------------------------
+// --------------------------------------------------
+// POST /api/communication
+// --------------------------------------------------
 
 router.post("/", async (req, res) => {
 
 	try {
 
-		const item = await kernel.communication.create(req.body);
+		const token = req.headers.authorization?.replace("Bearer ", "");
+
+		const user = await kernel.auth.authenticate(token);
+		// console.log("req.body" , req.body);
+		const item = await kernel.communication.create(
+			user,
+			req.body
+		);
 
 		res.status(201).json(item);
 
 	}
 	catch (error) {
 
-		res.status(500).json({
+		res.status(401).json({
 			error: error.message
 		});
 

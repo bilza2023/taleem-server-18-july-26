@@ -103,6 +103,12 @@
 		<label>Title</label>
 		<input id="title" required />
 
+		<label>Thumbnail</label>
+		<input
+			id="thumbnail"
+			placeholder="/content/images/example.webp"
+		/>
+
 		<label>Type</label>
 
 		<select id="type">
@@ -112,11 +118,12 @@
 			<option value="JSON">JSON</option>
 		</select>
 
-		<label>Course Slug</label>
-		<input
+		<label>Course</label>
+
+		<select
 			id="courseSlug"
-			placeholder="course-public"
-		/>
+			required
+		></select>
 
 		<label>Body</label>
 		<textarea id="body"></textarea>
@@ -140,7 +147,9 @@
 
 	<p id="status"></p>
 
-	<script>
+	<script type="module">
+
+		import loadCourses from "/api/js/loadCourses";
 
 		const token = localStorage.getItem("taleem-token");
 
@@ -173,10 +182,15 @@
 
 				}
 
+				await loadCourses(
+					"courseSlug",
+					item.courseSlug
+				);
+
 				document.getElementById("slug").value = item.slug;
 				document.getElementById("title").value = item.title;
+				document.getElementById("thumbnail").value = item.thumbnail || "";
 				document.getElementById("type").value = item.type;
-				document.getElementById("courseSlug").value = item.courseSlug || "";
 				document.getElementById("body").value = item.body || "";
 
 			}
@@ -212,9 +226,11 @@
 
 								title: document.getElementById("title").value.trim(),
 
+								thumbnail: document.getElementById("thumbnail").value.trim(),
+
 								type: document.getElementById("type").value,
 
-								courseSlug: document.getElementById("courseSlug").value.trim(),
+								courseSlug: document.getElementById("courseSlug").value,
 
 								body: document.getElementById("body").value
 

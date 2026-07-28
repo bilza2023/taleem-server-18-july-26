@@ -8,6 +8,7 @@ import adminRouter from "./routes/admin.js";
 import adminPagesRouter from "./routes/admin-pages.js";
 import publicRouter from "./routes/public.js";
 import libraryRouter from "./routes/library.js";
+import communicationRouter from "./routes/communication.js";
 
 dotenv.config();
 
@@ -84,6 +85,17 @@ app.get("/api/page/:slug", (req, res) => {
 	);
 
 });
+app.get("/api/js/:name", (req, res) => {
+
+    res.sendFile(
+        path.join(
+            CONTENT_DIR,
+            "js",
+            `${req.params.name}.js`
+        )
+    );
+
+});
 
 
 // --------------------------------------------------
@@ -118,6 +130,8 @@ app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/pages", adminPagesRouter);
 app.use("/api/library", libraryRouter);
+app.use("/api/communication", communicationRouter);
+// app.use("/api/comm", communicationRouter);
 
 // --------------------------------------------------
 // Start Server

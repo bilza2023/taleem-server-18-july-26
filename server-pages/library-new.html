@@ -109,6 +109,12 @@
 			required
 		/>
 
+		<label>Thumbnail</label>
+		<input
+			id="thumbnail"
+			placeholder="/content/images/example.webp"
+		/>
+
 		<label>Type</label>
 
 		<select id="type">
@@ -120,12 +126,12 @@
 
 		</select>
 
-		<label>Course Slug</label>
-		<input
+		<label>Course</label>
+
+		<select
 			id="courseSlug"
 			required
-			placeholder="course-public"
-		/>
+		></select>
 
 		<label>Body</label>
 		<textarea id="body"></textarea>
@@ -149,11 +155,15 @@
 
 	<p id="status"></p>
 
-	<script>
+	<script type="module">
+
+		import loadCourses from "/api/js/loadCourses";
 
 		const token = localStorage.getItem("taleem-token");
 
 		const status = document.getElementById("status");
+
+		await loadCourses("courseSlug");
 
 		document.getElementById("form")
 			.addEventListener("submit", async (event) => {
@@ -178,9 +188,11 @@
 
 								title: document.getElementById("title").value.trim(),
 
+								thumbnail: document.getElementById("thumbnail").value.trim(),
+
 								type: document.getElementById("type").value,
 
-								courseSlug: document.getElementById("courseSlug").value.trim(),
+								courseSlug: document.getElementById("courseSlug").value,
 
 								body: document.getElementById("body").value
 

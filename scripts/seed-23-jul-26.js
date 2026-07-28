@@ -73,7 +73,6 @@ async function main() {
 			type: ContentType.HTML,
 			thumbnail : "box.webp",
 			body: "<h1>Public Page</h1>",
-			thumbnail: null,
 			courseId: publicCourse.id
 		}
 	});
@@ -86,7 +85,6 @@ async function main() {
 			type: ContentType.HTML,
 			thumbnail : "box.webp",
 			body: "<h1>Members Page</h1>",
-			thumbnail: null,
 			courseId: membersCourse.id
 		}
 	});

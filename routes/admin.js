@@ -85,7 +85,7 @@ router.get("/library/:slug", async (req, res) => {
 router.post("/library", async (req, res) => {
 
 	try {
-
+console.log(req.body);
 		const item = await kernel.library.createBySlug(
 			null,
 			req.body

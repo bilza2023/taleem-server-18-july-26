@@ -48,15 +48,27 @@ export default class Communication {
 
 	}
 
-	async create(data) {
+async create(user, data) {
 
-		return this.kernel.db.communication.create({
+	return this.kernel.db.communication.create({
 
-			data
+		data: {
 
-		});
+			userId: user.id,
 
-	}
+			referenceId: data.referenceId,
+
+			type: data.type,
+
+			message: data.message,
+
+			meta: data.meta
+
+		}
+
+	});
+
+}
 
 	async update(id, data) {
 

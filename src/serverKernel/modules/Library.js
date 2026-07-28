@@ -82,6 +82,7 @@ async getBySlug(slug) {
 		title: item.title,
 		type: item.type,
 		body: item.body,
+		thumbnail:item.thumbnail,
 		courseSlug: item.course.slug
 
 	};
@@ -97,7 +98,7 @@ async getBySlug(slug) {
 
 	async create(admin, data) {
 
-		// TODO: authorize admin for "library"
+// console.log("data" , data);
 
 		return this.kernel.db.library.create({
 			data
@@ -130,27 +131,28 @@ async getBySlug(slug) {
 	// Public CRUD (Slug Based)
 	// --------------------------------------------------
 
-	async createBySlug(admin, data) {
+async createBySlug(admin, data) {
 
-		// TODO: authorize admin for "library"
+	// TODO: authorize admin for "library"
 
-		const course = await this.kernel.course.getBySlug(data.courseSlug);
+	const course = await this.kernel.course.getBySlug(data.courseSlug);
 
-		if (!course) {
-			throw new Error(`Course "${data.courseSlug}" not found.`);
-		}
-
-		return this.create(admin, {
-			slug: data.slug,
-			title: data.title,
-			type: data.type,
-			body: data.body,
-			courseId: course.id
-		});
-
+	if (!course) {
+		throw new Error(`Course "${data.courseSlug}" not found.`);
 	}
 
-	async updateBySlug(admin, slug, data) {
+	return this.create(admin, {
+		slug: data.slug,
+		title: data.title,
+		thumbnail: data.thumbnail,
+		type: data.type,
+		body: data.body,
+		courseId: course.id
+	});
+
+}
+
+async updateBySlug(admin, slug, data) {
 
 		// TODO: authorize admin for "library"
 
@@ -171,6 +173,7 @@ async getBySlug(slug) {
 			title: data.title,
 			type: data.type,
 			body: data.body,
+			thumbnail: data.thumbnail,
 			courseId: course.id
 		});
 
