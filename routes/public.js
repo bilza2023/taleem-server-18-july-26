@@ -67,11 +67,6 @@ router.get("/course/:slug/list", async (req, res) => {
 	}
 
 });
-
-// --------------------------------------------------
-// GET /api/public/library
-// List all library items (without body)
-// --------------------------------------------------
 // --------------------------------------------------
 // GET /api/public/library
 // Query library items
@@ -80,6 +75,7 @@ router.get("/course/:slug/list", async (req, res) => {
 //   /library
 //   /library?course=blog
 //   /library?course=pre-algebra
+//   /library?sort=sortOrder
 // --------------------------------------------------
 router.get("/library", async (req, res) => {
 
@@ -89,7 +85,8 @@ router.get("/library", async (req, res) => {
 
 			course: req.query.course,
 			access: req.query.access,
-			type: req.query.type
+			type: req.query.type,
+			sort: req.query.sort
 
 		});
 

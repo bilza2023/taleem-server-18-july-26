@@ -237,13 +237,25 @@ router.post("/course", async (req, res) => {
 		);
 
 	}
-	catch {
+	// catch {
 
-		res.status(500).json({
-			error: "create_failed"
-		});
+	// 	res.status(500).json({
+	// 		error: "create_failed"
+	// 	});
 
-	}
+	// }
+	catch (error) {
+
+	console.error(error);
+
+	res.status(500).json({
+		name: error.name,
+		code: error.code,
+		message: error.message,
+		meta: error.meta
+	});
+
+}
 
 });
 

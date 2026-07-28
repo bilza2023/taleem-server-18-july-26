@@ -42,6 +42,18 @@ async list(filters = {}) {
 
 	}
 
+	let orderBy = {
+		createdAt: "desc"
+	};
+
+	if (filters.sort === "sortOrder") {
+
+		orderBy = {
+			sortOrder: "asc"
+		};
+
+	}
+
 	const items = await this.kernel.db.library.findMany({
 
 		where,
@@ -50,9 +62,7 @@ async list(filters = {}) {
 			course: true
 		},
 
-		orderBy: {
-			createdAt: "desc"
-		}
+		orderBy
 
 	});
 
@@ -69,7 +79,6 @@ async list(filters = {}) {
 	}));
 
 }
-
 async getById(id) {
 
 	return this.kernel.db.library.findUnique({

@@ -58,7 +58,7 @@ model Course {
   description String?
   thumbnail   String?
 
-  access CourseAccess @default(OPEN)
+  access  CourseAccess @default(OPEN)
 
   price Int @default(0)
 
@@ -83,7 +83,7 @@ model Library {
   body String?
 
   courseId Int
-sortOrder Int @default(0)
+  sortOrder Int @default(0)
   allowCommunication Boolean @default(true)
   status      LibraryStatus  @default(DRAFT)
 

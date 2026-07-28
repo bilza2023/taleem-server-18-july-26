@@ -26,7 +26,7 @@ const openCourse = await prisma.course.create({
 		slug: "course-open",
 		title: "Open Course",
 		description: "Open course used for platform testing.",
-		thumbnail: null,
+		thumbnail: "class8.png",
 		access: "OPEN",
 		price: 0
 	}
@@ -37,7 +37,7 @@ const membersCourse = await prisma.course.create({
 		slug: "course-members",
 		title: "Members Course",
 		description: "Members course used for platform testing.",
-		thumbnail: null,
+			thumbnail: "class.webp",
 		access: "MEMBERS",
 		price: 0
 	}
@@ -48,7 +48,7 @@ const subscriptionCourse = await prisma.course.create({
 		slug: "course-subscription",
 		title: "Subscription Course",
 		description: "Subscription course used for platform testing.",
-		thumbnail: null,
+		thumbnail: "atom.png",
 		access: "SUBSCRIPTION",
 		price: 100
 	}
@@ -68,6 +68,20 @@ await prisma.library.create({
 		type: ContentType.ARTICLE,
 		thumbnail: "box.webp",
 		body: "<h1>Open Page</h1>",
+		sortOrder:2,
+		courseId: openCourse.id
+	}
+});
+
+await prisma.library.create({
+	data: {
+		slug: "open-page2",
+		title: "Open Page # 2",
+		description: "Open page used for testing sort .",
+		type: ContentType.ARTICLE,
+		thumbnail: "atom.png",
+		body: "<h1>Open Page 2</h1>",
+		sortOrder:2,
 		courseId: openCourse.id
 	}
 });
@@ -80,6 +94,20 @@ await prisma.library.create({
 		type: ContentType.ARTICLE,
 		thumbnail: "box.webp",
 		body: "<h1>Members Page</h1>",
+		sortOrder:1,
+		courseId: membersCourse.id
+	}
+});
+
+await prisma.library.create({
+	data: {
+		slug: "members-page2",
+		title: "Members Page # 2",
+		description: "Members page used for testing sort.",
+		type: ContentType.ARTICLE,
+		thumbnail: "atom.png",
+		sortOrder:2,
+		body: "<h1>Members Page 2</h1>",
 		courseId: membersCourse.id
 	}
 });
