@@ -15,33 +15,87 @@ async function main() {
 	await prisma.admin.deleteMany();
 
 
-	// --------------------------------------------------
-	// Courses
-	// --------------------------------------------------
+// --------------------------------------------------
+// Courses
+// --------------------------------------------------
 
-	console.log("📚 Creating courses...");
+console.log("📚 Creating courses...");
 
-	const publicCourse = await prisma.course.create({
-		data: {
-			slug: "course-public",
-			title: "Public Course",
-			description: "Public course used for platform testing.",
-			thumbnail: null,
-			access: "PUBLIC",
-			price: 0
-		}
-	});
+const openCourse = await prisma.course.create({
+	data: {
+		slug: "course-open",
+		title: "Open Course",
+		description: "Open course used for platform testing.",
+		thumbnail: null,
+		access: "OPEN",
+		price: 0
+	}
+});
 
-	const membersCourse = await prisma.course.create({
-		data: {
-			slug: "course-members",
-			title: "Members Course",
-			description: "Members course used for platform testing.",
-			thumbnail: null,
-			access: "MEMBERS",
-			price: 0
-		}
-	});
+const membersCourse = await prisma.course.create({
+	data: {
+		slug: "course-members",
+		title: "Members Course",
+		description: "Members course used for platform testing.",
+		thumbnail: null,
+		access: "MEMBERS",
+		price: 0
+	}
+});
+
+const subscriptionCourse = await prisma.course.create({
+	data: {
+		slug: "course-subscription",
+		title: "Subscription Course",
+		description: "Subscription course used for platform testing.",
+		thumbnail: null,
+		access: "SUBSCRIPTION",
+		price: 100
+	}
+});
+
+// --------------------------------------------------
+// Library
+// --------------------------------------------------
+
+console.log("📄 Creating library items...");
+
+await prisma.library.create({
+	data: {
+		slug: "open-page",
+		title: "Open Page",
+		description: "Open page used for testing.",
+		type: ContentType.HTML,
+		thumbnail: "box.webp",
+		body: "<h1>Open Page</h1>",
+		courseId: openCourse.id
+	}
+});
+
+await prisma.library.create({
+	data: {
+		slug: "members-page",
+		title: "Members Page",
+		description: "Members page used for testing.",
+		type: ContentType.HTML,
+		thumbnail: "box.webp",
+		body: "<h1>Members Page</h1>",
+		courseId: membersCourse.id
+	}
+});
+
+await prisma.library.create({
+	data: {
+		slug: "subscription-page",
+		title: "Subscription Page",
+		description: "Subscription page used for testing.",
+		type: ContentType.HTML,
+		thumbnail: "box.webp",
+		body: "<h1>Subscription Page</h1>",
+		courseId: subscriptionCourse.id
+	}
+});
+
 
 	// --------------------------------------------------
 	// User
@@ -60,49 +114,23 @@ async function main() {
 	});
 
 	// --------------------------------------------------
-	// Library
-	// --------------------------------------------------
-
-	console.log("📄 Creating library items...");
-
-	await prisma.library.create({
-		data: {
-			slug: "public-page",
-			title: "Public Page",
-			description: "Public page used for testing.",
-			type: ContentType.HTML,
-			thumbnail : "box.webp",
-			body: "<h1>Public Page</h1>",
-			courseId: publicCourse.id
-		}
-	});
-
-	await prisma.library.create({
-		data: {
-			slug: "members-page",
-			title: "Members Page",
-			description: "Members page used for testing.",
-			type: ContentType.HTML,
-			thumbnail : "box.webp",
-			body: "<h1>Members Page</h1>",
-			courseId: membersCourse.id
-		}
-	});
-
-	// --------------------------------------------------
 	// Subscription
 	// --------------------------------------------------
 
 	console.log("🎓 Creating subscription...");
+const startsAt = new Date();
 
-	await prisma.subscription.create({
-		data: {
-			userId: user.id,
-			courseId: membersCourse.id,
-			startsAt: new Date(),
-			endsAt: null
-		}
-	});
+const endsAt = new Date();
+endsAt.setFullYear(endsAt.getFullYear() + 1);
+
+await prisma.subscription.create({
+    data: {
+        userId: user.id,
+        courseId: subscriptionCourse.id,
+        startsAt,
+        endsAt
+    }
+});
 
 	// --------------------------------------------------
 	// Communication

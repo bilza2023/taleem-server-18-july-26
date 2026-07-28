@@ -6,6 +6,9 @@ import kernel from "../src/serverKernel/ServerKernel.js";
 const router = express.Router();
 
 // --------------------------------------------------
+// GET /api/library/:slug ==> The main library content route
+// --------------------------------------------------
+// --------------------------------------------------
 // GET /api/library/:slug
 // --------------------------------------------------
 
@@ -13,26 +16,65 @@ router.get("/:slug", async (req, res) => {
 
 	try {
 
-		const token = req.headers.authorization?.replace("Bearer ", "");
+		const slug = req.params.slug;
+		const access = await kernel.library.getAccessByLibrarySlug(slug);
 
-		const user = await kernel.auth.authenticate(token);
+		if (access !== "OPEN") {
 
-		const item = await kernel.library.getBySlug(
-			req.params.slug,
-			user
-		);
+			const token = req.headers.authorization?.replace("Bearer ", "");
+			const user = await kernel.auth.authenticate(token);
 
-		res.json(item);
+			if (access === "SUBSCRIPTION") {
+
+				const courseId = await kernel.library.getCourseIdByLibrarySlug(slug);
+
+				await kernel.subscription.authorize(user.id, courseId);
+
+			}
+
+		}
+
+		res.json(await kernel.library.getBySlug(slug));
 
 	}
 	catch (error) {
 
-		res.status(401).json({
-			error: error.message
+		console.error(error);
+
+		const message = error.message.toLowerCase();
+
+		if (message.includes("authenticate") || message.includes("token")) {
+
+			return res.status(401).json({
+				error: "login_required"
+			});
+
+		}
+
+		if (message.includes("subscription")) {
+
+			return res.status(403).json({
+				error: "subscription_required"
+			});
+
+		}
+
+		if (message.includes("library") && message.includes("not found")) {
+
+			return res.status(404).json({
+				error: "library_not_found"
+			});
+
+		}
+
+		return res.status(500).json({
+			error: "server_error"
 		});
 
 	}
 
 });
+
+
 
 export default router;

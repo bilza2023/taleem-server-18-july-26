@@ -100,4 +100,34 @@ export default class Subscription {
 
 	}
 
+	async authorize(userId, courseId) {
+
+	const now = new Date();
+
+	const subscription = await this.kernel.db.subscription.findFirst({
+
+		where: {
+			userId,
+			courseId,
+			startsAt: {
+				lte: now
+			},
+			endsAt: {
+				gte: now
+			}
+		}
+
+	});
+
+	if (!subscription) {
+
+		throw new Error(
+			`User "${userId}" does not have an active subscription for course "${courseId}".`
+		);
+
+	}
+
+	return subscription;
+
+}
 }

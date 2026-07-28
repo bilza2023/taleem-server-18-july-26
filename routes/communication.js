@@ -71,7 +71,7 @@ router.get("/library/:slug", async (req, res) => {
 // GET /api/communication/my
 // --------------------------------------------------
 
-router.get("/my", async (req, res) => {
+router.get("/me", async (req, res) => {
 
 	try {
 

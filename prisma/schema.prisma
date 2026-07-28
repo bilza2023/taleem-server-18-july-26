@@ -18,6 +18,11 @@ enum ContentType {
   TEXT
   MARKDOWN
 }
+enum CourseAccess {
+  OPEN
+  MEMBERS
+  SUBSCRIPTION
+}
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -54,7 +59,7 @@ model Course {
   description String?
   thumbnail   String?
 
-  access String @default("PUBLIC") // PUBLIC | MEMBERS | SUBSCRIPTION
+access CourseAccess @default(OPEN)
 
   price Int @default(0)
 

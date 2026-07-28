@@ -23,7 +23,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CONTENT_DIR = path.join(__dirname, "content");
-const UTILITIES_DIR = path.join(__dirname, "utilities");
 const SERVER_PAGES_DIR = path.join(__dirname, "server-pages");
 
 // --------------------------------------------------
@@ -41,22 +40,21 @@ app.set("views", path.join(__dirname, "views"));
 // --------------------------------------------------
 
 app.use("/api/content", express.static(CONTENT_DIR));
-app.use("/api/utilities", express.static(UTILITIES_DIR));
 
 // --------------------------------------------------
 // Server Pages
 // --------------------------------------------------
 
-app.get("/api/forms/login", (req, res) => {
-	res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
-});
-app.get("/api/forms/admin-login", (req, res) => {
-	res.sendFile(path.join(SERVER_PAGES_DIR, "admin-login.html"));
-});
+// app.get("/api/forms/login", (req, res) => {
+// 	res.sendFile(path.join(SERVER_PAGES_DIR, "login.html"));
+// });
+// app.get("/api/forms/admin-login", (req, res) => {
+// 	res.sendFile(path.join(SERVER_PAGES_DIR, "admin-login.html"));
+// });
 
-app.get("/api/forms/register", (req, res) => {
-	res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
-});
+// app.get("/api/forms/register", (req, res) => {
+// 	res.sendFile(path.join(SERVER_PAGES_DIR, "register.html"));
+// });
 
 // --------------------------------------------------
 // Public Content
@@ -74,7 +72,7 @@ app.get("/api/data/:name", (req, res) => {
 
 });
 
-app.get("/api/page/:slug", (req, res) => {
+app.get("/api/pages/:slug", (req, res) => {
 
 	res.sendFile(
 		path.join(
@@ -141,6 +139,5 @@ app.listen(PORT, "127.0.0.1", () => {
 
 	console.log(`🚀 Taleem API running on http://127.0.0.1:${PORT}`);
 	console.log(`📁 Content:   ${CONTENT_DIR}`);
-	console.log(`🛠️  Utilities: ${UTILITIES_DIR}`);
 
 });

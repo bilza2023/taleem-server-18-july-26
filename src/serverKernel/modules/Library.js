@@ -223,5 +223,55 @@ async updateBySlug(admin, slug, data) {
 }));
 
 }
+// --------------------------------------------------
+// Get parent course id from a library slug
+// --------------------------------------------------
 
+async getCourseIdByLibrarySlug(slug) {
+
+	const item = await this.kernel.db.library.findUnique({
+
+		where: {
+			slug
+		},
+
+		select: {
+			courseId: true
+		}
+
+	});
+
+	if (!item) {
+
+		throw new Error(`Library "${slug}" not found.`);
+
+	}
+
+	return item.courseId;
+
+}
+// we use this to lookup a course access when loading library item 
+async getAccessByLibrarySlug(slug) {
+
+	const item = await this.kernel.db.library.findUnique({
+
+		where: {
+			slug
+		},
+
+		include: {
+			course: true
+		}
+
+	});
+
+	if (!item) {
+
+		throw new Error(`Library "${slug}" not found.`);
+
+	}
+
+	return item.course.access;
+
+}
 }
