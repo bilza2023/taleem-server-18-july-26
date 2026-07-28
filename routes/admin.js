@@ -2,8 +2,33 @@
 
 import express from "express";
 import kernel from "../src/serverKernel/ServerKernel.js";
-
+import path from "path";
 const router = express.Router();
+
+
+router.get("/login", (req, res) => {
+
+	res.sendFile(
+		path.join(
+			process.cwd(),
+			"server-pages",
+			"login.html"
+		)
+	);
+
+});
+
+router.get("/", (req, res) => {
+
+	res.sendFile(
+		path.join(
+			process.cwd(),
+			"server-pages",
+			"index.html"
+		)
+	);
+
+});
 
 // --------------------------------------------------
 // POST /api/admin/login
