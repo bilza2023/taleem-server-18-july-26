@@ -10,6 +10,7 @@ async function main() {
 	await prisma.communication.deleteMany();
 	await prisma.subscription.deleteMany();
 	await prisma.library.deleteMany();
+	await prisma.adminCoursePolicy.deleteMany();
 	await prisma.user.deleteMany();
 	await prisma.course.deleteMany();
 	await prisma.admin.deleteMany();
@@ -202,41 +203,62 @@ await prisma.subscription.create({
 		}
 	});
 
-	// --------------------------------------------------
-// Resource Admins
 // --------------------------------------------------
-await prisma.admin.createMany({
+// Admins
+// --------------------------------------------------
+
+console.log("👨‍🏫 Creating admins...");
+
+const openAdmin = await prisma.admin.create({
+	data: {
+		email: "open@taleem.help",
+		password
+	}
+});
+
+const membersAdmin = await prisma.admin.create({
+	data: {
+		email: "members@taleem.help",
+		password
+	}
+});
+
+const subscriptionAdmin = await prisma.admin.create({
+	data: {
+		email: "subscription@taleem.help",
+		password
+	}
+});
+
+// --------------------------------------------------
+// Admin Course Policies
+// --------------------------------------------------
+
+await prisma.adminCoursePolicy.createMany({
 	data: [
 		{
-			email: "library@taleem.help",
-			password,
-			name: "Library Admin",
-			resource: "library"
+			adminId: openAdmin.id,
+			courseId: openCourse.id,
+			library: true,
+			communication: true,
+			subscription: false
 		},
 		{
-			email: "course@taleem.help",
-			password,
-			name: "Course Admin",
-			resource: "course"
+			adminId: membersAdmin.id,
+			courseId: membersCourse.id,
+			library: true,
+			communication: true,
+			subscription: false
 		},
 		{
-			email: "subscription@taleem.help",
-			password,
-			name: "Subscription Admin",
-			resource: "subscription"
-		},
-		{
-			email: "communication@taleem.help",
-			password,
-			name: "Communication Admin",
-			resource: "communication"
+			adminId: subscriptionAdmin.id,
+			courseId: subscriptionCourse.id,
+			library: true,
+			communication: true,
+			subscription: true
 		}
 	]
 });
-	// --------------------------------------------------
-	// Summary
-	// --------------------------------------------------
-
 	console.log("");
 
 }

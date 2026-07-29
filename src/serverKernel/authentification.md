@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Authentication is one of the most error-prone parts of any server. During the development of Taleem Server, a large percentage of bugs were caused by authentication logic being mixed with HTTP routing.
+A large percentage of bugs were caused by authentication logic being mixed with HTTP routing.
 
 The purpose of this design is to completely isolate authentication inside the **Server Kernel** so that the HTTP layer becomes simple and predictable.
 

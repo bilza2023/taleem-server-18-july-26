@@ -315,4 +315,33 @@ async getAccessByLibrarySlug(slug) {
 	return item.course.access;
 
 }
+async slugToId(slug) {
+
+	const library = await this.kernel.db.library.findUnique({
+		where: { slug },
+		select: { id: true }
+	});
+
+	if (!library) {
+		throw new Error(`Library "${slug}" not found.`);
+	}
+
+	return library.id;
+
+}
+
+async idToSlug(id) {
+
+	const library = await this.kernel.db.library.findUnique({
+		where: { id },
+		select: { slug: true }
+	});
+
+	if (!library) {
+		throw new Error(`Library "${id}" not found.`);
+	}
+
+	return library.slug;
+
+}
 }

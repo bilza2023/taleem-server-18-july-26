@@ -35,20 +35,49 @@ model User {
   subscriptions  Subscription[]
   communications Communication[]
 }
+
+// model Admin {
+//   id        Int      @id @default(autoincrement())
+
+//   email     String   @unique
+//   password  String
+
+//   name      String?
+
+//   resource  String
+
+//   isActive  Boolean  @default(true)
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
 model Admin {
-  id        Int      @id @default(autoincrement())
-
-  email     String   @unique
+  id        Int @id @default(autoincrement())
+  email     String @unique
   password  String
-
-  name      String?
-
-  resource  String
 
   isActive  Boolean  @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  policies  AdminCoursePolicy[]
+}
+
+model AdminCoursePolicy {
+   id             Int @id @default(autoincrement())
+
+  adminId        Int
+  courseId       Int
+
+  library        Boolean @default(false)
+  communication  Boolean @default(false)
+  subscription   Boolean @default(false)
+
+  admin          Admin  @relation(fields: [adminId], references: [id])
+  course         Course @relation(fields: [courseId], references: [id])
+
+  @@unique([adminId, courseId])
 }
 model Course {
  
@@ -64,6 +93,7 @@ model Course {
 
   library       Library[]
   subscriptions Subscription[]
+  adminPolicies AdminCoursePolicy[]
 }
 
 model Library {
