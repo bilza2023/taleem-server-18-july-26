@@ -42,18 +42,6 @@ async list(filters = {}) {
 
 	}
 
-	let orderBy = {
-		createdAt: "desc"
-	};
-
-	if (filters.sort === "sortOrder") {
-
-		orderBy = {
-			sortOrder: "asc"
-		};
-
-	}
-
 	const items = await this.kernel.db.library.findMany({
 
 		where,
@@ -62,7 +50,9 @@ async list(filters = {}) {
 			course: true
 		},
 
-		orderBy
+		orderBy: {
+			createdAt: "desc"
+		}
 
 	});
 
@@ -74,11 +64,16 @@ async list(filters = {}) {
 		body: item.body,
 		thumbnail: item.thumbnail,
 		courseSlug: item.course.slug,
-		access: item.course.access
+		access: item.course.access,
+
+		// Client-side sorting
+		sortOrder: item.sortOrder,
+		createdAt: item.createdAt
 
 	}));
 
 }
+
 async getById(id) {
 
 	return this.kernel.db.library.findUnique({
@@ -231,9 +226,9 @@ async updateBySlug(admin, slug, data) {
 
 	}
 
-	async listByCourse(courseSlug) {
+async listByCourse(courseSlug) {
 
-	 const items = await this.kernel.db.library.findMany({
+	const items = await this.kernel.db.library.findMany({
 
 		where: {
 			course: {
@@ -246,19 +241,27 @@ async updateBySlug(admin, slug, data) {
 		},
 
 		orderBy: {
-			createdAt: "desc"
+			sortOrder: "asc"
 		}
 
 	});
 
 	return items.map(item => ({
 
-    slug: item.slug,
-    title: item.title,
-    type: item.type,
-    courseSlug: item.course.slug
+		slug: item.slug,
+		title: item.title,
+		description: item.description,
+		thumbnail: item.thumbnail,
+		type: item.type,
 
-}));
+		sortOrder: item.sortOrder,
+		createdAt: item.createdAt,
+
+		courseSlug: item.course.slug,
+		courseTitle: item.course.title,
+		access: item.course.access
+
+	}));
 
 }
 // --------------------------------------------------
