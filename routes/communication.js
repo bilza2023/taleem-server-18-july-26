@@ -8,30 +8,43 @@ const router = express.Router();
 // --------------------------------------------------
 // POST /api/communication
 // --------------------------------------------------
-// --------------------------------------------------
-// POST /api/communication
-// --------------------------------------------------
 
 router.post("/", async (req, res) => {
 
 	try {
 
-		const token = req.headers.authorization?.replace("Bearer ", "");
+		const token = kernel.auth.getToken(req);
 
 		const user = await kernel.auth.authenticate(token);
-		// console.log("req.body" , req.body);
-		const item = await kernel.communication.create(
-			user,
-			req.body
-		);
+
+		const item = await kernel.communication.create({
+
+			...req.body,
+
+			userId: user.id
+
+		});
 
 		res.status(201).json(item);
 
 	}
 	catch (error) {
 
-		res.status(401).json({
-			error: error.message
+		const message = error.message.toLowerCase();
+
+		if (
+			message.includes("authenticate") ||
+			message.includes("token")
+		) {
+
+			return res.status(401).json({
+				error: "login_required"
+			});
+
+		}
+
+		return res.status(500).json({
+			error: "server_error"
 		});
 
 	}
@@ -39,55 +52,43 @@ router.post("/", async (req, res) => {
 });
 
 // --------------------------------------------------
-// GET /api/communication/library/:slug
-// --------------------------------------------------
-
-router.get("/library/:slug", async (req, res) => {
-
-	try {
-
-		const items = await kernel.communication.listByReference(
-			req.params.slug
-		);
-
-		res.json(items);
-
-	}
-	catch (error) {
-
-		res.status(500).json({
-			error: error.message
-		});
-
-	}
-
-});
-
-// --------------------------------------------------
-// GET /api/communication/user/:userId
-// --------------------------------------------------
-
-// --------------------------------------------------
-// GET /api/communication/my
+// GET /api/communication/me
 // --------------------------------------------------
 
 router.get("/me", async (req, res) => {
 
 	try {
 
-		const token = req.headers.authorization?.replace("Bearer ", "");
+		const token = kernel.auth.getToken(req);
 
 		const user = await kernel.auth.authenticate(token);
 
-		const items = await kernel.communication.listByUser(user.id);
+		const items = await kernel.communication.list({
+
+			userId: user.id
+
+		});
 
 		res.json(items);
 
 	}
 	catch (error) {
 
-		res.status(401).json({
-			error: error.message
+		const message = error.message.toLowerCase();
+
+		if (
+			message.includes("authenticate") ||
+			message.includes("token")
+		) {
+
+			return res.status(401).json({
+				error: "login_required"
+			});
+
+		}
+
+		return res.status(500).json({
+			error: "server_error"
 		});
 
 	}

@@ -7,17 +7,11 @@ const router = express.Router();
 
 // --------------------------------------------------
 // GET /api/public/course
-// List all courses
-// --------------------------------------------------
-
-// --------------------------------------------------
-// GET /api/public/course
-// Query courses
+// List public courses
 //
 // Examples:
 //   /course
-//   /course?access=OPEN
-//   /course?access=SUBSCRIPTION
+//   /course?access=PUBLIC
 // --------------------------------------------------
 
 router.get("/course", async (req, res) => {
@@ -42,41 +36,16 @@ router.get("/course", async (req, res) => {
 	}
 
 });
-// --------------------------------------------------
-// GET /api/public/course/:slug/list
-// List library items for a course
-// --------------------------------------------------
-
-router.get("/course/:slug/list", async (req, res) => {
-
-	try {
-
-		const items = await kernel.library.listByCourse(
-			req.params.slug
-		);
-
-		res.json(items);
-
-	}
-	catch (error) {
-
-		res.status(500).json({
-			error: error.message
-		});
-
-	}
-
-});
 
 // --------------------------------------------------
 // GET /api/public/library
-// Query library items
+// List public library items
 //
 // Examples:
 //   /library
-//   /library?course=blog
 //   /library?course=pre-algebra
-//   /library?access=OPEN
+//   /library?type=ARTICLE
+//   /library?access=PUBLIC
 // --------------------------------------------------
 
 router.get("/library", async (req, res) => {
@@ -86,12 +55,11 @@ router.get("/library", async (req, res) => {
 		const items = await kernel.library.list({
 
 			course: req.query.course,
-			access: req.query.access,
-			type: req.query.type
+			type: req.query.type,
+			access: req.query.access
 
 		});
 
-		// console.log("items" ,items);
 		res.json(items);
 
 	}
@@ -105,37 +73,4 @@ router.get("/library", async (req, res) => {
 
 });
 
-// --------------------------------------------------
-// GET /api/public/course/:slug
-// Get one course
-// --------------------------------------------------
-
-router.get("/course/:slug", async (req, res) => {
-
-	try {
-
-		const course = await kernel.course.getBySlug(
-			req.params.slug
-		);
-
-		if (!course) {
-
-			return res.status(404).json({
-				error: "Course not found"
-			});
-
-		}
-
-		res.json(course);
-
-	}
-	catch (error) {
-
-		res.status(500).json({
-			error: error.message
-		});
-
-	}
-
-});
 export default router;
