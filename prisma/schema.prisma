@@ -128,7 +128,7 @@ model Communication {
   authorResponse String?
 
   isPublic Boolean @default(false)
-
+  readAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
