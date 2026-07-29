@@ -5,9 +5,7 @@ import bcrypt from "bcrypt";
 export default class User {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
-
 	}
 
 	// --------------------------------------------------
@@ -16,13 +14,11 @@ export default class User {
 
 	async list() {
 
-		return this.kernel.db.user.findMany({
-			orderBy: { createdAt: "desc" }
-		});
+		return this.kernel.db.user.findMany();
 
 	}
 
-	async getById(id) {
+	async get(id) {
 
 		return this.kernel.db.user.findUnique({
 			where: { id }
@@ -47,10 +43,12 @@ export default class User {
 		const password = await bcrypt.hash(data.password, 10);
 
 		return this.kernel.db.user.create({
+
 			data: {
 				...data,
 				password
 			}
+
 		});
 
 	}
@@ -59,13 +57,15 @@ export default class User {
 
 		const user = await this.getByEmail(email);
 
-		if (!user)
+		if (!user) {
 			throw new Error(`User.login(): User '${email}' not found.`);
+		}
 
 		const ok = await bcrypt.compare(password, user.password);
 
-		if (!ok)
+		if (!ok) {
 			throw new Error(`User.login(): Invalid password.`);
+		}
 
 		return this.kernel.auth.createUserToken(user);
 
@@ -84,8 +84,11 @@ export default class User {
 		}
 
 		return this.kernel.db.user.update({
+
 			where: { id },
+
 			data
+
 		});
 
 	}
@@ -93,7 +96,9 @@ export default class User {
 	async delete(id) {
 
 		return this.kernel.db.user.delete({
+
 			where: { id }
+
 		});
 
 	}

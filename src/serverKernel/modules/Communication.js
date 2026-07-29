@@ -3,19 +3,27 @@
 export default class Communication {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
-
 	}
 
-	async list() {
+	// --------------------------------------------------
+	// Queries
+	// --------------------------------------------------
+
+	async list(filters = {}) {
+
+		const where = {};
+
+		if (filters.userId) {
+			where.userId = filters.userId;
+		}
+
+		if (filters.referenceId) {
+			where.referenceId = filters.referenceId;
+		}
 
 		return this.kernel.db.communication.findMany({
-
-			orderBy: {
-				createdAt: "desc"
-			}
-
+			where
 		});
 
 	}
@@ -23,63 +31,28 @@ export default class Communication {
 	async get(id) {
 
 		return this.kernel.db.communication.findUnique({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}
 
-	async listByReference(referenceId) {
+	// --------------------------------------------------
+	// CRUD
+	// --------------------------------------------------
 
-		return this.kernel.db.communication.findMany({
+	async create(data) {
 
-			where: {
-				referenceId
-			},
-
-			orderBy: {
-				createdAt: "desc"
-			}
-
+		return this.kernel.db.communication.create({
+			data
 		});
 
 	}
-
-async create(user, data) {
-
-	return this.kernel.db.communication.create({
-
-		data: {
-
-			userId: user.id,
-
-			referenceId: data.referenceId,
-
-			type: data.type,
-
-			message: data.message,
-
-			meta: data.meta
-
-		}
-
-	});
-
-}
 
 	async update(id, data) {
 
 		return this.kernel.db.communication.update({
-
-			where: {
-				id
-			},
-
+			where: { id },
 			data
-
 		});
 
 	}
@@ -87,54 +60,37 @@ async create(user, data) {
 	async delete(id) {
 
 		return this.kernel.db.communication.delete({
+			where: { id }
+		});
+
+	}
+
+	// --------------------------------------------------
+	// Special Queries
+	// --------------------------------------------------
+
+	async listUnanswered() {
+
+		return this.kernel.db.communication.findMany({
 
 			where: {
-				id
+				OR: [
+					{ authorResponse: null },
+					{ authorResponse: "" }
+				]
+			},
+
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true
+					}
+				}
 			}
 
 		});
 
 	}
-async listUnanswered() {
 
-    return this.kernel.db.communication.findMany({
-
-        where: {
-            OR: [
-                { authorResponse: null },
-                { authorResponse: "" }
-            ]
-        },
-
-        include: {
-            user: {
-                select: {
-                    id: true,
-                    name: true
-                }
-            }
-        },
-
-        orderBy: {
-            createdAt: "asc"
-        }
-
-    });
-
-}
-async listByUser(userId) {
-
-	return this.kernel.db.communication.findMany({
-
-		where: {
-			userId
-		},
-
-		orderBy: {
-			createdAt: "desc"
-		}
-
-	});
-
-}
 }

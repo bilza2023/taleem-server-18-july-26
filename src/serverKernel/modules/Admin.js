@@ -5,12 +5,28 @@ import bcrypt from "bcrypt";
 export default class Admin {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
+	}
+
+	// --------------------------------------------------
+	// Queries
+	// --------------------------------------------------
+
+	async list(filters = {}) {
+
+		const where = {};
+
+		if (filters.isActive !== undefined) {
+			where.isActive = filters.isActive;
+		}
+
+		return this.kernel.db.admin.findMany({
+			where
+		});
 
 	}
 
-	async getById(id) {
+	async get(id) {
 
 		return this.kernel.db.admin.findUnique({
 			where: { id }
@@ -18,30 +34,68 @@ export default class Admin {
 
 	}
 
-	async getByEmail(email) {
+	// --------------------------------------------------
+	// Authentication
+	// --------------------------------------------------
 
-		return this.kernel.db.admin.findUnique({
+	async login(email, password) {
+
+		const admin = await this.kernel.db.admin.findUnique({
 			where: { email }
+		});
+
+		if (!admin) {
+			throw new Error(`Admin.login(): Admin '${email}' not found.`);
+		}
+
+		if (!admin.isActive) {
+			throw new Error(`Admin.login(): Admin '${email}' is inactive.`);
+		}
+
+		const ok = await bcrypt.compare(password, admin.password);
+
+		if (!ok) {
+			throw new Error(`Admin.login(): Invalid password.`);
+		}
+
+		return this.kernel.auth.createAdminToken(admin);
+
+	}
+
+	// --------------------------------------------------
+	// CRUD
+	// --------------------------------------------------
+
+	async create(data) {
+
+		if (data.password) {
+			data.password = await bcrypt.hash(data.password, 10);
+		}
+
+		return this.kernel.db.admin.create({
+			data
 		});
 
 	}
 
-	async login(email, password) {
+	async update(id, data) {
 
-		const admin = await this.getByEmail(email);
+		if (data.password) {
+			data.password = await bcrypt.hash(data.password, 10);
+		}
 
-		if (!admin)
-			throw new Error(`Admin.login(): Admin '${email}' not found.`);
+		return this.kernel.db.admin.update({
+			where: { id },
+			data
+		});
 
-		if (!admin.isActive)
-			throw new Error(`Admin.login(): Admin '${email}' is inactive.`);
+	}
 
-		const ok = await bcrypt.compare(password, admin.password);
+	async delete(id) {
 
-		if (!ok)
-			throw new Error(`Admin.login(): Invalid password.`);
-
-		return this.kernel.auth.createAdminToken(admin);
+		return this.kernel.db.admin.delete({
+			where: { id }
+		});
 
 	}
 

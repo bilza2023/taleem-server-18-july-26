@@ -3,135 +3,90 @@
 export default class Library {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
-
 	}
 
 	// --------------------------------------------------
 	// Queries
 	// --------------------------------------------------
 
-async list(filters = {}) {
+	async list(filters = {}) {
 
-	const where = {};
+		const where = {};
 
-	// Library filters
-	if (filters.type) {
+		if (filters.type) {
+			where.type = filters.type;
+		}
 
-		where.type = filters.type;
+		if (filters.course || filters.access) {
+
+			where.course = {};
+
+			if (filters.course) {
+				where.course.slug = filters.course;
+			}
+
+			if (filters.access) {
+				where.course.access = filters.access;
+			}
+
+		}
+
+		return this.kernel.db.library.findMany({
+
+			where,
+
+			select: {
+
+				id: true,
+				slug: true,
+				title: true,
+				thumbnail: true,
+				type: true,
+				createdAt: true,
+				updatedAt: true,
+
+				course: {
+					select: {
+						id: true,
+						slug: true,
+						access: true
+					}
+				}
+
+			}
+
+		});
 
 	}
 
-	// Course filters
-	if (filters.course || filters.access) {
+	async get(id) {
 
-		where.course = {};
+		return this.kernel.db.library.findUnique({
 
-		if (filters.course) {
+			where: { id },
 
-			where.course.slug = filters.course;
+			include: {
 
-		}
+				course: {
+					select: {
+						id: true,
+						slug: true,
+						access: true
+					}
+				}
 
-		if (filters.access) {
+			}
 
-			where.course.access = filters.access;
-
-		}
-
-	}
-
-	const items = await this.kernel.db.library.findMany({
-
-		where,
-
-		include: {
-			course: true
-		},
-
-		orderBy: {
-			createdAt: "desc"
-		}
-
-	});
-
-	return items.map(item => ({
-
-		slug: item.slug,
-		title: item.title,
-		type: item.type,
-		body: item.body,
-		thumbnail: item.thumbnail,
-		courseSlug: item.course.slug,
-		access: item.course.access,
-
-		// Client-side sorting
-		sortOrder: item.sortOrder,
-		createdAt: item.createdAt
-
-	}));
-
-}
-
-async getById(id) {
-
-	return this.kernel.db.library.findUnique({
-
-		where: {
-			id
-		},
-
-		include: {
-			course: true
-		}
-
-	});
-
-}
-async getBySlug(slug) {
-
-	const item = await this.kernel.db.library.findUnique({
-
-		where: {
-			slug
-		},
-
-		include: {
-			course: true
-		}
-
-	});
-
-	if (!item) {
-
-		return null;
+		});
 
 	}
-
-	return {
-
-		id: item.id,
-		slug: item.slug,
-		title: item.title,
-		type: item.type,
-		body: item.body,
-		thumbnail: item.thumbnail,
-		courseSlug: item.course.slug,
-		access: item.course.access
-
-	};
-
-}
-
 
 	// --------------------------------------------------
-	// Internal CRUD (ID Based)
+	// CRUD
 	// --------------------------------------------------
 
-	async create(admin, data) {
-
-// console.log("data" , data);
+	async create(data) {
 
 		return this.kernel.db.library.create({
 			data
@@ -139,209 +94,66 @@ async getBySlug(slug) {
 
 	}
 
-	async update(admin, id, data) {
-
-		// TODO: authorize admin for "library"
+	async update(id, data) {
 
 		return this.kernel.db.library.update({
+
 			where: { id },
+
 			data
+
 		});
 
 	}
 
-	async delete(admin, id) {
-
-		// TODO: authorize admin for "library"
+	async delete(id) {
 
 		return this.kernel.db.library.delete({
+
 			where: { id }
+
 		});
 
 	}
 
 	// --------------------------------------------------
-	// Public CRUD (Slug Based)
+	// Utilities
 	// --------------------------------------------------
 
-async createBySlug(admin, data) {
+	async slugToId(slug) {
 
-	// TODO: authorize admin for "library"
+		const item = await this.kernel.db.library.findUnique({
 
-	const course = await this.kernel.course.getBySlug(data.courseSlug);
+			where: { slug },
 
-	if (!course) {
-		throw new Error(`Course "${data.courseSlug}" not found.`);
-	}
+			select: { id: true }
 
-	return this.create(admin, {
-		slug: data.slug,
-		title: data.title,
-		thumbnail: data.thumbnail,
-		type: data.type,
-		body: data.body,
-		courseId: course.id
-	});
-
-}
-
-async updateBySlug(admin, slug, data) {
-
-		// TODO: authorize admin for "library"
-
-		const library = await this.getBySlug(slug);
-
-		if (!library) {
-			throw new Error(`Library "${slug}" not found.`);
-		}
-
-		const course = await this.kernel.course.getBySlug(data.courseSlug);
-
-		if (!course) {
-			throw new Error(`Course "${data.courseSlug}" not found.`);
-		}
-
-		return this.update(admin, library.id, {
-			slug: data.slug,
-			title: data.title,
-			type: data.type,
-			body: data.body,
-			thumbnail: data.thumbnail,
-			courseId: course.id
 		});
 
-	}
-
-	async deleteBySlug(admin, slug) {
-
-		// TODO: authorize admin for "library"
-
-		const library = await this.getBySlug(slug);
-
-		if (!library) {
+		if (!item) {
 			throw new Error(`Library "${slug}" not found.`);
 		}
 
-		return this.delete(admin, library.id);
+		return item.id;
 
 	}
 
-async listByCourse(courseSlug) {
+	async idToSlug(id) {
 
-	const items = await this.kernel.db.library.findMany({
+		const item = await this.kernel.db.library.findUnique({
 
-		where: {
-			course: {
-				slug: courseSlug
-			}
-		},
+			where: { id },
 
-		include: {
-			course: true
-		},
+			select: { slug: true }
 
-		orderBy: {
-			sortOrder: "asc"
+		});
+
+		if (!item) {
+			throw new Error(`Library "${id}" not found.`);
 		}
 
-	});
-
-	return items.map(item => ({
-
-		slug: item.slug,
-		title: item.title,
-		description: item.description,
-		thumbnail: item.thumbnail,
-		type: item.type,
-
-		sortOrder: item.sortOrder,
-		createdAt: item.createdAt,
-
-		courseSlug: item.course.slug,
-		courseTitle: item.course.title,
-		access: item.course.access
-
-	}));
-
-}
-// --------------------------------------------------
-// Get parent course id from a library slug
-// --------------------------------------------------
-
-async getCourseIdByLibrarySlug(slug) {
-
-	const item = await this.kernel.db.library.findUnique({
-
-		where: {
-			slug
-		},
-
-		select: {
-			courseId: true
-		}
-
-	});
-
-	if (!item) {
-
-		throw new Error(`Library "${slug}" not found.`);
+		return item.slug;
 
 	}
 
-	return item.courseId;
-
-}
-// we use this to lookup a course access when loading library item 
-async getAccessByLibrarySlug(slug) {
-
-	const item = await this.kernel.db.library.findUnique({
-
-		where: {
-			slug
-		},
-
-		include: {
-			course: true
-		}
-
-	});
-
-	if (!item) {
-
-		throw new Error(`Library "${slug}" not found.`);
-
-	}
-
-	return item.course.access;
-
-}
-async slugToId(slug) {
-
-	const library = await this.kernel.db.library.findUnique({
-		where: { slug },
-		select: { id: true }
-	});
-
-	if (!library) {
-		throw new Error(`Library "${slug}" not found.`);
-	}
-
-	return library.id;
-
-}
-
-async idToSlug(id) {
-
-	const library = await this.kernel.db.library.findUnique({
-		where: { id },
-		select: { slug: true }
-	});
-
-	if (!library) {
-		throw new Error(`Library "${id}" not found.`);
-	}
-
-	return library.slug;
-
-}
 }

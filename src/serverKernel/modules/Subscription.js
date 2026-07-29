@@ -3,41 +3,47 @@
 export default class Subscription {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
-
 	}
 
-	async list() {
+	// --------------------------------------------------
+	// Queries
+	// --------------------------------------------------
+
+	async list(filters = {}) {
+
+		const where = {};
+
+		if (filters.userId) {
+			where.userId = filters.userId;
+		}
+
+		if (filters.courseId) {
+			where.courseId = filters.courseId;
+		}
 
 		return this.kernel.db.subscription.findMany({
-
-			orderBy: {
-				startsAt: "desc"
-			}
-
+			where
 		});
 
 	}
 
-	async getById(id) {
+	async get(id) {
 
 		return this.kernel.db.subscription.findUnique({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}
+
+	// --------------------------------------------------
+	// CRUD
+	// --------------------------------------------------
 
 	async create(data) {
 
 		return this.kernel.db.subscription.create({
-
 			data
-
 		});
 
 	}
@@ -45,13 +51,8 @@ export default class Subscription {
 	async update(id, data) {
 
 		return this.kernel.db.subscription.update({
-
-			where: {
-				id
-			},
-
+			where: { id },
 			data
-
 		});
 
 	}
@@ -59,75 +60,38 @@ export default class Subscription {
 	async delete(id) {
 
 		return this.kernel.db.subscription.delete({
-
-			where: {
-				id
-			}
-
+			where: { id }
 		});
 
 	}
 
-	async listByUser(userId) {
-
-		return this.kernel.db.subscription.findMany({
-
-			where: {
-				userId
-			},
-
-			orderBy: {
-				startsAt: "desc"
-			}
-
-		});
-
-	}
-
-	async listByCourse(courseId) {
-
-		return this.kernel.db.subscription.findMany({
-
-			where: {
-				courseId
-			},
-
-			orderBy: {
-				startsAt: "desc"
-			}
-
-		});
-
-	}
+	// --------------------------------------------------
+	// Utilities
+	// --------------------------------------------------
 
 	async authorize(userId, courseId) {
 
-	const now = new Date();
+		const now = new Date();
 
-	const subscription = await this.kernel.db.subscription.findFirst({
+		const subscription = await this.kernel.db.subscription.findFirst({
 
-		where: {
-			userId,
-			courseId,
-			startsAt: {
-				lte: now
-			},
-			endsAt: {
-				gte: now
+			where: {
+				userId,
+				courseId,
+				startsAt: { lte: now },
+				endsAt: { gte: now }
 			}
+
+		});
+
+		if (!subscription) {
+			throw new Error(
+				`User "${userId}" does not have an active subscription for course "${courseId}".`
+			);
 		}
 
-	});
-
-	if (!subscription) {
-
-		throw new Error(
-			`User "${userId}" does not have an active subscription for course "${courseId}".`
-		);
+		return subscription;
 
 	}
 
-	return subscription;
-
-}
 }

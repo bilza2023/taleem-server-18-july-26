@@ -3,59 +3,37 @@
 export default class Course {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
-
 	}
 
 	// --------------------------------------------------
 	// Queries
 	// --------------------------------------------------
 
-async list(filters = {}) {
+	async list(filters = {}) {
 
-	const where = {};
+		const where = {};
 
-	if (filters.access) {
-
-		where.access = filters.access;
-
-	}
-
-	return this.kernel.db.course.findMany({
-
-		where,
-
-		orderBy: {
-			title: "asc"
+		if (filters.access) {
+			where.access = filters.access;
 		}
 
-	});
-
-}
-
-	async getById(id) {
-
-		return this.kernel.db.course.findUnique({
-			where: {
-				id
-			}
+		return this.kernel.db.course.findMany({
+			where
 		});
 
 	}
 
-	async getBySlug(slug) {
+	async get(id) {
 
 		return this.kernel.db.course.findUnique({
-			where: {
-				slug
-			}
+			where: { id }
 		});
 
 	}
 
 	// --------------------------------------------------
-	// Internal CRUD (ID Based)
+	// CRUD
 	// --------------------------------------------------
 
 	async create(data) {
@@ -69,9 +47,7 @@ async list(filters = {}) {
 	async update(id, data) {
 
 		return this.kernel.db.course.update({
-			where: {
-				id
-			},
+			where: { id },
 			data
 		});
 
@@ -80,73 +56,43 @@ async list(filters = {}) {
 	async delete(id) {
 
 		return this.kernel.db.course.delete({
-			where: {
-				id
-			}
+			where: { id }
 		});
 
 	}
 
 	// --------------------------------------------------
-	// Public CRUD (Slug Based)
+	// Utilities
 	// --------------------------------------------------
 
-	async createBySlug(data) {
+	async slugToId(slug) {
 
-		return this.create(data);
-
-	}
-
-	async updateBySlug(slug, data) {
-
-		const course = await this.getBySlug(slug);
+		const course = await this.kernel.db.course.findUnique({
+			where: { slug },
+			select: { id: true }
+		});
 
 		if (!course) {
 			throw new Error(`Course "${slug}" not found.`);
 		}
 
-		return this.update(course.id, data);
+		return course.id;
 
 	}
 
-	async deleteBySlug(slug) {
+	async idToSlug(id) {
 
-		const course = await this.getBySlug(slug);
+		const course = await this.kernel.db.course.findUnique({
+			where: { id },
+			select: { slug: true }
+		});
 
 		if (!course) {
-			throw new Error(`Course "${slug}" not found.`);
+			throw new Error(`Course "${id}" not found.`);
 		}
 
-		return this.delete(course.id);
+		return course.slug;
 
 	}
-async slugToId(slug) {
 
-	const course = await this.kernel.db.course.findUnique({
-		where: { slug },
-		select: { id: true }
-	});
-
-	if (!course) {
-		throw new Error(`Course "${slug}" not found.`);
-	}
-
-	return course.id;
-
-}
-
-async idToSlug(id) {
-
-	const course = await this.kernel.db.course.findUnique({
-		where: { id },
-		select: { slug: true }
-	});
-
-	if (!course) {
-		throw new Error(`Course "${id}" not found.`);
-	}
-
-	return course.slug;
-
-}
 }
