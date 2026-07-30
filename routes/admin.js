@@ -97,19 +97,23 @@ router.get("/library/:slug", async (req, res) => {
 router.post("/library", async (req, res) => {
 
 	try {
-
+// console.log(req.body);
+// console.log("courseSlug =", req.body.courseSlug);
+//  debugger;
 		const admin = await kernel.auth.authenticate(getToken(req));
+
+		const courseSlug = req.body.courseSlug
+		const courseId = await kernel.course.slugToId(courseSlug);
+
+		req.body.courseId = courseId;
+		delete req.body.courseSlug;
 
 		await kernel.policy.require(admin, req.body.courseId, "library");
 
 		res.status(201).json(await kernel.library.create(req.body));
 
 	}
-	catch (error) {
-
-		res.status(500).json({ error: error.message });
-
-	}
+	catch (error) {res.status(500).json({ error: error.message });}
 
 });
 
@@ -117,12 +121,17 @@ router.put("/library/:slug", async (req, res) => {
 
 	try {
 
+       console.log("req.params" , req.params);
 		const admin = await kernel.auth.authenticate(getToken(req));
 
 		const id = await kernel.library.slugToId(req.params.slug);
 		const library = await kernel.library.get(id);
 
 		await kernel.policy.require(admin, library.course.id, "library");
+		// const data = req.body;
+		delete req.body.courseSlug;
+		
+		// req.body.courseId = library.course.id;
 
 		res.json(await kernel.library.update(id, req.body));
 
