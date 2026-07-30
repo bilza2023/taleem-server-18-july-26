@@ -34,6 +34,17 @@ export default class User {
 
 	}
 
+	async emailToId(email) {
+
+	const user = await this.getByEmail(email);
+
+	if (!user) {
+		throw new Error(`User '${email}' not found.`);
+	}
+
+	return user.id;
+
+}
 	// --------------------------------------------------
 	// Authentication
 	// --------------------------------------------------

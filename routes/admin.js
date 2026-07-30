@@ -108,7 +108,7 @@ router.post("/library", async (req, res) => {
 		req.body.courseId = courseId;
 		delete req.body.courseSlug;
 
-		await kernel.policy.require(admin, req.body.courseId, "library");
+		await kernel.policy.require(admin, courseId, "library");
 
 		res.status(201).json(await kernel.library.create(req.body));
 
@@ -299,5 +299,87 @@ router.post("/communication/respond", async (req, res) => {
 	}
 
 });
+router.get("/communication/course/:courseSlug", async (req, res) => {
 
+	try {
+
+		const admin = await kernel.auth.authenticate(getToken(req));
+
+		const courseId = await kernel.course.slugToId(
+			req.params.courseSlug
+		);
+
+		await kernel.policy.require(
+			admin,
+			courseId,
+			"library"
+		);
+
+		res.json(
+			await kernel.communication.listUnanswered(courseId)
+		);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+			error: error.message
+		});
+
+	}
+
+});
+router.post("/subscription", async (req, res) => {
+
+	try {
+
+		const admin = await kernel.auth.authenticate(getToken(req));
+
+		const userId = await kernel.user.emailToId(
+			req.body.email
+		);
+
+		const courseId = await kernel.course.slugToId(
+			req.body.courseSlug
+		);
+
+		await kernel.policy.require(
+			admin,
+			courseId,
+			"subscription"
+		);
+
+		const startsAt = new Date();
+
+		const endsAt = new Date(startsAt);
+
+		endsAt.setDate(
+			endsAt.getDate() + Number(req.body.days)
+		);
+
+		res.status(201).json(
+
+			await kernel.subscription.create({
+
+				userId,
+				courseId,
+				startsAt,
+				endsAt
+
+			})
+
+		);
+
+	}
+	catch (error) {
+
+		res.status(500).json({
+
+			error: error.message
+
+		});
+
+	}
+
+});
 export default router;

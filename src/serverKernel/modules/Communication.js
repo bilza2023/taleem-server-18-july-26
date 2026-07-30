@@ -110,63 +110,32 @@ async create(data) {
 	// Special Queries
 	// --------------------------------------------------
 
-	async listUnanswered(admin) {
+async listUnanswered(courseId) {
 
-		const courseIds = (
-			await this.kernel.db.adminCoursePolicy.findMany({
+	return this.kernel.db.communication.findMany({
 
-				where: { adminId: admin.id, communication: true },
+		where: {
 
-				select: { courseId: true }
+			OR: [
+				{ authorResponse: null },
+				{ authorResponse: "" }
+			],
 
-			})
-		).map(x => x.courseId);
-
-		return this.kernel.db.communication.findMany({
-
-			where: {
-
-				OR: [
-					{ authorResponse: null },
-					{ authorResponse: "" }
-				],
-
-				library: {
-					courseId: {
-						in: courseIds
-					}
-				}
-
-			},
-
-			include: {
-
-				user: {
-					select: { id: true, name: true }
-				},
-
-				library: {
-
-					select: {
-
-						id: true,
-						title: true,
-
-						course: {
-							select: {
-								id: true,
-								title: true
-							}
-						}
-
-					}
-
-				}
-
+			library: {
+				courseId
 			}
 
-		});
+		},
 
-	}
+		include: {
+
+			user: true,
+			library: true
+
+		}
+
+	});
+
+}
 
 }
