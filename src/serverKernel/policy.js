@@ -1,22 +1,24 @@
+
 // src/serverKernel/Policy.js
 
-import Permission from "./enums/Permission.js";
+import Resources from "./enums/Resources.js";
 
 export default class Policy {
 
 	constructor(kernel) {
-
 		this.kernel = kernel;
-
 	}
 
-	// Require a permission for an admin on a course.
-	async require(admin, courseId, permission) {
+	// --------------------------------------------------
+	// Require a resource for an admin on a course.
+	// --------------------------------------------------
 
-		if (!Object.values(Permission).includes(permission)) {
+	async require(admin, courseId, resource) {
+
+		if (!Object.values(Resources).includes(resource)) {
 
 			throw new Error(
-				`Policy.require(): Unknown permission '${permission}'.`
+				`Policy.require(): Unknown resource '${resource}'.`
 			);
 
 		}
@@ -41,10 +43,10 @@ export default class Policy {
 
 		}
 
-		if (!policy[permission]) {
+		if (!policy[resource]) {
 
 			throw new Error(
-				`Policy.require(): '${permission}' permission denied for admin '${admin.email}' on course '${courseId}'.`
+				`Policy.require(): Resource '${resource}' denied for admin '${admin.email}' on course '${courseId}'.`
 			);
 
 		}

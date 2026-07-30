@@ -1,5 +1,5 @@
 // src/serverKernel/modules/Admin.js
-
+// - sont expose this file it is for super-admin which we dont have for now
 import bcrypt from "bcrypt";
 
 export default class Admin {

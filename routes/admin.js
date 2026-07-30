@@ -7,136 +7,52 @@ const router = express.Router();
 
 const ADMIN_PAGES = path.resolve("admin-pages");
 
-// --------------------------------------------------
-// Admin Pages
-// --------------------------------------------------
-
-router.get("/", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "index.html"));
-});
-
-router.get("/login", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "login.html"));
-});
 
 // --------------------------------------------------
-// Library Pages
+// Library API
 // --------------------------------------------------
-
-
-router.get("/library/new", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "library-new.html"));
-});
-
-router.get("/library/edit", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "library-edit.html"));
-});
-router.get("/library/delete", (req, res) => {
-
-	res.sendFile(
-		path.join(
-			ADMIN_PAGES,
-			"library-delete.html"
-		)
-	);
-
-});
-
-router.get("/library", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "library-index.html"));
-});
 
 router.get("/library/:slug", async (req, res) => {
 
 	try {
 
-		res.json(
-			await kernel.library.getBySlug(req.params.slug)
-		);
+		const admin = await kernel.admin.authenticate(req);
 
-	}
-	catch {
+		const id = await kernel.library.slugToId(req.params.slug);
+		const library = await kernel.library.get(id);
 
-		res.status(404).json({
-			error: "library_not_found"
-		});
+		await kernel.policy.require(admin, library.course.id, "library");
 
-	}
-
-});
-
-
-// --------------------------------------------------
-// Course Pages
-// --------------------------------------------------
-
-router.get("/course", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "course-index.html"));
-});
-
-router.get("/course/new", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "course-new.html"));
-});
-
-router.get("/course/edit", (req, res) => {
-	res.sendFile(path.join(ADMIN_PAGES, "course-edit.html"));
-});
-
-// --------------------------------------------------
-// Communication Pages
-// --------------------------------------------------
-
-router.get("/communication/unanswered", (req, res) => {
-	res.sendFile(
-		path.join(
-			ADMIN_PAGES,
-			"communication-unanswered.html"
-		)
-	);
-});
-
-// --------------------------------------------------
-// POST /api/admin/login
-// --------------------------------------------------
-
-router.post("/login", async (req, res) => {
-
-	try {
-
-		const { email, password } = req.body;
-
-		const token = await kernel.admin.login(email, password);
-
-		res.json({ token });
+		res.json(library);
 
 	}
 	catch (error) {
 
-		res.status(401).json({
-			error: "login_failed"
+		res.status(404).json({
+			error: error.message
 		});
 
 	}
 
 });
-
 
 router.post("/library", async (req, res) => {
 
 	try {
 
+		const admin = await kernel.admin.authenticate(req);
+
+		await kernel.policy.require(admin, req.body.courseId, "library");
+
 		res.status(201).json(
-			await kernel.library.createBySlug(
-				null,
-				req.body
-			)
+			await kernel.library.create(req.body)
 		);
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(500).json({
-			error: "create_failed"
+			error: error.message
 		});
 
 	}
@@ -147,19 +63,22 @@ router.put("/library/:slug", async (req, res) => {
 
 	try {
 
+		const admin = await kernel.admin.authenticate(req);
+
+		const id = await kernel.library.slugToId(req.params.slug);
+		const library = await kernel.library.get(id);
+
+		await kernel.policy.require(admin, library.course.id, "library");
+
 		res.json(
-			await kernel.library.updateBySlug(
-				null,
-				req.params.slug,
-				req.body
-			)
+			await kernel.library.update(id, req.body)
 		);
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(500).json({
-			error: "update_failed"
+			error: error.message
 		});
 
 	}
@@ -170,37 +89,30 @@ router.delete("/library/:slug", async (req, res) => {
 
 	try {
 
-		await kernel.library.deleteBySlug(
-			null,
-			req.params.slug
-		);
+		const admin = await kernel.admin.authenticate(req);
+
+		const id = await kernel.library.slugToId(req.params.slug);
+		const library = await kernel.library.get(id);
+
+		await kernel.policy.require(admin, library.course.id, "library");
+
+		await kernel.library.delete(id);
 
 		res.json({
 			success: true
 		});
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(500).json({
-			error: "delete_failed"
+			error: error.message
 		});
 
 	}
 
 });
 
-
-router.get("/course/delete", (req, res) => {
-
-	res.sendFile(
-		path.join(
-			ADMIN_PAGES,
-			"course-delete.html"
-		)
-	);
-
-});
 
 // --------------------------------------------------
 // Course API
@@ -210,15 +122,20 @@ router.get("/course/:slug", async (req, res) => {
 
 	try {
 
-		res.json(
-			await kernel.course.getBySlug(req.params.slug)
-		);
+		const admin = await kernel.admin.authenticate(req);
+
+		const id = await kernel.course.slugToId(req.params.slug);
+		const course = await kernel.course.get(id);
+
+		await kernel.policy.require(admin, course.id, "course");
+
+		res.json(course);
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(404).json({
-			error: "course_not_found"
+			error: error.message
 		});
 
 	}
@@ -229,30 +146,22 @@ router.post("/course", async (req, res) => {
 
 	try {
 
+		const admin = await kernel.admin.authenticate(req);
+
+		await kernel.policy.require(admin, req.body.id, "course");
+
 		res.status(201).json(
-			await kernel.course.createBySlug(req.body)
+			await kernel.course.create(req.body)
 		);
 
 	}
-	// catch {
-
-	// 	res.status(500).json({
-	// 		error: "create_failed"
-	// 	});
-
-	// }
 	catch (error) {
 
-	console.error(error);
+		res.status(500).json({
+			error: error.message
+		});
 
-	res.status(500).json({
-		name: error.name,
-		code: error.code,
-		message: error.message,
-		meta: error.meta
-	});
-
-}
+	}
 
 });
 
@@ -260,18 +169,22 @@ router.put("/course/:slug", async (req, res) => {
 
 	try {
 
+		const admin = await kernel.admin.authenticate(req);
+
+		const id = await kernel.course.slugToId(req.params.slug);
+		const course = await kernel.course.get(id);
+
+		await kernel.policy.require(admin, course.id, "course");
+
 		res.json(
-			await kernel.course.updateBySlug(
-				req.params.slug,
-				req.body
-			)
+			await kernel.course.update(id, req.body)
 		);
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(500).json({
-			error: "update_failed"
+			error: error.message
 		});
 
 	}
@@ -282,35 +195,33 @@ router.delete("/course/:slug", async (req, res) => {
 
 	try {
 
-		await kernel.course.deleteBySlug(
-			req.params.slug
-		);
+		const admin = await kernel.admin.authenticate(req);
+
+		const id = await kernel.course.slugToId(req.params.slug);
+		const course = await kernel.course.get(id);
+
+		await kernel.policy.require(admin, course.id, "course");
+
+		await kernel.course.delete(id);
 
 		res.json({
 			success: true
 		});
 
 	}
-	// catch {
-
-	// 	res.status(500).json({
-	// 		error: "delete_failed"
-	// 	});
-
-	// }
 	catch (error) {
 
-	console.error(error);
+		res.status(500).json({
+			error: error.message
+		});
 
-	res.status(500).json({
-		error: error.message
-	});
-
-}
+	}
 
 });
 
-
+// --------------------------------------------------
+// Communication API
+// --------------------------------------------------
 // --------------------------------------------------
 // Communication API
 // --------------------------------------------------
@@ -319,15 +230,18 @@ router.get("/communication/unanswered/list", async (req, res) => {
 
 	try {
 
-		res.json(
-			await kernel.communication.listUnanswered()
-		);
+		const admin = await kernel.admin.authenticate(req);
+
+		// TODO: Filter by admin's courses in a later revision.
+		const communication = await kernel.communication.listUnanswered();
+
+		res.json(communication);
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(500).json({
-			error: "server_error"
+			error: error.message
 		});
 
 	}
@@ -338,11 +252,19 @@ router.post("/communication/respond", async (req, res) => {
 
 	try {
 
-		const { id, authorResponse, isPublic } = req.body;
+		const admin = await kernel.admin.authenticate(req);
 
-		await kernel.communication.update(id, {
-			authorResponse,
-			isPublic
+		const communication = await kernel.communication.get(req.body.id);
+
+		await kernel.policy.require(
+			admin,
+			communication.courseId,
+			"communication"
+		);
+
+		await kernel.communication.update(req.body.id, {
+			authorResponse: req.body.authorResponse,
+			isPublic: req.body.isPublic
 		});
 
 		res.json({
@@ -350,17 +272,15 @@ router.post("/communication/respond", async (req, res) => {
 		});
 
 	}
-	catch {
+	catch (error) {
 
 		res.status(500).json({
-			error: "update_failed"
+			error: error.message
 		});
 
 	}
 
 });
-
-
 
 
 export default router;

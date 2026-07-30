@@ -18,8 +18,8 @@ export default class Communication {
 			where.userId = filters.userId;
 		}
 
-		if (filters.referenceId) {
-			where.referenceId = filters.referenceId;
+		if (filters.libraryId) {
+			where.libraryId = filters.libraryId;
 		}
 
 		return this.kernel.db.communication.findMany({
@@ -31,7 +31,31 @@ export default class Communication {
 	async get(id) {
 
 		return this.kernel.db.communication.findUnique({
-			where: { id }
+
+			where: { id },
+
+			include: {
+
+				library: {
+
+					select: {
+
+						id: true,
+						title: true,
+
+						course: {
+							select: {
+								id: true,
+								title: true
+							}
+						}
+
+					}
+
+				}
+
+			}
+
 		});
 
 	}
@@ -69,24 +93,59 @@ export default class Communication {
 	// Special Queries
 	// --------------------------------------------------
 
-	async listUnanswered() {
+	async listUnanswered(admin) {
+
+		const courseIds = (
+			await this.kernel.db.adminCoursePolicy.findMany({
+
+				where: { adminId: admin.id, communication: true },
+
+				select: { courseId: true }
+
+			})
+		).map(x => x.courseId);
 
 		return this.kernel.db.communication.findMany({
 
 			where: {
+
 				OR: [
 					{ authorResponse: null },
 					{ authorResponse: "" }
-				]
+				],
+
+				library: {
+					courseId: {
+						in: courseIds
+					}
+				}
+
 			},
 
 			include: {
+
 				user: {
+					select: { id: true, name: true }
+				},
+
+				library: {
+
 					select: {
+
 						id: true,
-						name: true
+						title: true,
+
+						course: {
+							select: {
+								id: true,
+								title: true
+							}
+						}
+
 					}
+
 				}
+
 			}
 
 		});
