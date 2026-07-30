@@ -63,14 +63,31 @@ export default class Communication {
 	// --------------------------------------------------
 	// CRUD
 	// --------------------------------------------------
+async create(data) {
 
-	async create(data) {
+	try {
 
-		return this.kernel.db.communication.create({
+		return await this.kernel.db.communication.create({
 			data
 		});
 
 	}
+	catch (error) {
+
+		throw new Error(
+			[
+				"",
+				"========================================",
+				"COMMUNICATION CREATE FAILED",
+				"----------------------------------------",
+				`Reason : ${error.message}`,
+				"========================================"
+			].join("\n")
+		);
+
+	}
+
+}
 
 	async update(id, data) {
 

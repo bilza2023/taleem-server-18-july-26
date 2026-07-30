@@ -1,19 +1,25 @@
 ///home/bilal-tariq/00--TALEEM/taleem-server/src/serverKernel/Auth.js
+
+import JWT from "./JWT.js";
+
 export default class Auth {
 
-	constructor(kernel) {this.kernel = kernel;}
+	constructor(kernel) {
+		this.kernel = kernel;
+		this.jwt = new JWT(kernel);
+	}
 	// --------------------------------------------------
 	// Token Creation
 	// --------------------------------------------------
 	createUserToken(user) {
 
-		return this.kernel.jwt.sign({ id: user.id, type: "user" });
+		return this.jwt.sign({ id: user.id, type: "user" });
 
 	}
 
 	createAdminToken(admin) {
 
-		return this.kernel.jwt.sign({ id: admin.id, type: "admin" });
+		return this.jwt.sign({ id: admin.id, type: "admin" });
 
 	}
 
@@ -33,33 +39,39 @@ export default class Auth {
 
 	}
 
-	async authenticateUser(id) {
+async authenticateUser(id) {
 
-		const user = await this.kernel.user.getById(id);
+	const user = await this.kernel.user.get(id);
 
-		if (!user)
-			this.fail("authenticateUser()", `User '${id}' does not exist.`);
+	if (!user)
+		this.fail(
+			"authenticateUser()",
+			`User '${id}' does not exist.`
+		);
 
-		return user;
+	return user;
 
-	}
+}
 
-	async authenticateAdmin(id) {
+async authenticateAdmin(id) {
 
-		const admin = await this.kernel.admin.getById(id);
+	const admin = await this.kernel.admin.get(id);
 
-		if (!admin)
-			this.fail("authenticateAdmin()", `Admin '${id}' does not exist.`);
+	if (!admin)
+		this.fail(
+			"authenticateAdmin()",
+			`Admin '${id}' does not exist.`
+		);
 
-		return admin;
+	return admin;
 
-	}
+}
 
 	verifyToken(token) {
 
 		try {
 
-			return this.kernel.jwt.verify(token);
+			return this.jwt.verify(token);
 
 		}
 		catch (error) {

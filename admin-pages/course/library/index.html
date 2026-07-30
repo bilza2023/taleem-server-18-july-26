@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
+
+	<title>Library</title>
+
+	<link
+		rel="stylesheet"
+		href="/api/css/admin"
+	>
+
+</head>
+
+<body>
+
+	<h1>Library</h1>
+
+	<p>
+
+		<a href="/api/admin/pages/dashboard">
+
+			← Dashboard
+
+		</a>
+
+	</p>
+
+	<p>
+
+		<button
+			type="button"
+			onclick="location.href='/api/admin/pages/course/library/new'"
+		>
+
+			New Library Item
+
+		</button>
+
+	</p>
+
+	<table>
+
+		<thead>
+
+			<tr>
+
+				<th>Title</th>
+				<th>Slug</th>
+				<th>Course</th>
+				<th>Type</th>
+				<th>Access</th>
+				<th>Actions</th>
+
+			</tr>
+
+		</thead>
+
+		<tbody id="libraryTable">
+
+			<tr>
+
+				<td colspan="6">
+
+					Loading...
+
+				</td>
+
+			</tr>
+
+		</tbody>
+
+	</table>
+
+	<script type="module">
+
+		import admin from "/api/js/admin";
+
+		if (!admin.verify()) {
+
+			location.replace(
+				"/api/admin/pages/login"
+			);
+
+		}
+
+		const tbody =
+			document.getElementById("libraryTable");
+
+		try {
+
+			const response =
+				await fetch("/api/public/library");
+
+			if (!response.ok) {
+
+				throw new Error(
+					"Unable to load library."
+				);
+
+			}
+
+			const items =
+				await response.json();
+
+			tbody.innerHTML = "";
+
+			if (items.length === 0) {
+
+				tbody.innerHTML = `
+
+					<tr>
+
+						<td colspan="6">
+
+							No library items found.
+
+						</td>
+
+					</tr>
+
+				`;
+
+			}
+
+			for (const item of items) {
+
+				const tr =
+					document.createElement("tr");
+
+				tr.innerHTML = `
+
+					<td>${item.title}</td>
+
+					<td>${item.slug}</td>
+
+					<td>${item.course?.title ?? ""}</td>
+
+					<td>${item.type}</td>
+
+					<td>${item.course?.access ?? ""}</td>
+
+					<td>
+
+						<a href="/api/admin/pages/course/library/edit?slug=${item.slug}">
+
+							Edit
+
+						</a>
+
+						&nbsp;|&nbsp;
+
+						<a href="/api/admin/pages/course/library/delete?slug=${item.slug}">
+
+							Delete
+
+						</a>
+
+					</td>
+
+				`;
+
+				tbody.appendChild(tr);
+
+			}
+
+		}
+		catch (error) {
+
+			tbody.innerHTML = `
+
+				<tr>
+
+					<td colspan="6">
+
+						${error.message}
+
+					</td>
+
+				</tr>
+
+			`;
+
+		}
+
+	</script>
+
+</body>
+
+</html>

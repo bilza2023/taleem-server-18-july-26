@@ -9,9 +9,9 @@
     "seed": "node scripts/seed-23-jul-26.js",
     "bulk": "node scripts/bulk-seed/bulk-seed.js",
     "wipe": "node scripts/clean-db.js",
-    "test": "npm run seed && vitest",
-    "test:watch": "vitest",
-    "test:run": "npm run seed && vitest run"
+    "test:kernel": "npm run seed && vitest run tests/kernel",
+    "test:routes": "npm run seed && vitest run tests/routes",
+    "test": "npm run test:kernel && npm run test:routes"
   },
   "author": "Bilal Tariq",
   "license": "ISC",

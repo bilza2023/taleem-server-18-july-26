@@ -35,7 +35,7 @@ class ServerKernel {
 
 			this.db = this.initialize("Prisma", () => new PrismaClient());
 
-			this.jwt = this.initialize("JWT", () => new JWT(this));
+			// this.jwt = this.initialize("JWT", () => new JWT(this));
 
 			this.auth = this.initialize("Auth", () => new Auth(this));
 

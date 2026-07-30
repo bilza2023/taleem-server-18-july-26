@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8">
+
+	<meta
+		name="viewport"
+		content="width=device-width, initial-scale=1.0"
+	>
+
+	<title>Taleem Administration</title>
+
+	<link
+		rel="stylesheet"
+		href="/api/css/admin"
+	>
+
+</head>
+
+<body>
+
+	<h1>Taleem Administration</h1>
+
+	<p>
+
+		Welcome.
+
+	</p>
+
+	<ul>
+
+		<li>
+
+			<a href="/api/admin/pages/course/library">
+
+				Library
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="/api/admin/pages/course/communication">
+
+				Communication
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="/api/admin/pages/course/subscription">
+
+				Subscriptions
+
+			</a>
+
+		</li>
+
+	</ul>
+
+	<p>
+
+		<button id="logout">
+
+			Log Out
+
+		</button>
+
+	</p>
+
+	<script type="module">
+
+		import admin from "/api/js/admin";
+
+		if (!admin.verify()) {
+
+			location.replace("/api/admin/pages/login");
+
+		}
+
+		document
+			.getElementById("logout")
+			.addEventListener("click", () => {
+
+				admin.logout();
+
+			});
+
+	</script>
+
+</body>
+
+</html>

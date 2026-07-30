@@ -56,6 +56,9 @@ router.post("/login", async (req, res) => {
 // --------------------------------------------------
 // POST /api/user/verify
 // --------------------------------------------------
+// --------------------------------------------------
+// POST /api/user/verify
+// --------------------------------------------------
 
 router.post("/verify", async (req, res) => {
 
@@ -63,7 +66,7 @@ router.post("/verify", async (req, res) => {
 
 		const { token } = req.body;
 
-		const user = await kernel.user.verify(token);
+		const user = await kernel.auth.authenticate(token);
 
 		res.json(user);
 

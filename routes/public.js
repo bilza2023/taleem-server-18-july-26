@@ -28,7 +28,7 @@ router.get("/course", async (req, res) => {
 
 	}
 	catch (error) {
-
+		console.log("library",error)
 		res.status(500).json({
 			error: error.message
 		});
@@ -51,7 +51,7 @@ router.get("/course", async (req, res) => {
 router.get("/library", async (req, res) => {
 
 	try {
-
+	// console.log(req.query);
 		const items = await kernel.library.list({
 
 			course: req.query.course,
@@ -64,7 +64,7 @@ router.get("/library", async (req, res) => {
 
 	}
 	catch (error) {
-
+		console.log("library",error)
 		res.status(500).json({
 			error: error.message
 		});

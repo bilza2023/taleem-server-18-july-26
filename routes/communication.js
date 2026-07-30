@@ -1,5 +1,5 @@
 // routes/communication.js
-
+import { getToken } from "./utils/getToken.js";
 import express from "express";
 import kernel from "../src/serverKernel/ServerKernel.js";
 
@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
 
 	try {
 
-		const token = kernel.auth.getToken(req);
+		const token = getToken(req);
 
 		const user = await kernel.auth.authenticate(token);
 
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
 	catch (error) {
 
 		const message = error.message.toLowerCase();
-
+		//  console.error(error);
 		if (
 			message.includes("authenticate") ||
 			message.includes("token")
@@ -59,7 +59,7 @@ router.get("/me", async (req, res) => {
 
 	try {
 
-		const token = kernel.auth.getToken(req);
+		const token = getToken(req);
 
 		const user = await kernel.auth.authenticate(token);
 
@@ -73,7 +73,7 @@ router.get("/me", async (req, res) => {
 
 	}
 	catch (error) {
-
+//  console.error(error);
 		const message = error.message.toLowerCase();
 
 		if (

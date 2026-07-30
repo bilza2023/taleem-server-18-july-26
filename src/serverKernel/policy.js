@@ -55,4 +55,31 @@ export default class Policy {
 
 	}
 
+	async listCourses(admin) {
+
+	return await this.kernel.db.course.findMany({
+
+		where: {
+
+			adminPolicies: {
+
+				some: {
+
+					adminId: admin.id
+
+				}
+
+			}
+
+		},
+
+		orderBy: {
+
+			title: "asc"
+
+		}
+
+	});
+
+}
 }
