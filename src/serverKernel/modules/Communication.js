@@ -66,7 +66,7 @@ export default class Communication {
 async create(data) {
 
 	try {
-
+		// console.log("data",data);
 		return await this.kernel.db.communication.create({
 			data
 		});

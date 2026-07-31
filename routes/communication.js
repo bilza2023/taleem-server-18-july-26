@@ -12,10 +12,22 @@ const router = express.Router();
 router.post("/", async (req, res) => {
 
 	try {
-
+// debugger;
 		const token = getToken(req);
 
 		const user = await kernel.auth.authenticate(token);
+		const librarySlug = req.body.librarySlug;
+		const libraryId = await kernel.library.slugToId(librarySlug);
+		// throw if no library id
+		if (!libraryId) {
+			return res.status(404).json({
+				error: "library_not_found"
+			});
+		}
+		
+		
+		req.body.libraryId = libraryId;
+		delete req.body.librarySlug  // why because the  slug should not be over written .
 
 		const item = await kernel.communication.create({
 
@@ -31,7 +43,7 @@ router.post("/", async (req, res) => {
 	catch (error) {
 
 		const message = error.message.toLowerCase();
-		//  console.error(error);
+		 console.error(error);
 		if (
 			message.includes("authenticate") ||
 			message.includes("token")
