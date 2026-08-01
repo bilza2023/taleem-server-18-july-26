@@ -171,15 +171,16 @@ describe("Communication", () => {
 
 	});
 
-	it("should list unanswered communications for an admin", async () => {
+	it("should list unanswered communications for a course", async () => {
 
-		const admin =
-			(await kernel.admin.list())
-				.find(a => a.email === "members@taleem.help");
+		const courseId =
+			await kernel.course.slugToId(
+				"course-members"
+			);
 
 		const communications =
 			await kernel.communication.listUnanswered(
-				admin
+				courseId
 			);
 
 		expect(communications.length).toBe(1);

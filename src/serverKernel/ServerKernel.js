@@ -1,12 +1,10 @@
 // src/serverKernel/ServerKernel.js
-
 import { PrismaClient } from "@prisma/client";
 
 import Config from "./Config.js";
 import JWT from "./JWT.js";
 import Auth from "./Auth.js";
 import Logger from "./Logger.js";
-
 import Policy from "./policy.js";
 import User from "./modules/User.js";
 import Admin from "./modules/Admin.js";
@@ -14,6 +12,8 @@ import Library from "./modules/Library.js";
 import Course from "./modules/Course.js";
 import Communication from "./modules/Communication.js";
 import Subscription from "./modules/Subscription.js";
+import Image from "./modules/Image.js";
+import Audio from "./modules/Audio.js";
 
 class ServerKernel {
 
@@ -51,16 +51,12 @@ class ServerKernel {
 			this.library = this.initialize("Library", () => new Library(this));
 
 			this.course = this.initialize("Course", () => new Course(this));
+			this.image = this.initialize("Image", () => new Image(this));
 
-			this.communication = this.initialize(
-				"Communication",
-				() => new Communication(this)
-			);
+			this.audio = this.initialize("Audio", () => new Audio(this));
 
-			this.subscription = this.initialize(
-				"Subscription",
-				() => new Subscription(this)
-			);
+			this.communication = this.initialize("Communication", () => new Communication(this));
+			this.subscription = this.initialize("Subscription", () => new Subscription(this));
 
 			this.logger.info("Server Kernel started successfully.");
 

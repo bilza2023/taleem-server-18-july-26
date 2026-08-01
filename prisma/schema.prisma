@@ -6,6 +6,7 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
 enum LibraryStatus {
   DRAFT
   PUBLISHED
@@ -17,6 +18,7 @@ enum ContentType {
   PLAYER
   MCQ
 }
+
 enum CourseAccess {
   OPEN
   MEMBERS
@@ -29,51 +31,50 @@ model User {
   password  String
   name      String?
   role      String   @default("student")
-  resource String?
+  resource  String?
   createdAt DateTime @default(now())
 
   subscriptions  Subscription[]
   communications Communication[]
 }
 
-
 model Admin {
-  id        Int @id @default(autoincrement())
-  email     String @unique
-  password  String
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
 
-  isActive  Boolean  @default(true)
+  isActive Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  policies  AdminCoursePolicy[]
+  policies AdminCoursePolicy[]
 }
 
 model AdminCoursePolicy {
-   id             Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  adminId        Int
-  courseId       Int
+  adminId  Int
+  courseId Int
 
-  library        Boolean @default(false)
-  communication  Boolean @default(false)
-  subscription   Boolean @default(false)
+  library       Boolean @default(false)
+  communication Boolean @default(false)
+  subscription  Boolean @default(false)
 
-  admin          Admin  @relation(fields: [adminId], references: [id])
-  course         Course @relation(fields: [courseId], references: [id])
+  admin  Admin  @relation(fields: [adminId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
 
   @@unique([adminId, courseId])
 }
+
 model Course {
- 
-  id          Int @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   slug        String  @unique
   title       String
   description String?
   thumbnail   String?
 
-  access  CourseAccess @default(OPEN)
+  access CourseAccess @default(OPEN)
 
   price Int @default(0)
 
@@ -93,21 +94,21 @@ model Library {
 
   thumbnail String?
 
-
   type ContentType
 
   body String?
 
-  courseId Int
-  sortOrder Int @default(0)
-  allowCommunication Boolean @default(true)
-  status      LibraryStatus  @default(DRAFT)
+  courseId           Int
+  sortOrder          Int           @default(0)
+  allowCommunication Boolean       @default(true)
+  status             LibraryStatus @default(DRAFT)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   course         Course          @relation(fields: [courseId], references: [id])
- communications Communication[]
+  communications Communication[]
+
   @@index([slug])
   @@index([courseId])
 }
@@ -123,13 +124,14 @@ model Subscription {
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
+
   cancelledAt DateTime?
+
   @@index([userId])
   @@index([courseId])
 }
 
 model Communication {
-  
   id Int @id @default(autoincrement())
 
   userId Int
@@ -137,20 +139,37 @@ model Communication {
   libraryId Int
 
   type String
-  
+
   meta String?
 
   message String
 
   authorResponse String?
 
-  isPublic Boolean @default(false)
-  readAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isPublic  Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
   library Library @relation(fields: [libraryId], references: [id])
 
   @@index([userId])
+}
+
+model Image {
+  id          String   @id @default(cuid())
+  filename    String   @unique
+  description String
+  alt         String?
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
+}
+
+model Audio {
+  id          String   @id @default(cuid())
+  filename    String   @unique
+  description String
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
 }

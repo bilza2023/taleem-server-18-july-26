@@ -7,7 +7,7 @@ import kernel from "../../src/serverKernel/ServerKernel.js";
 describe("Communication Routes", () => {
 
 	let token;
-	let libraryId;
+	let librarySlug;
 
 	beforeAll(async () => {
 
@@ -16,9 +16,7 @@ describe("Communication Routes", () => {
 			"12345678"
 		);
 
-		libraryId = await kernel.library.slugToId(
-			"open-page"
-		);
+		librarySlug = "open-page";
 
 	});
 
@@ -27,7 +25,7 @@ describe("Communication Routes", () => {
 		const res = await request(app)
 			.post("/api/communication")
 			.send({
-				libraryId,
+				librarySlug,
 				type: "comment",
 				message: "Hello"
 			});
@@ -42,7 +40,7 @@ describe("Communication Routes", () => {
 			.post("/api/communication")
 			.set("Authorization", `Bearer ${token}`)
 			.send({
-				libraryId,
+				librarySlug,
 				type: "comment",
 				message: "Route test message"
 			});

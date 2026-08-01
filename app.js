@@ -10,6 +10,7 @@ import adminPagesRouter from "./routes/admin-pages.js";
 import publicRouter from "./routes/public.js";
 import libraryRouter from "./routes/library.js";
 import communicationRouter from "./routes/communication.js";
+import mediaRouter from "./routes/media.js";
 
 dotenv.config();
 
@@ -113,5 +114,6 @@ app.use("/api/admin", adminRouter);
 app.use("/api/admin/pages", adminPagesRouter);
 app.use("/api/library", libraryRouter);
 app.use("/api/communication", communicationRouter);
+app.use("/api/media", mediaRouter);
 
 export default app;

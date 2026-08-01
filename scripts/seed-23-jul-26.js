@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import { PrismaClient, ContentType } from "@prisma/client";
+import fs from "fs";
+import path from "path";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +10,8 @@ async function main() {
 	console.log("🧹 Clearing database...");
 
 	await prisma.communication.deleteMany();
+	await prisma.image.deleteMany();
+	await prisma.audio.deleteMany();
 	await prisma.subscription.deleteMany();
 	await prisma.library.deleteMany();
 	await prisma.adminCoursePolicy.deleteMany();
@@ -15,6 +19,12 @@ async function main() {
 	await prisma.course.deleteMany();
 	await prisma.admin.deleteMany();
 
+console.log("🧹 Clearing test media...");
+
+for (const dir of ["content/images", "content/audio"])
+	for (const file of fs.readdirSync(dir))
+		if (file.startsWith("test-"))
+			fs.unlinkSync(`${dir}/${file}`);
 	// --------------------------------------------------
 	// Courses
 	// --------------------------------------------------
